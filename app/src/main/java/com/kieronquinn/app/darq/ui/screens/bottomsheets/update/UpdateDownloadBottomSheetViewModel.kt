@@ -116,7 +116,11 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
             mkdirs()
         }
         downloadFile = File(downloadFolder, fileName)
-        context.registerReceiver(downloadStateReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(downloadStateReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED)
+        } else {
+            context.registerReceiver(downloadStateReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        }
         context.contentResolver.registerContentObserver(Uri.parse("content://downloads/my_downloads"), true, downloadObserver)
         requestId = DownloadManager.Request(Uri.parse(url)).apply {
             setDescription(context.getString(R.string.download_manager_description))
