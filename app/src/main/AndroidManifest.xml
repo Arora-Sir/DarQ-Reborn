@@ -12,6 +12,8 @@
 		tools:ignore="QueryAllPackagesPermission" />
 	<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 	<application
 		android:name=".DarqApplication"
@@ -40,8 +42,15 @@
 			android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
 			android:theme="@style/AppTheme.ThirdPartyLicences" />
 
-		<service android:name="com.kieronquinn.app.darq.service.boot.BootForegroundService"/>
-		<service android:name="com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService"/>
+		<service android:name="com.kieronquinn.app.darq.service.boot.BootForegroundService"
+			android:foregroundServiceType="specialUse">
+			<property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Boot service to initialize DarQ" />
+		</service>
+		
+		<service android:name="com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService"
+			android:foregroundServiceType="specialUse">
+			<property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Background service to manage auto dark mode" />
+		</service>
 
 		<receiver android:name="com.kieronquinn.app.darq.receivers.BootReceiver"
 			android:exported="false">

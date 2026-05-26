@@ -30,13 +30,23 @@ class BootForegroundService : LifecycleService() {
 
     private val launchIntent by lazy {
         Intent(this, DarqActivity::class.java).let { notificationIntent ->
-            PendingIntent.getActivity(this, 0, notificationIntent, 0)
+            val flags = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE
+            } else {
+                0
+            }
+            PendingIntent.getActivity(this, 0, notificationIntent, flags)
         }
     }
 
     private val shizukuLaunchIntent by lazy {
         Intent(packageManager.getLaunchIntentForPackage(ShizukuConstants.SHIZUKU_PACKAGE_NAME)).let { notificationIntent ->
-            PendingIntent.getActivity(this, 0, notificationIntent, 0)
+            val flags = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE
+            } else {
+                0
+            }
+            PendingIntent.getActivity(this, 0, notificationIntent, flags)
         }
     }
 

@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.kieronquinn.systemstubs'
-    compileSdkVersion 32
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 30
-        targetSdkVersion 32
+        targetSdkVersion 34
     }
 
     buildTypes {

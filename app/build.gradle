@@ -10,11 +10,11 @@ def tagName = '2.2.2'
 
 android {
     namespace 'com.kieronquinn.app.darq'
-    compileSdkVersion 32
+    compileSdkVersion 34
     defaultConfig {
         applicationId "com.kieronquinn.app.darq"
         minSdkVersion 29
-        targetSdkVersion 32
+        targetSdkVersion 34
         versionCode 23
         versionName tagName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
