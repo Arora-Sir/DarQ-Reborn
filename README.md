@@ -1,15 +1,26 @@
-# DarQ
+# DarQ (Modded Fork)
 
-![DarQ](https://i.imgur.com/PFfaGMrl.png)
+![DarQ](assets/darq_banner.png)
 
-DarQ provides a per-app selectable force dark option for Android 10 and above. 
+DarQ provides a per-app selectable force dark option for Android 10 and above.
+
+> [!NOTE]
+> This is a modded fork maintained by **Mohit Arora / Arora-Sir**. The original repository by [KieronQuinn](https://github.com/KieronQuinn/DarQ) is archived.
 
 It uses a root or [Shizuku](https://shizuku.rikka.app/) (ADB) service to apply the theme seamlessly and quickly, without needing an accessibility service.
 
+## Requirements & Setup
+
+DarQ requires either **Root Access** or the **Shizuku** service to be running on your device to modify system theme properties.
+
+### Shizuku Setup (For Non-Rooted Devices)
+If your device is not rooted, you must set up **Shizuku** before running DarQ:
+1. Download and install **Shizuku** from the [Shizuku GitHub Repository](https://github.com/RikkaApps/Shizuku) or the [Google Play Store](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api).
+2. Open Shizuku and follow the in-app guide to start the service (using Wireless Debugging on Android 11+ or ADB command line on a computer).
+3. Once the Shizuku service is running, open DarQ and grant it Shizuku access when prompted.
+
 DarQ also provides an option to apply the system dark theme (as well as selectable force dark) only after sunset and before sunrise, protecting your eyes when it's most needed. 
 
-Please read the Frequently Asked Questions sections in the app or [here](https://github.com/KieronQuinn/DarQ/blob/master/app/src/main/assets/faq.md) for more information and some answers to questions
+Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ/blob/master/app/src/main/assets/faq.md) for more information and some answers to questions.
 
-[Download from GitHub Releases](https://github.com/KieronQuinn/DarQ/releases)
-
-[XDA Thread](https://forum.xda-developers.com/t/app-root-adb-10-11-oct-darq-per-app-selectable-force-dark-option-for-android-10.3944356/)
+[Download from GitHub Releases](https://github.com/Arora-Sir/DarQ/releases)

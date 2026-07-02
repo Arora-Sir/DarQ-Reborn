@@ -4,6 +4,10 @@ Force dark was only added as a (hidden) option on Android 10 and above. If you w
 ## Why does DarQ need root or Shizuku/ADB access?
 Since the final beta of Android 10, the force dark property (`debug.hwui.force_dark`) is only writable with root or with the `shell` UID (which `adb shell` and therefore Shizuku runs with).
 
+If you are using Shizuku and want the service to automatically run on boot, you can use the modded Shizuku client:
+- [Modded Shizuku (GitHub)](https://github.com/thedjchi/Shizuku)
+- [Modded Shizuku Releases](https://github.com/thedjchi/Shizuku/releases)
+
 ## How does DarQ monitor running apps?
 DarQ uses a hidden API only accessible to privileged code (`IActivityManager.registerProcessObserver`), which allows it to know when an app is opened or closed without an Accessibility Service.
 

@@ -58,7 +58,7 @@ class SettingsFaqFragment: BoundFragment<FragmentSettingsFaqBinding>(FragmentSet
                 it.open("faq.md")
             }.bufferedReader()
         }.use { it.readText() }
-        binding.markdown.text = markwon.toMarkdown(markdown)
+        markwon.setMarkdown(binding.markdown, markdown)
         ViewCompat.setOnApplyWindowInsetsListener(binding.markdown){ view, insets ->
             val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()).bottom
             view.updatePadding(bottom = bottomInset)

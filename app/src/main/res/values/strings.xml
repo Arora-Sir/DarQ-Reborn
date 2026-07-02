@@ -20,7 +20,7 @@
     <string name="item_header_about">About</string>
     <string name="item_about_faq_title">Frequently Asked Questions</string>
     <string name="item_about_title">DarQ v%1s</string>
-    <string name="item_about_content">Created by Kieron Quinn / Quinny899 @ XDA\nChinese translation by 123Duo3</string>
+    <string name="item_about_content">Original app by Kieron Quinn / Quinny899\nMaintained &amp; updated by Mohit Arora / Arora-Sir</string>
     <string name="item_developer_options_title">Developer Options</string>
     <string name="item_developer_options_monet_color_picker_title">Monet Color Picker</string>
     <string name="item_developer_options_monet_color_picker_content">Pick a color to use from your wallpaper</string>
@@ -53,9 +53,12 @@
     <string name="loading_service_connect">Connecting to service…</string>
     <string name="snackbar_syncing_text">Syncing changes with service…</string>
     <string name="snackbar_syncing_complete_text">Changes synced with service.</string>
+    <string name="snackbar_syncing_complete_app_enabled">%1$s enabled.</string>
+    <string name="snackbar_syncing_complete_app_disabled">%1$s disabled.</string>
     <string name="snackbar_syncing_failed_text">Failed to sync changes. Changes will be applied on next restart.</string>
     <string name="snackbar_syncing_failed_button">More Info</string>
     <string name="loading_apps">Loading apps…</string>
+    <string name="loading_apps_progress">Loading apps… (%1$d/%2$d)</string>
     <string name="search">Search</string>
     <string name="app_search_empty">Nothing found</string>
     <string name="menu_app_picker_show_non_launchable_apps">Show non-launchable apps\t</string>
@@ -92,7 +95,7 @@
     <string name="dialog_location_permission_use_location">Use Location</string>
     <string name="dialog_location_permission_use_timezone">Use Time Zone\n<small>(less accurate)</small></string>
     <string name="chip_donate">Donate</string>
-    <string name="chip_twitter">Follow me on Twitter</string>
+    <string name="chip_twitter">X</string>
     <string name="chip_github">GitHub</string>
     <string name="chip_xda">XDA Thread</string>
     <string name="menu_open_source_libraries">Open source libraries</string>
@@ -102,5 +105,7 @@
     <string name="bottom_sheet_update_available_neutral">View on GitHub</string>
     <string name="download_manager_description">Downloading update…</string>
     <string name="bs_update_download_failed">Download failed</string>
+    <string name="app_picker_header_active">Active</string>
+    <string name="app_picker_header_all">Other Applications</string>
 
 </resources>

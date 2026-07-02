@@ -44,7 +44,7 @@ abstract class ContainerSharedViewModel: ViewModel() {
     sealed class SyncState {
         object NotSyncing: SyncState()
         data class Syncing(val syncQueue: Queue<IPCSetting>): SyncState()
-        data class SyncComplete(val success: Boolean): SyncState()
+        data class SyncComplete(val success: Boolean, val lastSyncedSetting: IPCSetting? = null): SyncState()
     }
 
     abstract fun queueIPCSync(ipcSetting: IPCSetting)
@@ -177,16 +177,19 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
 
     private suspend fun runSync(){
         var syncSuccess = true
+        var lastSyncedItem: IPCSetting? = null
         while(true){
             val syncQueue = (_syncState.value as? SyncState.Syncing)?.syncQueue ?: break
             if(syncQueue.size == 0) break
-            val result = syncItem(syncQueue.remove())
+            val item = syncQueue.remove()
+            val result = syncItem(item)
             if(!result){
                 syncSuccess = false
                 break
             }
+            lastSyncedItem = item
         }
-        _syncState.emit(SyncState.SyncComplete(syncSuccess))
+        _syncState.emit(SyncState.SyncComplete(syncSuccess, lastSyncedItem))
     }
 
     private suspend fun syncItem(ipcSetting: IPCSetting): Boolean {

@@ -99,6 +99,15 @@ class SettingsAppPickerFragment :
                     handleLoadState(it)
                 }
             }
+            launch {
+                viewModel.loadingProgress.debounce(100).collect { progress ->
+                    if (progress != null && progress.second > 0) {
+                        binding.appPickerLoadingText.text = getString(R.string.loading_apps_progress, progress.first, progress.second)
+                    } else {
+                        binding.appPickerLoadingText.text = getString(R.string.loading_apps)
+                    }
+                }
+            }
         }
     }
 

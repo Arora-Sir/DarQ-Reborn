@@ -26,6 +26,7 @@
             app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+            android:layout_marginEnd="16dp"
             android:paddingTop="@dimen/padding_8"
             android:paddingBottom="@dimen/padding_8" />
 
@@ -49,6 +50,7 @@
             app:trackThickness="8dp" />
 
         <TextView
+            android:id="@+id/app_picker_loading_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_16"

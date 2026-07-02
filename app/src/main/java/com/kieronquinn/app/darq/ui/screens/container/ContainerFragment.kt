@@ -266,7 +266,24 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
             is ContainerSharedViewModel.SyncState.SyncComplete -> {
                 binding.snackbarRoot.snackbarProgress.isVisible = false
                 if(syncState.success){
-                    binding.snackbarRoot.snackbarText.text = getString(R.string.snackbar_syncing_complete_text)
+                    val packageChange = syncState.lastSyncedSetting?.packageChange
+                    if(packageChange != null){
+                        val appLabel = try {
+                            val pm = requireContext().packageManager
+                            val appInfo = pm.getApplicationInfo(packageChange.packageName, 0)
+                            appInfo.loadLabel(pm).toString()
+                        } catch (e: Exception) {
+                            packageChange.packageName
+                        }
+                        val message = if(packageChange.enabled){
+                            getString(R.string.snackbar_syncing_complete_app_enabled, appLabel)
+                        } else {
+                            getString(R.string.snackbar_syncing_complete_app_disabled, appLabel)
+                        }
+                        binding.snackbarRoot.snackbarText.text = message
+                    } else {
+                        binding.snackbarRoot.snackbarText.text = getString(R.string.snackbar_syncing_complete_text)
+                    }
                     binding.snackbarRoot.snackbarAction.isVisible = false
                 }else{
                     binding.snackbarRoot.snackbarText.text = getString(R.string.snackbar_syncing_failed_text)

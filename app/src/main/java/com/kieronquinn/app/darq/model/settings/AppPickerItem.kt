@@ -7,9 +7,11 @@ sealed class AppPickerItem(open val itemType: AppPickerItemType) {
         }
     }
 
+    data class Header(val titleResId: Int): AppPickerItem(AppPickerItemType.HEADER)
+
     object SnackbarPadding: AppPickerItem(AppPickerItemType.SNACKBAR_PADDING)
 }
 
 enum class AppPickerItemType {
-    APP, SNACKBAR_PADDING
+    APP, SNACKBAR_PADDING, HEADER
 }

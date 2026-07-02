@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kieronquinn.app.darq.databinding.ItemAppBinding
+import com.kieronquinn.app.darq.databinding.ItemHeaderBinding
 import com.kieronquinn.app.darq.databinding.ItemSnackbarPaddingBinding
 import com.kieronquinn.app.darq.model.settings.AppPickerItem
 import com.kieronquinn.app.darq.model.settings.AppPickerItemType
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
+import com.kieronquinn.monetcompat.core.MonetCompat
 import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import com.squareup.picasso.Picasso
 
@@ -32,6 +34,10 @@ class SettingsAppPickerAdapter(
         Picasso.get()
     }
 
+    private val monet by lazy {
+        MonetCompat.getInstance()
+    }
+
     override fun getItemCount(): Int {
         return items.size
     }
@@ -45,6 +51,7 @@ class SettingsAppPickerAdapter(
         return when(AppPickerItemType.values().find { it.ordinal == viewType }!!){
             AppPickerItemType.APP -> ViewHolder.ItemAppViewHolder(ItemAppBinding.inflate(layoutInflater, parent, false))
             AppPickerItemType.SNACKBAR_PADDING -> ViewHolder.ItemSnackbarPaddingViewHolder(ItemSnackbarPaddingBinding.inflate(layoutInflater, parent, false))
+            AppPickerItemType.HEADER -> ViewHolder.ItemHeaderViewHolder(ItemHeaderBinding.inflate(layoutInflater, parent, false))
         }
     }
 
@@ -52,6 +59,7 @@ class SettingsAppPickerAdapter(
         val item = items[holder.adapterPosition]
         when(holder){
             is ViewHolder.ItemAppViewHolder -> setupApp(holder.binding, item as AppPickerItem.App)
+            is ViewHolder.ItemHeaderViewHolder -> setupHeader(holder.binding, item as AppPickerItem.Header)
         }
     }
 
@@ -60,16 +68,23 @@ class SettingsAppPickerAdapter(
             title.text = item.label
             val uri = Uri.parse("${AppIconRequestHandler.SCHEME_PNAME}:${item.packageName}")
             picasso.load(uri).into(icon)
-            checkbox.applyMonet()
-            checkbox.setOnCheckedChangeListener(null)
-            checkbox.isChecked = item.enabled
-            checkbox.setOnCheckedChangeListener { _, isChecked ->
+            appSwitch.applyMonet()
+            appSwitch.setOnCheckedChangeListener(null)
+            appSwitch.isChecked = item.enabled
+            appSwitch.setOnCheckedChangeListener { _, isChecked ->
                 item.enabled = isChecked
                 onPackageEnabledChanged.invoke(item)
             }
             root.setOnClickListener {
-                checkbox.toggle()
+                appSwitch.toggle()
             }
+        }
+    }
+
+    private fun setupHeader(binding: ItemHeaderBinding, item: AppPickerItem.Header) {
+        with(binding) {
+            itemHeadingTitle.setText(item.titleResId)
+            itemHeadingTitle.setTextColor(monet.getAccentColor(itemHeadingTitle.context))
         }
     }
 
@@ -83,6 +98,7 @@ class SettingsAppPickerAdapter(
         return when(val item = items[position]){
             is AppPickerItem.App -> item.packageName.hashCode().toLong()
             is AppPickerItem.SnackbarPadding -> "SnackbarPadding".hashCode().toLong()
+            is AppPickerItem.Header -> item.titleResId.toLong()
         }
     }
 
@@ -103,6 +119,7 @@ class SettingsAppPickerAdapter(
     sealed class ViewHolder(open val view: View): RecyclerView.ViewHolder(view) {
         data class ItemAppViewHolder(val binding: ItemAppBinding): ViewHolder(binding.root)
         data class ItemSnackbarPaddingViewHolder(val binding: ItemSnackbarPaddingBinding): ViewHolder(binding.root)
+        data class ItemHeaderViewHolder(val binding: ItemHeaderBinding): ViewHolder(binding.root)
     }
 
 }
