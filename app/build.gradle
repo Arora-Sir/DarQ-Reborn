@@ -15,7 +15,7 @@ android {
         applicationId "com.kieronquinn.app.darq"
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 24
+        versionCode 223
         versionName tagName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "TAG_NAME", "\"${tagName}\"")

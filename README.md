@@ -6,6 +6,9 @@ DarQ provides a per-app selectable force dark option for Android 10 and above.
 
 > [!NOTE]
 > This is a modded fork maintained by **Mohit Arora / Arora-Sir**. The original repository by [KieronQuinn](https://github.com/KieronQuinn/DarQ) is archived.
+> 
+> [!IMPORTANT]
+> **Upgrading from the Official Release (v2.2.1 or older):** Due to a signature mismatch from the transition to this fork, you **must uninstall the official version first** before installing updates from this repository. Future updates from this fork will upgrade directly as normal.
 
 It uses a root or [Shizuku](https://shizuku.rikka.app/) (ADB) service to apply the theme seamlessly and quickly, without needing an accessibility service.
 
