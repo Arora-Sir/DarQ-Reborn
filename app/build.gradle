@@ -6,7 +6,7 @@ plugins {
     id 'com.google.android.gms.oss-licenses-plugin'
 }
 
-def tagName = '2.2.3'
+def tagName = '2.2.4'
 
 android {
     namespace 'com.kieronquinn.app.darq'
@@ -15,7 +15,7 @@ android {
         applicationId "com.kieronquinn.app.darq"
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 223
+        versionCode 224
         versionName tagName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "TAG_NAME", "\"${tagName}\"")
