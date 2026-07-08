@@ -30,6 +30,12 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
                 getString(R.string.item_send_app_closes_title),
                 getString(R.string.item_send_app_closes_content),
                 settings::sendAppCloses
+            ),
+            SettingsItem.SwitchSetting(
+                R.drawable.ic_github,
+                getString(R.string.item_check_for_updates_title),
+                getString(R.string.item_check_for_updates_content),
+                settings::checkForUpdates
             )
         ).toMutableList()
     }

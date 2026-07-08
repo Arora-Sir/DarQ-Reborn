@@ -73,11 +73,17 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
 
     private val _update = MutableStateFlow<UpdateChecker.Update?>(null).apply {
         viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                updateChecker.clearCachedDownloads(context)
-            }
-            updateChecker.getLatestRelease().collect {
-                emit(it)
+            if (settings.checkForUpdates) {
+                updateChecker.getLatestRelease().collect { update ->
+                    if (update != null) {
+                        // Delete any stale cached APKs (wrong version), but keep the
+                        // current target so re-opening the app skips re-download
+                        withContext(Dispatchers.IO) {
+                            updateChecker.deleteStaleCache(context, update.assetName)
+                        }
+                    }
+                    emit(update)
+                }
             }
         }
     }

@@ -77,14 +77,7 @@ abstract class BaseBottomSheetFragment<T: ViewBinding>(private val inflate: (Lay
                 insets
             }
         }
-        dialog.setOnShowListener {
-            (binding.root.parent as View).backgroundTintList = ColorStateList.valueOf(monet.getBackgroundColor(requireContext()))
-            behavior = dialog.behavior.apply {
-                isDraggable = cancelable
-                state = BottomSheetBehavior.STATE_EXPANDED
-                addBottomSheetCallback(bottomSheetCallback)
-            }
-        }
+
         isCancelable = cancelable
         return dialog
     }
@@ -108,15 +101,24 @@ abstract class BaseBottomSheetFragment<T: ViewBinding>(private val inflate: (Lay
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = inflate.invoke(layoutInflater, container, false)
-        dialog?.setOnShowListener {
-            (binding.root.parent as View).backgroundTintList = ColorStateList.valueOf(monet.getBackgroundColor(requireContext()))
-        }
+
         return binding.root
     }
 
     private var showBlurAnimation: ValueAnimator? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.setOnShowListener {
+            val currentView = this.view
+            if (currentView != null) {
+                (currentView.parent as? View)?.backgroundTintList = ColorStateList.valueOf(monet.getBackgroundColor(requireContext()))
+                behavior = (dialog as? BottomSheetDialog)?.behavior?.apply {
+                    isDraggable = cancelable
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    addBottomSheetCallback(bottomSheetCallback)
+                }
+            }
+        }
         showBlurAnimation = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 250L
             addUpdateListener {

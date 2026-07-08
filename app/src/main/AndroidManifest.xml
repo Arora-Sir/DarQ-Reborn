@@ -59,6 +59,13 @@
 			</intent-filter>
 		</receiver>
 
+		<receiver android:name="com.kieronquinn.app.darq.receivers.UpdateDownloadReceiver"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+			</intent-filter>
+		</receiver>
+
 		<provider
 			android:name="rikka.shizuku.ShizukuProvider"
 			android:authorities="${applicationId}.shizuku"

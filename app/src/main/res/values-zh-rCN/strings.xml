@@ -18,6 +18,8 @@
     <string name="item_always_use_force_dark_content">忽略强制深色应用列表，并且为所有应用<b>一直启用</b>强制深色。</string>
     <string name="item_send_app_closes_title">监听应用关闭</string>
     <string name="item_send_app_closes_content">当强制深色列表中的应用关闭时禁用强制深色。这会导致在应用间切换时强制深色不能被立即应用。</string>
+    <string name="item_check_for_updates_title">启动时检查更新</string>
+    <string name="item_check_for_updates_content">打开应用时自动检查新版本，并提示直接安装。</string>
     <string name="item_header_about">关于</string>
     <string name="item_about_faq_title">常见问题</string>
     <string name="item_about_title">DarQ v%1s</string>

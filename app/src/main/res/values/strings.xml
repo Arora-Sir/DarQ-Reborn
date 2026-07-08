@@ -17,6 +17,8 @@
     <string name="item_always_use_force_dark_content">Ignore the list of Force Dark apps and instead have Force Dark <b>always enabled</b>, for all apps.</string>
     <string name="item_send_app_closes_title">Listen for App Closes</string>
     <string name="item_send_app_closes_content">Disables Force Dark when an app in the Force Dark list is closed. This leads to more instances where Force Dark may not be applied quickly enough to an app when switching between apps.</string>
+    <string name="item_check_for_updates_title">Check for updates on launch</string>
+    <string name="item_check_for_updates_content">Automatically check for new releases when opening the app and prompt to install them directly.</string>
     <string name="item_header_about">About</string>
     <string name="item_about_faq_title">Frequently Asked Questions</string>
     <string name="item_about_title">DarQ v%1s</string>

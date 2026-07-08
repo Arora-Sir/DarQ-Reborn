@@ -13,6 +13,7 @@ import android.os.Looper
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.github.UpdateChecker
@@ -50,7 +51,20 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
 
     override fun startDownload(context: Context, update: UpdateChecker.Update) {
         if(_downloadState.value is State.Idle) {
-            downloadUpdate(context, update.assetUrl, update.assetName)
+            // Check if the APK was already downloaded in a previous session
+            val downloadFolder = File(context.externalCacheDir, "updates")
+            val existingFile = File(downloadFolder, update.assetName)
+            if (existingFile.exists() && existingFile.length() > 0) {
+                // Skip the download — go straight to install
+                viewModelScope.launch {
+                    val outputUri = FileProvider.getUriForFile(
+                        context, BuildConfig.APPLICATION_ID + ".provider", existingFile
+                    )
+                    _downloadState.emit(State.Done(outputUri))
+                }
+            } else {
+                downloadUpdate(context, update.assetUrl, update.assetName)
+            }
         }
     }
 
@@ -69,6 +83,11 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
                     }
                 }
                 if (success && downloadFile != null) {
+                    val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+                    sharedPrefs.edit()
+                        .remove("update_download_id")
+                        .remove("update_download_filename")
+                        .apply()
                     val outputUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", downloadFile!!)
                     _downloadState.emit(State.Done(outputUri))
                 } else {
@@ -129,6 +148,11 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
         }.run {
             downloadManager.enqueue(this)
         }
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPrefs.edit()
+            .putLong("update_download_id", requestId ?: -1L)
+            .putString("update_download_filename", fileName)
+            .apply()
     }
 
     override fun cancelDownload(context: Context) {
@@ -138,6 +162,11 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
             }
             context.unregisterReceiver(downloadStateReceiver)
             context.contentResolver.unregisterContentObserver(downloadObserver)
+            val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+            sharedPrefs.edit()
+                .remove("update_download_id")
+                .remove("update_download_filename")
+                .apply()
             _downloadState.emit(State.Idle)
         }
     }

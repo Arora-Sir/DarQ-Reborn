@@ -29,6 +29,9 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_USE_LOCATION = "use_location"
         private const val DEFAULT_USE_LOCATION = false
 
+        private const val KEY_CHECK_FOR_UPDATES = "check_for_updates"
+        private const val DEFAULT_CHECK_FOR_UPDATES = true
+
         private const val KEY_DEVELOPER_OPTIONS = "developer_options"
         private const val DEFAULT_DEVELOPER_OPTIONS = false
 
@@ -52,6 +55,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     var oxygenForceDark by this.shared(KEY_OXYGEN_FORCE_DARK, DEFAULT_OXYGEN_FORCE_DARK)
     var alwaysForceDark by this.shared(KEY_ALWAYS_FORCE_DARK, DEFAULT_ALWAYS_FORCE_DARK)
     var useLocation by this.shared(KEY_USE_LOCATION, DEFAULT_USE_LOCATION)
+    var checkForUpdates by this.shared(KEY_CHECK_FOR_UPDATES, DEFAULT_CHECK_FOR_UPDATES)
     var developerOptions by this.shared(KEY_DEVELOPER_OPTIONS, DEFAULT_DEVELOPER_OPTIONS)
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
@@ -85,6 +89,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             monetColor = this.monetColor,
             xposedAggressiveDark = this.xposedAggressiveDark,
             xposedInvertStatus = this.xposedInvertStatus,
+            checkForUpdates = this.checkForUpdates,
             enabledApps = this.enabledApps.toList()
         )
     }
@@ -104,6 +109,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         monetColor = settingsBackup.monetColor
         xposedAggressiveDark = settingsBackup.xposedAggressiveDark
         xposedInvertStatus = settingsBackup.xposedInvertStatus
+        checkForUpdates = settingsBackup.checkForUpdates
         enabledApps = settingsBackup.enabledApps.toTypedArray()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation
     }

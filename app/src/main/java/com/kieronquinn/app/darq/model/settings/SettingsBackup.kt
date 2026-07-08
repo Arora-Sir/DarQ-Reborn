@@ -12,5 +12,6 @@ data class SettingsBackup(
     val monetColor: Int,
     val xposedAggressiveDark: Boolean,
     val xposedInvertStatus: Boolean,
+    val checkForUpdates: Boolean = true,
     val enabledApps: List<String>
 )

@@ -44,7 +44,9 @@ class UpdateChecker {
 
     fun getLatestRelease() = callbackFlow {
         withContext(Dispatchers.IO){
-            getReleaseList()?.let { gitHubReleaseResponse ->
+            // Pick the first non-draft release (includes pre-releases for testing)
+            val release = getReleaseList()?.firstOrNull { it.draft != true }
+            release?.let { gitHubReleaseResponse ->
                 val currentTag = gitHubReleaseResponse.tagName
                 if (currentTag != null && isNewerVersion(currentTag, BuildConfig.TAG_NAME)) {
                     //New update available!
@@ -84,11 +86,18 @@ class UpdateChecker {
         awaitClose {  }
     }
 
-    fun clearCachedDownloads(context: Context){
-        File(context.externalCacheDir, "updates").deleteRecursively()
+    fun deleteStaleCache(context: Context, currentAssetName: String) {
+        // Only delete APK files that are NOT the current update target
+        // This preserves already-downloaded APKs so re-opening the app skips re-download
+        val folder = File(context.externalCacheDir, "updates")
+        folder.listFiles()?.forEach { file ->
+            if (file.name != currentAssetName) {
+                file.delete()
+            }
+        }
     }
 
-    private fun getReleaseList(): GitHubReleaseResponse? {
+    private fun getReleaseList(): List<GitHubReleaseResponse>? {
         val service: GitHubService = retrofit.create(GitHubService::class.java)
         runCatching {
             service.getReleaseList().execute().body()
@@ -101,8 +110,8 @@ class UpdateChecker {
     }
 
     interface GitHubService {
-        @GET("releases/latest")
-        fun getReleaseList(): Call<GitHubReleaseResponse>
+        @GET("releases")
+        fun getReleaseList(): Call<List<GitHubReleaseResponse>>
     }
 
     @Parcelize
