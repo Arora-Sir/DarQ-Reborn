@@ -19,5 +19,5 @@ object Links {
     const val LINK_XDA = "https://kieronquinn.co.uk/redirect/DarQ/xda"
     const val LINK_TWITTER = "https://x.com/MohitAr0rA"
     const val LINK_DONATE = "https://kieronquinn.co.uk/redirect/DarQ/donate"
-    const val LINK_GITHUB = "https://github.com/Arora-Sir/DarQ"
+    const val LINK_GITHUB = "https://github.com/Arora-Sir/DarQ-Reborn"
 }

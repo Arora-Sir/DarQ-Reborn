@@ -24,7 +24,7 @@ class UpdateChecker {
     }
 
     companion object {
-        private const val GITHUB_REPO = "Arora-Sir/DarQ"
+        private const val GITHUB_REPO = "Arora-Sir/DarQ-Reborn"
         private const val BASE_URL = "https://api.github.com/repos/$GITHUB_REPO/"
         private const val RELEASES_URL = "https://github.com/$GITHUB_REPO/releases"
     }
