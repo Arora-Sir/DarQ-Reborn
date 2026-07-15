@@ -47,41 +47,47 @@ class UpdateChecker {
             val release = getLatestReleaseResponse()
             release?.let { gitHubReleaseResponse ->
                 val currentTag = gitHubReleaseResponse.tagName
-                if (currentTag != null && isNewerVersion(currentTag, BuildConfig.TAG_NAME)) {
-                    val asset =
-                        gitHubReleaseResponse.assets?.firstOrNull { it.name?.endsWith(".apk") == true }
-                    if (asset == null) {
-                        this@callbackFlow.trySend(null).isSuccess
-                        return@let
-                    }
-                    val releaseUrl =
-                        asset.browserDownloadUrl?.replace("/download/", "/tag/")?.let {
-                            it.substring(0, it.lastIndexOf("/"))
+                if (currentTag != null) {
+                    val remoteNormalized = currentTag.replace("v", "").trim()
+                    val localNormalized = BuildConfig.TAG_NAME.replace("v", "").trim()
+                    if (remoteNormalized != localNormalized) {
+                        val asset =
+                            gitHubReleaseResponse.assets?.firstOrNull { it.name?.endsWith(".apk") == true }
+                        if (asset == null) {
+                            this@callbackFlow.trySend(null).isSuccess
+                            return@let
                         }
-                    val name = gitHubReleaseResponse.name ?: run {
+                        val releaseUrl =
+                            asset.browserDownloadUrl?.replace("/download/", "/tag/")?.let {
+                                it.substring(0, it.lastIndexOf("/"))
+                            }
+                        val name = gitHubReleaseResponse.name ?: run {
+                            this@callbackFlow.trySend(null).isSuccess
+                            return@let
+                        }
+                        val body = gitHubReleaseResponse.body ?: run {
+                            this@callbackFlow.trySend(null).isSuccess
+                            return@let
+                        }
+                        val publishedAt = gitHubReleaseResponse.publishedAt ?: run {
+                            this@callbackFlow.trySend(null).isSuccess
+                            return@let
+                        }
+                        // Construct a unique filename for the version (e.g. DarQ_2.2.9.apk)
+                        val uniqueAssetName = "DarQ_${currentTag}.apk"
+                        this@callbackFlow.trySend(
+                            Update(
+                                name,
+                                body,
+                                publishedAt,
+                                asset.browserDownloadUrl ?: RELEASES_URL,
+                                uniqueAssetName,
+                                releaseUrl ?: RELEASES_URL
+                            )
+                        ).isSuccess
+                    } else {
                         this@callbackFlow.trySend(null).isSuccess
-                        return@let
                     }
-                    val body = gitHubReleaseResponse.body ?: run {
-                        this@callbackFlow.trySend(null).isSuccess
-                        return@let
-                    }
-                    val publishedAt = gitHubReleaseResponse.publishedAt ?: run {
-                        this@callbackFlow.trySend(null).isSuccess
-                        return@let
-                    }
-                    // Construct a unique filename for the version (e.g. DarQ_2.2.9.apk)
-                    val uniqueAssetName = "DarQ_${currentTag}.apk"
-                    this@callbackFlow.trySend(
-                        Update(
-                            name,
-                            body,
-                            publishedAt,
-                            asset.browserDownloadUrl ?: RELEASES_URL,
-                            uniqueAssetName,
-                            releaseUrl ?: RELEASES_URL
-                        )
-                    ).isSuccess
                 } else {
                     this@callbackFlow.trySend(null).isSuccess
                 }
