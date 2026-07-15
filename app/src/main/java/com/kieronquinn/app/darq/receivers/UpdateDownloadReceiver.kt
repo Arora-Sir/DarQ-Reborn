@@ -50,7 +50,7 @@ class UpdateDownloadReceiver : BroadcastReceiver() {
                     .apply()
 
                 // Rebuild output file
-                val downloadFolder = File(context.getExternalFilesDir(null), "updates")
+                val downloadFolder = File(context.cacheDir, "updates")
                 val downloadFile = File(downloadFolder, savedFilename)
                 if (downloadFile.exists()) {
                     val outputUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", downloadFile)

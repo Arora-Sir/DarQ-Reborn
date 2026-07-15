@@ -53,8 +53,8 @@ class UpdateChecker {
                     val asset =
                         gitHubReleaseResponse.assets?.firstOrNull { it.name?.endsWith(".apk") == true }
                     val releaseUrl =
-                        asset?.browserDownloadUrl?.replace("/download/", "/tag/")?.apply {
-                            substring(0, lastIndexOf("/"))
+                        asset?.browserDownloadUrl?.replace("/download/", "/tag/")?.let {
+                            it.substring(0, it.lastIndexOf("/"))
                         }
                     val name = gitHubReleaseResponse.name ?: run {
                         this@callbackFlow.trySend(null).isSuccess
@@ -89,7 +89,7 @@ class UpdateChecker {
     fun deleteStaleCache(context: Context, currentAssetName: String) {
         // Only delete APK files that are NOT the current update target
         // This preserves already-downloaded APKs so re-opening the app skips re-download
-        val folder = File(context.getExternalFilesDir(null), "updates")
+        val folder = File(context.cacheDir, "updates")
         folder.listFiles()?.forEach { file ->
             if (file.name != currentAssetName) {
                 file.delete()

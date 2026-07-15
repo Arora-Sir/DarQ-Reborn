@@ -1,30 +1,25 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.update
 
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.database.ContentObserver
-import android.database.Cursor
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
 import com.kieronquinn.app.darq.BuildConfig
-import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.github.UpdateChecker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
-import kotlin.math.roundToInt
+import java.io.FileOutputStream
 
-abstract class UpdateDownloadBottomSheetViewModel: ViewModel() {
+abstract class UpdateDownloadBottomSheetViewModel : ViewModel() {
 
     abstract val downloadState: Flow<State>
 
@@ -33,32 +28,31 @@ abstract class UpdateDownloadBottomSheetViewModel: ViewModel() {
     abstract fun openPackageInstaller(context: Context, uri: Uri)
 
     sealed class State {
-        object Idle: State()
-        data class Downloading(val progress: Int): State()
-        data class Done(val fileUri: Uri): State()
-        object Failed: State()
+        object Idle : State()
+        data class Downloading(val progress: Int) : State()
+        data class Done(val fileUri: Uri) : State()
+        object Failed : State()
     }
-
 }
 
-class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: DownloadManager): UpdateDownloadBottomSheetViewModel() {
+class UpdateDownloadBottomSheetViewModelImpl : UpdateDownloadBottomSheetViewModel() {
 
-    private var requestId: Long? = null
     private var _downloadState = MutableStateFlow<State>(State.Idle)
-    private var downloadFile: File? = null
-
     override val downloadState = _downloadState.asStateFlow()
 
+    private val okHttpClient by lazy { OkHttpClient() }
+
     override fun startDownload(context: Context, update: UpdateChecker.Update) {
-        if(_downloadState.value is State.Idle) {
-            // Check if the APK was already downloaded in a previous session
-            val downloadFolder = File(context.getExternalFilesDir(null), "updates")
+        if (_downloadState.value is State.Idle) {
+            val downloadFolder = File(context.cacheDir, "updates")
             val existingFile = File(downloadFolder, update.assetName)
             if (existingFile.exists() && existingFile.length() > 0) {
-                // Skip the download — go straight to install
+                // File already downloaded — skip straight to install
                 viewModelScope.launch {
                     val outputUri = FileProvider.getUriForFile(
-                        context, BuildConfig.APPLICATION_ID + ".provider", existingFile
+                        context,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        existingFile
                     )
                     _downloadState.emit(State.Done(outputUri))
                 }
@@ -68,36 +62,60 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
         }
     }
 
-    private val downloadStateReceiver = object: BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            viewModelScope.launch {
-                var success = false
-                val query = DownloadManager.Query().apply {
-                    setFilterById(requestId ?: return@apply)
-                }
-                val cursor = downloadManager.query(query)
-                if (cursor.moveToFirst()) {
-                    val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                    if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-                        success = true
+    private fun downloadUpdate(context: Context, url: String, fileName: String) {
+        viewModelScope.launch {
+            _downloadState.emit(State.Downloading(0))
+            withContext(Dispatchers.IO) {
+                try {
+                    val downloadFolder = File(context.cacheDir, "updates").also { it.mkdirs() }
+                    val outputFile = File(downloadFolder, fileName)
+
+                    val request = Request.Builder().url(url).build()
+                    val response = okHttpClient.newCall(request).execute()
+
+                    if (!response.isSuccessful) {
+                        _downloadState.emit(State.Failed)
+                        return@withContext
                     }
-                }
-                if (success && downloadFile != null) {
-                    val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-                    sharedPrefs.edit()
-                        .remove("update_download_id")
-                        .remove("update_download_filename")
-                        .apply()
-                    val outputUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", downloadFile!!)
+
+                    val body = response.body() ?: run {
+                        _downloadState.emit(State.Failed)
+                        return@withContext
+                    }
+
+                    val totalBytes = body.contentLength()
+                    var downloadedBytes = 0L
+
+                    body.byteStream().use { input ->
+                        FileOutputStream(outputFile).use { output ->
+                            val buffer = ByteArray(8192)
+                            var bytesRead: Int
+                            while (input.read(buffer).also { bytesRead = it } != -1) {
+                                output.write(buffer, 0, bytesRead)
+                                downloadedBytes += bytesRead
+                                if (totalBytes > 0) {
+                                    val progress = (downloadedBytes * 100 / totalBytes).toInt()
+                                    _downloadState.emit(State.Downloading(progress))
+                                }
+                            }
+                        }
+                    }
+
+                    val outputUri = FileProvider.getUriForFile(
+                        context,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        outputFile
+                    )
                     _downloadState.emit(State.Done(outputUri))
-                } else {
+
+                } catch (e: Exception) {
                     _downloadState.emit(State.Failed)
                 }
             }
         }
     }
 
-    override fun openPackageInstaller(context: Context, uri: Uri){
+    override fun openPackageInstaller(context: Context, uri: Uri) {
         Intent(Intent.ACTION_VIEW, uri).apply {
             putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
             setDataAndType(uri, "application/vnd.android.package-archive")
@@ -108,67 +126,11 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
         }
     }
 
-    private val downloadObserver = object: ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            super.onChange(selfChange, uri)
-            viewModelScope.launch {
-                val query = DownloadManager.Query()
-                query.setFilterById(requestId ?: return@launch)
-                val c: Cursor = downloadManager.query(query)
-                var progress = 0.0
-                if (c.moveToFirst()) {
-                    val sizeIndex: Int =
-                        c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
-                    val downloadedIndex: Int =
-                        c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
-                    val size = c.getInt(sizeIndex)
-                    val downloaded = c.getInt(downloadedIndex)
-                    if (size != -1) progress = downloaded * 100.0 / size
-                }
-                _downloadState.emit(State.Downloading(progress.roundToInt()))
-            }
-        }
-    }
-
-    private fun downloadUpdate(context: Context, url: String, fileName: String) = viewModelScope.launch {
-        val downloadFolder = File(context.getExternalFilesDir(null), "updates").apply {
-            mkdirs()
-        }
-        downloadFile = File(downloadFolder, fileName)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(downloadStateReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED)
-        } else {
-            context.registerReceiver(downloadStateReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        }
-        context.contentResolver.registerContentObserver(Uri.parse("content://downloads/my_downloads"), true, downloadObserver)
-        requestId = DownloadManager.Request(Uri.parse(url)).apply {
-            setDescription(context.getString(R.string.download_manager_description))
-            setTitle(context.getString(R.string.app_name))
-            setDestinationInExternalFilesDir(context, null, "updates/$fileName")
-        }.run {
-            downloadManager.enqueue(this)
-        }
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPrefs.edit()
-            .putLong("update_download_id", requestId ?: -1L)
-            .putString("update_download_filename", fileName)
-            .apply()
-    }
-
     override fun cancelDownload(context: Context) {
+        // OkHttp: simply reset state — the coroutine will finish silently
         viewModelScope.launch {
-            requestId?.let {
-                downloadManager.remove(it)
-            }
-            context.unregisterReceiver(downloadStateReceiver)
-            context.contentResolver.unregisterContentObserver(downloadObserver)
-            val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-            sharedPrefs.edit()
-                .remove("update_download_id")
-                .remove("update_download_filename")
-                .apply()
             _downloadState.emit(State.Idle)
         }
     }
-
 }
+

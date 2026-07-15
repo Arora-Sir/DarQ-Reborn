@@ -59,7 +59,7 @@ class DarqApplication : Application() {
         viewModel<SettingsViewModel>{ SettingsViewModelImpl(get(), get()) }
         viewModel<SettingsAppPickerViewModel>{ SettingsAppPickerViewModelImpl(get(), get()) }
         viewModel<SettingsDeveloperOptionsViewModel>{ SettingsDeveloperOptionsViewModelImpl(get()) }
-        viewModel<UpdateDownloadBottomSheetViewModel>{ UpdateDownloadBottomSheetViewModelImpl(getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager) }
+        viewModel<UpdateDownloadBottomSheetViewModel>{ UpdateDownloadBottomSheetViewModelImpl() }
         viewModel<LocationPermissionDialogViewModel> { LocationPermissionDialogViewModelImpl(get(), get()) }
         viewModel<BackupRestoreBottomSheetViewModel> { BackupRestoreBottomSheetViewModelImpl(get()) }
         viewModel<BackupRestoreBackupBottomSheetViewModel> { BackupRestoreBackupBottomSheetViewModelImpl(get(), get(), get()) }
