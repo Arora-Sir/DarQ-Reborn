@@ -89,7 +89,7 @@ class UpdateChecker {
     fun deleteStaleCache(context: Context, currentAssetName: String) {
         // Only delete APK files that are NOT the current update target
         // This preserves already-downloaded APKs so re-opening the app skips re-download
-        val folder = File(context.externalCacheDir, "updates")
+        val folder = File(context.getExternalFilesDir(null), "updates")
         folder.listFiles()?.forEach { file ->
             if (file.name != currentAssetName) {
                 file.delete()

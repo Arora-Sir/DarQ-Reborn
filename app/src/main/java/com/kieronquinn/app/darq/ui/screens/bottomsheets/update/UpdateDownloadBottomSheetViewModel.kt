@@ -52,7 +52,7 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
     override fun startDownload(context: Context, update: UpdateChecker.Update) {
         if(_downloadState.value is State.Idle) {
             // Check if the APK was already downloaded in a previous session
-            val downloadFolder = File(context.externalCacheDir, "updates")
+            val downloadFolder = File(context.getExternalFilesDir(null), "updates")
             val existingFile = File(downloadFolder, update.assetName)
             if (existingFile.exists() && existingFile.length() > 0) {
                 // Skip the download — go straight to install
@@ -131,7 +131,7 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
     }
 
     private fun downloadUpdate(context: Context, url: String, fileName: String) = viewModelScope.launch {
-        val downloadFolder = File(context.externalCacheDir, "updates").apply {
+        val downloadFolder = File(context.getExternalFilesDir(null), "updates").apply {
             mkdirs()
         }
         downloadFile = File(downloadFolder, fileName)
@@ -144,7 +144,7 @@ class UpdateDownloadBottomSheetViewModelImpl(private val downloadManager: Downlo
         requestId = DownloadManager.Request(Uri.parse(url)).apply {
             setDescription(context.getString(R.string.download_manager_description))
             setTitle(context.getString(R.string.app_name))
-            setDestinationUri(Uri.fromFile(downloadFile!!))
+            setDestinationInExternalFilesDir(context, null, "updates/$fileName")
         }.run {
             downloadManager.enqueue(this)
         }
