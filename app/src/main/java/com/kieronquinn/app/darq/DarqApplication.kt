@@ -56,7 +56,7 @@ class DarqApplication : Application() {
 
     private val viewModelsModule = module {
         viewModel<ContainerSharedViewModel>{ ContainerSharedViewModelImpl(get(), get(), get(), get()) }
-        viewModel<SettingsViewModel>{ SettingsViewModelImpl(get(), get()) }
+        viewModel<SettingsViewModel>{ SettingsViewModelImpl(get(), get(), get()) }
         viewModel<SettingsAppPickerViewModel>{ SettingsAppPickerViewModelImpl(get(), get()) }
         viewModel<SettingsDeveloperOptionsViewModel>{ SettingsDeveloperOptionsViewModelImpl(get()) }
         viewModel<UpdateDownloadBottomSheetViewModel>{ UpdateDownloadBottomSheetViewModelImpl() }

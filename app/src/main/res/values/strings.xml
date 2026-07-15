@@ -115,6 +115,11 @@
     <string name="bottom_sheet_update_available_neutral">View on GitHub</string>
     <string name="download_manager_description">Downloading update…</string>
     <string name="bs_update_download_failed">Download failed</string>
+    <string name="item_check_updates_manual_title">Check for Updates</string>
+    <string name="item_check_updates_manual_content">Manually check for new DarQ Reborn versions</string>
+    <string name="checking_for_updates">Checking for updates…</string>
+    <string name="up_to_date">DarQ is up to date</string>
+    <string name="check_updates_failed">Failed to check for updates</string>
     <string name="app_picker_header_active">Active</string>
     <string name="app_picker_header_all">Other Applications</string>
 

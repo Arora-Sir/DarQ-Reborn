@@ -57,6 +57,7 @@ abstract class ContainerSharedViewModel: ViewModel() {
     abstract val update: Flow<UpdateChecker.Update?>
     abstract fun getAvailableUpdate(): UpdateChecker.Update?
     abstract fun clearUpdate()
+    abstract fun setAvailableUpdate(update: UpdateChecker.Update?)
 
     enum class DarkModeState(val value: Int) {
         AUTO(0), DISABLED(1), ENABLED(2), CUSTOM(3)
@@ -97,6 +98,12 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
     override fun clearUpdate() {
         viewModelScope.launch {
             _update.emit(null)
+        }
+    }
+
+    override fun setAvailableUpdate(update: UpdateChecker.Update?) {
+        viewModelScope.launch {
+            _update.emit(update)
         }
     }
 

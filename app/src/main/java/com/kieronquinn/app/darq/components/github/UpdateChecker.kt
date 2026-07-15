@@ -44,16 +44,18 @@ class UpdateChecker {
 
     fun getLatestRelease() = callbackFlow {
         withContext(Dispatchers.IO){
-            // Pick the first non-draft, non-pre-release (Latest) release
-            val release = getReleaseList()?.firstOrNull { it.draft != true && it.prerelease != true }
+            val release = getLatestReleaseResponse()
             release?.let { gitHubReleaseResponse ->
                 val currentTag = gitHubReleaseResponse.tagName
                 if (currentTag != null && isNewerVersion(currentTag, BuildConfig.TAG_NAME)) {
-                    //New update available!
                     val asset =
                         gitHubReleaseResponse.assets?.firstOrNull { it.name?.endsWith(".apk") == true }
+                    if (asset == null) {
+                        this@callbackFlow.trySend(null).isSuccess
+                        return@let
+                    }
                     val releaseUrl =
-                        asset?.browserDownloadUrl?.replace("/download/", "/tag/")?.let {
+                        asset.browserDownloadUrl?.replace("/download/", "/tag/")?.let {
                             it.substring(0, it.lastIndexOf("/"))
                         }
                     val name = gitHubReleaseResponse.name ?: run {
@@ -68,16 +70,20 @@ class UpdateChecker {
                         this@callbackFlow.trySend(null).isSuccess
                         return@let
                     }
+                    // Construct a unique filename for the version (e.g. DarQ_2.2.9.apk)
+                    val uniqueAssetName = "DarQ_${currentTag}.apk"
                     this@callbackFlow.trySend(
                         Update(
                             name,
                             body,
                             publishedAt,
-                            asset?.browserDownloadUrl ?: RELEASES_URL,
-                            asset?.name ?: "DarQ.apk",
+                            asset.browserDownloadUrl ?: RELEASES_URL,
+                            uniqueAssetName,
                             releaseUrl ?: RELEASES_URL
                         )
                     ).isSuccess
+                } else {
+                    this@callbackFlow.trySend(null).isSuccess
                 }
             } ?: run {
                 this@callbackFlow.trySend(null).isSuccess
@@ -87,8 +93,6 @@ class UpdateChecker {
     }
 
     fun deleteStaleCache(context: Context, currentAssetName: String) {
-        // Only delete APK files that are NOT the current update target
-        // This preserves already-downloaded APKs so re-opening the app skips re-download
         val folder = File(context.cacheDir, "updates")
         folder.listFiles()?.forEach { file ->
             if (file.name != currentAssetName) {
@@ -97,10 +101,10 @@ class UpdateChecker {
         }
     }
 
-    private fun getReleaseList(): List<GitHubReleaseResponse>? {
+    private fun getLatestReleaseResponse(): GitHubReleaseResponse? {
         val service: GitHubService = retrofit.create(GitHubService::class.java)
         runCatching {
-            service.getReleaseList().execute().body()
+            service.getLatestRelease().execute().body()
         }.onSuccess {
             return it
         }.onFailure {
@@ -110,8 +114,8 @@ class UpdateChecker {
     }
 
     interface GitHubService {
-        @GET("releases")
-        fun getReleaseList(): Call<List<GitHubReleaseResponse>>
+        @GET("releases/latest")
+        fun getLatestRelease(): Call<GitHubReleaseResponse>
     }
 
     @Parcelize

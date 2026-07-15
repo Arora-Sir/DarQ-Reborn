@@ -89,6 +89,22 @@ class UpdateDownloadBottomSheetViewModelImpl : UpdateDownloadBottomSheetViewMode
         nm.notify(NOTIFICATION_ID, notification)
     }
 
+    private fun showSizeProgressNotification(context: Context, downloadedBytes: Long) {
+        ensureNotificationChannel(context)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val sizeMB = downloadedBytes / (1024.0 * 1024.0)
+        val formattedSize = String.format("%.2f MB", sizeMB)
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.app_name))
+            .setContentText("Downloading update… ($formattedSize)")
+            .setSmallIcon(R.drawable.ic_notification)
+            .setProgress(100, 0, true)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .build()
+        nm.notify(NOTIFICATION_ID, notification)
+    }
+
     private fun cancelNotification(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancel(NOTIFICATION_ID)
@@ -143,6 +159,7 @@ class UpdateDownloadBottomSheetViewModelImpl : UpdateDownloadBottomSheetViewMode
                     val totalBytes = body.contentLength()
                     var downloadedBytes = 0L
                     var lastNotifiedProgress = -1
+                    var lastNotifiedBytes = 0L
 
                     body.byteStream().use { input ->
                         FileOutputStream(outputFile).use { output ->
@@ -154,10 +171,15 @@ class UpdateDownloadBottomSheetViewModelImpl : UpdateDownloadBottomSheetViewMode
                                 if (totalBytes > 0) {
                                     val progress = (downloadedBytes * 100 / totalBytes).toInt()
                                     _downloadState.emit(State.Downloading(progress))
-                                    // Update notification only every 5% to reduce overhead
                                     if (progress >= lastNotifiedProgress + 5) {
                                         lastNotifiedProgress = progress
                                         showProgressNotification(context, progress)
+                                    }
+                                } else {
+                                    _downloadState.emit(State.Downloading(0))
+                                    if (downloadedBytes >= lastNotifiedBytes + 500 * 1024) {
+                                        lastNotifiedBytes = downloadedBytes
+                                        showSizeProgressNotification(context, downloadedBytes)
                                     }
                                 }
                             }

@@ -1,14 +1,19 @@
 package com.kieronquinn.app.darq.ui.screens.settings
 
+import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.components.github.UpdateChecker
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 abstract class SettingsViewModel: ViewModel() {
@@ -25,10 +30,15 @@ abstract class SettingsViewModel: ViewModel() {
     abstract fun onAboutTripleTapped()
     abstract fun onOssLicencesClicked()
     abstract fun isOxygenForceDarkSupported(): Boolean
+    abstract fun onCheckForUpdatesClicked(context: Context, sharedViewModel: ContainerSharedViewModel)
 
 }
 
-class SettingsViewModelImpl(private val navigation: Navigation, private val settings: DarqSharedPreferences): SettingsViewModel() {
+class SettingsViewModelImpl(
+    private val navigation: Navigation,
+    private val settings: DarqSharedPreferences,
+    private val updateChecker: UpdateChecker
+): SettingsViewModel() {
 
     private val _developerOptionsVisible = MutableStateFlow(settings.developerOptions)
     override val developerOptionsVisible = _developerOptionsVisible.asStateFlow()
@@ -96,6 +106,22 @@ class SettingsViewModelImpl(private val navigation: Navigation, private val sett
 
     override fun isOxygenForceDarkSupported(): Boolean {
         return Build.MANUFACTURER == "OnePlus" && Build.VERSION.SDK_INT < Build.VERSION_CODES.R
+    }
+
+    override fun onCheckForUpdatesClicked(context: Context, sharedViewModel: ContainerSharedViewModel) {
+        viewModelScope.launch {
+            Toast.makeText(context, R.string.checking_for_updates, Toast.LENGTH_SHORT).show()
+            try {
+                val update = updateChecker.getLatestRelease().first()
+                if (update != null) {
+                    sharedViewModel.setAvailableUpdate(update)
+                } else {
+                    Toast.makeText(context, R.string.up_to_date, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, R.string.check_updates_failed, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }

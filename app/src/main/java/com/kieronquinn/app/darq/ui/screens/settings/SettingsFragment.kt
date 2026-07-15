@@ -84,6 +84,14 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 getString(R.string.item_about_faq_title),
                 tapAction = viewModel::onFaqClicked
             ),
+            SettingsItem.Setting(
+                R.drawable.ic_restore_round,
+                getString(R.string.item_check_updates_manual_title),
+                getString(R.string.item_check_updates_manual_content),
+                tapAction = {
+                    viewModel.onCheckForUpdatesClicked(requireContext(), sharedViewModel)
+                }
+            ),
             SettingsItem.AboutSetting(
                 R.drawable.ic_about_round,
                 getString(R.string.item_about_title, BuildConfig.VERSION_NAME),
