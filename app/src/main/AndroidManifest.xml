@@ -71,6 +71,13 @@
 			</intent-filter>
 		</receiver>
 
+		<receiver android:name="com.kieronquinn.app.darq.receivers.TriggerReceiver"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="com.kieronquinn.app.darq.ACTION_START_SERVICE"/>
+			</intent-filter>
+		</receiver>
+
 		<provider
 			android:name="rikka.shizuku.ShizukuProvider"
 			android:authorities="${applicationId}.shizuku"

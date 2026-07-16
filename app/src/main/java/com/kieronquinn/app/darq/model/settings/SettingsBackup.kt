@@ -14,5 +14,6 @@ data class SettingsBackup(
     val xposedInvertStatus: Boolean,
     val checkForUpdates: Boolean = true,
     val persistentService: Boolean = false,
+    val bootWaitShizuku: Boolean = true,
     val enabledApps: List<String>
 )

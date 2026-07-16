@@ -38,6 +38,9 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_PERSISTENT_SERVICE = "persistent_service"
         private const val DEFAULT_PERSISTENT_SERVICE = false
 
+        private const val KEY_BOOT_WAIT_SHIZUKU = "boot_wait_shizuku"
+        private const val DEFAULT_BOOT_WAIT_SHIZUKU = true
+
         private const val KEY_XPOSED_AGGRESSIVE_DARK = "xposed_aggressive_dark"
         const val DEFAULT_XPOSED_AGGRESSIVE_DARK = true
 
@@ -61,6 +64,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     var checkForUpdates by this.shared(KEY_CHECK_FOR_UPDATES, DEFAULT_CHECK_FOR_UPDATES)
     var developerOptions by this.shared(KEY_DEVELOPER_OPTIONS, DEFAULT_DEVELOPER_OPTIONS)
     var persistentService by this.shared(KEY_PERSISTENT_SERVICE, DEFAULT_PERSISTENT_SERVICE)
+    var bootWaitShizuku by this.shared(KEY_BOOT_WAIT_SHIZUKU, DEFAULT_BOOT_WAIT_SHIZUKU)
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
 
@@ -95,6 +99,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             xposedInvertStatus = this.xposedInvertStatus,
             checkForUpdates = this.checkForUpdates,
             persistentService = this.persistentService,
+            bootWaitShizuku = this.bootWaitShizuku,
             enabledApps = this.enabledApps.toList()
         )
     }
@@ -116,6 +121,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         xposedInvertStatus = settingsBackup.xposedInvertStatus
         checkForUpdates = settingsBackup.checkForUpdates
         persistentService = settingsBackup.persistentService
+        bootWaitShizuku = settingsBackup.bootWaitShizuku
         enabledApps = settingsBackup.enabledApps.toTypedArray()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation
     }

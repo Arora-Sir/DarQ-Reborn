@@ -63,6 +63,12 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
                     true
                 }
             ),
+            SettingsItem.SwitchSetting(
+                R.drawable.ic_notification,
+                getString(R.string.item_boot_wait_shizuku_title),
+                getString(R.string.item_boot_wait_shizuku_content),
+                settings::bootWaitShizuku
+            ),
             SettingsItem.Setting(
                 R.drawable.ic_developer_options_service_info,
                 getString(R.string.item_persistent_notification_settings_title),

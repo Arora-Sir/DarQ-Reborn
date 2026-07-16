@@ -13,7 +13,14 @@ import com.kieronquinn.app.darq.model.shizuku.ShizukuConstants
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.utils.extensions.getShizukuLaunchIntent
+import com.kieronquinn.app.darq.utils.extensions.isShizukuInstalled
+import com.kieronquinn.app.darq.utils.extensions.Shizuku_awaitBinderReceived
+import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.topjohnwu.superuser.Shell
+import android.util.Log
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.ext.android.inject
+import rikka.shizuku.Shizuku
 
 class BootForegroundService : LifecycleService() {
 
@@ -28,6 +35,7 @@ class BootForegroundService : LifecycleService() {
     }
 
     private val connectionProvider by inject<DarqServiceConnectionProvider>()
+    private val settings by inject<DarqSharedPreferences>()
 
     private val launchIntent by lazy {
         Intent(this, DarqActivity::class.java).let { notificationIntent ->
@@ -73,6 +81,15 @@ class BootForegroundService : LifecycleService() {
         startForeground(NOTIFICATION_ID_STARTUP, notification)
 
         lifecycleScope.launchWhenCreated {
+            if (!Shell.rootAccess() && isShizukuInstalled() && settings.bootWaitShizuku) {
+                if (!Shizuku.pingBinder()) {
+                    Log.d("BootForegroundService", "Shizuku binder is not ready, waiting for up to 3 minutes...")
+                    withTimeoutOrNull(180000L) {
+                        Shizuku_awaitBinderReceived()
+                    }
+                    Log.d("BootForegroundService", "Finished waiting for Shizuku binder. Ready: ${Shizuku.pingBinder()}")
+                }
+            }
             val result = connectionProvider.getService()
             if (result.isFailure) {
                 //Failed to start

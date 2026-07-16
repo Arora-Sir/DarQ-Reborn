@@ -15,6 +15,12 @@ import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.utils.extensions.isShizukuInstalled
+import com.kieronquinn.app.darq.utils.extensions.Shizuku_awaitBinderReceived
+import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.withTimeoutOrNull
+import rikka.shizuku.Shizuku
 
 class DarqPersistentService : LifecycleService() {
 
@@ -29,6 +35,18 @@ class DarqPersistentService : LifecycleService() {
     }
 
     private val connectionProvider by inject<DarqServiceConnectionProvider>()
+    private val settings by inject<DarqSharedPreferences>()
+    
+    private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
+        Log.d(TAG, "Shizuku binder received. Attempting to bind service...")
+        lifecycleScope.launch {
+            bindService()
+        }
+    }
+
+    private val binderDeadListener = Shizuku.OnBinderDeadListener {
+        Log.d(TAG, "Shizuku binder died.")
+    }
 
     private val launchIntent by lazy {
         Intent(this, DarqActivity::class.java).let { notificationIntent ->
@@ -44,6 +62,10 @@ class DarqPersistentService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
+        if (!Shell.rootAccess() && isShizukuInstalled()) {
+            Shizuku.addBinderReceivedListener(binderReceivedListener)
+            Shizuku.addBinderDeadListener(binderDeadListener)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -76,9 +98,16 @@ class DarqPersistentService : LifecycleService() {
 
         lifecycleScope.launch {
             try {
-                Log.d(TAG, "Binding to Shizuku/Root service to keep it alive...")
-                val result = connectionProvider.getService()
-                Log.d(TAG, "Service binding result: $result")
+                if (!Shell.rootAccess() && isShizukuInstalled() && settings.bootWaitShizuku) {
+                    if (!Shizuku.pingBinder()) {
+                        Log.d(TAG, "Shizuku binder is not ready, waiting for up to 3 minutes...")
+                        withTimeoutOrNull(180000L) {
+                            Shizuku_awaitBinderReceived()
+                        }
+                        Log.d(TAG, "Finished waiting for Shizuku binder. Ready: ${Shizuku.pingBinder()}")
+                    }
+                }
+                bindService()
             } catch (e: Exception) {
                 Log.e(TAG, "Error binding to service in background", e)
             }
@@ -87,8 +116,22 @@ class DarqPersistentService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private suspend fun bindService() {
+        try {
+            Log.d(TAG, "Binding to Shizuku/Root service to keep it alive...")
+            val result = connectionProvider.getService()
+            Log.d(TAG, "Service binding result: $result")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error binding to service", e)
+        }
+    }
+
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
+        if (!Shell.rootAccess() && isShizukuInstalled()) {
+            Shizuku.removeBinderReceivedListener(binderReceivedListener)
+            Shizuku.removeBinderDeadListener(binderDeadListener)
+        }
         super.onDestroy()
     }
 }

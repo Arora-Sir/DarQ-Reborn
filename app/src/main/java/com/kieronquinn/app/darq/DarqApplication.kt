@@ -45,6 +45,13 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.sui.Sui
+import com.kieronquinn.app.darq.utils.extensions.isShizukuInstalled
+import com.topjohnwu.superuser.Shell
+import rikka.shizuku.Shizuku
+import android.content.pm.PackageManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 
 class DarqApplication : Application() {
 
@@ -100,6 +107,36 @@ class DarqApplication : Application() {
                 startForegroundService(Intent(this, DarqPersistentService::class.java))
             } catch (e: Exception) {
                 Log.e("DarQA", "Failed to start persistent service from Application context (likely background execution)", e)
+            }
+        }
+
+        val connectionProvider = get<DarqServiceConnectionProvider>()
+        if (!Shell.rootAccess() && isShizukuInstalled()) {
+            val binderReceivedListener = object : Shizuku.OnBinderReceivedListener {
+                override fun onBinderReceived() {
+                    Log.d("DarQA", "Shizuku binder received in Application. Attempting to bind service...")
+                    GlobalScope.launch(Dispatchers.Main) {
+                        try {
+                            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                                connectionProvider.getService()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
+                        }
+                    }
+                }
+            }
+            Shizuku.addBinderReceivedListener(binderReceivedListener)
+
+            if (Shizuku.pingBinder() && Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                Log.d("DarQA", "Shizuku binder already active on Application startup. Binding service...")
+                GlobalScope.launch(Dispatchers.Main) {
+                    try {
+                        connectionProvider.getService()
+                    } catch (e: Exception) {
+                        Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
+                    }
+                }
             }
         }
     }

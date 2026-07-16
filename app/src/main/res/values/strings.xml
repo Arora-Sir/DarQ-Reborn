@@ -125,5 +125,7 @@
     <string name="close">Close</string>
     <string name="app_picker_header_active">Active</string>
     <string name="app_picker_header_all">Other Applications</string>
+    <string name="item_boot_wait_shizuku_title">Wait for Shizuku on boot</string>
+    <string name="item_boot_wait_shizuku_content">Waits for Shizuku to start up on boot before attempting connection, avoiding start-up failure notifications.</string>
 
 </resources>
