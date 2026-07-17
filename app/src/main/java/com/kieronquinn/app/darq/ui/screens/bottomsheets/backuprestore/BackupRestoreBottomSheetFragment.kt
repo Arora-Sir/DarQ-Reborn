@@ -44,9 +44,9 @@ class BackupRestoreBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomSh
             binding.backupRestoreIcBackup.imageTintList = accent
             binding.backupRestoreIcRestore.imageTintList = accent
             binding.backupRestoreCancel.setTextColor(accent)
-            val secondaryBackground = monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext())
-            binding.backupRestoreRestore.backgroundTintList = ColorStateList.valueOf(secondaryBackground)
-            binding.backupRestoreBackup.backgroundTintList = ColorStateList.valueOf(secondaryBackground)
+            val cardBg = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.bottom_sheet_card_background)
+            binding.backupRestoreRestore.backgroundTintList = ColorStateList.valueOf(cardBg)
+            binding.backupRestoreBackup.backgroundTintList = ColorStateList.valueOf(cardBg)
             ViewCompat.setOnApplyWindowInsetsListener(root){ view, insets ->
                 val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
                 val extraPadding = resources.getDimension(R.dimen.padding_8).toInt()

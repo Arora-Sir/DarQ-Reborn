@@ -38,7 +38,7 @@
     <color name="icon_inside_14">#e48bf3</color>
     <color name="icon_inside_15">#00acfc</color>
 
-    <color name="bottom_sheet_background">#161618</color>
-    <color name="bottom_sheet_card_background">#2e2e36</color>
+    <color name="bottom_sheet_background">#27282C</color>
+    <color name="bottom_sheet_card_background">#44454B</color>
 
 </resources>
