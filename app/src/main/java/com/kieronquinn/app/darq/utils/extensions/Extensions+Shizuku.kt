@@ -15,6 +15,8 @@ import kotlin.coroutines.resume
 private fun Context.getShizukuPermissionInfo(): PermissionInfo? {
     return runCatching {
         packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0)
+    }.getOrNull() ?: runCatching {
+        packageManager.getPermissionInfo("af.shizuku.plus.api.permission.API_V2", 0)
     }.getOrNull()
 }
 

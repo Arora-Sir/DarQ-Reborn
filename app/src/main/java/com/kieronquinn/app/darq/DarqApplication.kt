@@ -48,6 +48,7 @@ import rikka.sui.Sui
 import com.kieronquinn.app.darq.utils.extensions.isShizukuInstalled
 import com.topjohnwu.superuser.Shell
 import rikka.shizuku.Shizuku
+import rikka.shizuku.ShizukuProvider
 import android.content.pm.PackageManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -99,6 +100,7 @@ class DarqApplication : Application() {
         val applicationThread = Context::class.java.getMethod("getIApplicationThread").invoke(this as Context)
         Log.d("DarQA", "ApplicationThread $applicationThread")
         Sui.init(packageName)
+        ShizukuProvider.enableMultiProcessSupport(true)
         setupMonet()
         
         val settings = get<DarqSharedPreferences>()
@@ -112,37 +114,42 @@ class DarqApplication : Application() {
 
         val connectionProvider = get<DarqServiceConnectionProvider>()
         if (!Shell.rootAccess() && isShizukuInstalled()) {
-            val binderReceivedListener = object : Shizuku.OnBinderReceivedListener {
+                val binderReceivedListener = object : Shizuku.OnBinderReceivedListener {
                 override fun onBinderReceived() {
-                    Log.d("DarQA", "Shizuku binder received in Application. Attempting to bind service...")
-                    GlobalScope.launch(Dispatchers.Main) {
-                        try {
-                            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-                                connectionProvider.getService()
+                    Log.i("DarQA", "Shizuku binder received")
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val selfPermission = Shizuku.checkSelfPermission()
+                        kotlinx.coroutines.withContext(Dispatchers.Main) {
+                            try {
+                                if (selfPermission == PackageManager.PERMISSION_GRANTED) {
+                                    connectionProvider.getService()
+                                }
+                            } catch (e: Throwable) {
+                                Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
                             }
-                        } catch (e: Throwable) {
-                            Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
                         }
                     }
                 }
             }
-            Shizuku.addBinderReceivedListener(binderReceivedListener)
+            Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
 
-            val isShizukuReady = try {
-                Shizuku.pingBinder() && Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
-            } catch (e: Throwable) {
-                Log.e("DarQA", "Failed to check Shizuku status on startup", e)
-                false
-            }
-
-            if (isShizukuReady) {
-                Log.d("DarQA", "Shizuku binder already active on Application startup. Binding service...")
-                GlobalScope.launch(Dispatchers.Main) {
-                    try {
-                        connectionProvider.getService()
-                    } catch (e: Exception) {
-                        Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    if (Shizuku.pingBinder()) {
+                        val selfPermission = Shizuku.checkSelfPermission()
+                        if (selfPermission == PackageManager.PERMISSION_GRANTED) {
+                            Log.i("DarQA", "Shizuku binder already active on Application startup. Binding service...")
+                            kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                try {
+                                    connectionProvider.getService()
+                                } catch (e: Exception) {
+                                    Log.e("DarQA", "Failed to auto-bind to Shizuku service", e)
+                                }
+                            }
+                        }
                     }
+                } catch (e: Throwable) {
+                    Log.e("DarQA", "Failed to check Shizuku status on startup", e)
                 }
             }
         }

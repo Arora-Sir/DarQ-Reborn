@@ -118,7 +118,8 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                 serviceType = ServiceType.SHIZUKU
                 GlobalScope.launch {
                     runCatching {
-                        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                        val selfPermission = Shizuku.checkSelfPermission()
+                        if (selfPermission == PackageManager.PERMISSION_GRANTED) {
                             Shizuku.bindUserService(darqProcessArgs, serviceConnection)
                         } else {
                             if (continuation.isActive) {
