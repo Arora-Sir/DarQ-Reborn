@@ -140,20 +140,7 @@ DarQ 使用了一个只能用特权指令才能调用的隐藏的 API（`IActivi
 
 如果遇到应用崩溃或异常，分享 Logcat 日志对排查问题非常有帮助。以下是捕获日志的方法：
 
-#### 方法 A：设备端（使用 Shizuku + LogFox）
-
 1. 安装开源日志查看器，例如 **LogFox**（可从 [GitHub](https://github.com/F0x1d/LogFox) 下载）。
 2. 打开 LogFox 并授予其 Shizuku 访问权限。
 3. 开始记录日志，启动 DarQ Reborn 触发崩溃，然后从通知弹窗中复制捕获到的日志。
 4. 在故障报告中分享复制的崩溃日志。
-
-#### 方法 B：电脑端（使用 ADB）
-
-1. 将手机连接到电脑，确保已启用 **USB 调试**。
-2. 打开命令行或终端，运行以下命令：
-
-   ```bash
-   adb logcat -d > logcat.txt
-   ```
-
-3. 在故障报告中分享生成的 `logcat.txt` 文件。
