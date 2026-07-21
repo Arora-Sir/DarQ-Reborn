@@ -91,7 +91,9 @@ DarQ 使用了一个只能用特权指令才能调用的隐藏的 API（`IActivi
 
 ### 为什么强制深色在某些应用上不起作用？
 
-这些应用是网页套壳（在 WebView 组件中运行的网站），而不是原生的 Android 应用程序。系统级的强制深色只影响原生 Android UI 组件。WebView 独立渲染网页，并不自动遵循系统的强制深色标志。
+这些应用是网页套壳（在 WebView 组件中运行的网站），而不是原生的 Android 应用程序。系统级的强制深色只影响原生 Android UI 组件。
+
+从历史版本来看，在较旧的 Android 版本（例如 Android 10/11）中，Android 系统的 WebView 引擎默认支持原生自动算法强制深色。但在现代 Android 版本（Android 13+）中，基于 Chromium 的 WebView 严格要求在宿主应用程序自身的代码中进行显式程序配置。除非应用程序开发者显式启用，否则系统级的 `debug.hwui.force_dark` 标志不再自动将 WebView 组件变暗。
 
 ### 哪些应用在启用强制深色时看起来不错？
 

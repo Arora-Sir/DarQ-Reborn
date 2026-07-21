@@ -91,7 +91,9 @@ Sometimes an app launches too quickly for force dark to be applied. You may have
 
 ### Why does Force Dark not work on some apps?
 
-These apps are web wrappers (websites running inside a WebView component) rather than native Android applications. System-level Force Dark only affects native Android UI components. WebViews render web pages independently and do not automatically respect the system's force dark flag.
+These apps are web wrappers (websites running inside a WebView component) rather than native Android applications. System-level Force Dark only affects native Android UI components. 
+
+Historically, in older Android versions (like Android 10/11), the Android system's WebView engine supported automatic algorithmic force dark natively by default. However, on modern Android versions (Android 13+), Chromium-based WebViews strictly require explicit programmatic configurations inside the host application's own code. System-level flags like `debug.hwui.force_dark` no longer automatically darken WebView components unless the app's developers explicitly enabled it.
 
 ### Which apps look good when force dark is enabled?
 
