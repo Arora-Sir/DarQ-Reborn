@@ -15,4 +15,5 @@ interface IDarqService {
     void setNightMode(boolean nightMode) = 6;
     LatLng getLocation() = 7;
     String getServiceType() = 8;
-}
+    boolean isNightModeActive() = 9;
+}

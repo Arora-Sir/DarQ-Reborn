@@ -57,6 +57,17 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_AUTO_DARK_END_TIME = "auto_dark_end_time"
         private const val DEFAULT_AUTO_DARK_END_TIME = 420 // 7:00 AM (420 mins from midnight)
 
+        // Whether Auto Dark Schedule is currently in a dark period. Managed ONLY by the schedule,
+        // NOT by the user. This separates schedule state from settings.enabled (user master toggle).
+        private const val KEY_AUTO_DARK_MANAGED_ENABLED = "auto_dark_managed_enabled"
+        const val DEFAULT_AUTO_DARK_MANAGED_ENABLED = true
+
+        // Stores the system night mode state BEFORE Auto Dark first took control (for System & DarQ mode restore)
+        private const val KEY_PRE_AUTO_DARK_SYSTEM_NIGHT_MODE = "pre_auto_dark_system_night_mode"
+
+        // Whether Auto Dark has ever activated and saved a pre-state to restore
+        private const val KEY_AUTO_DARK_HAS_MANAGED = "auto_dark_has_managed"
+
         private const val KEY_XPOSED_AGGRESSIVE_DARK = "xposed_aggressive_dark"
         const val DEFAULT_XPOSED_AGGRESSIVE_DARK = true
 
@@ -100,6 +111,12 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         set(value) { autoDarkScheduleMode = if (value) 2 else 1 }
     var autoDarkStartTime by this.shared(KEY_AUTO_DARK_START_TIME, DEFAULT_AUTO_DARK_START_TIME)
     var autoDarkEndTime by this.shared(KEY_AUTO_DARK_END_TIME, DEFAULT_AUTO_DARK_END_TIME)
+    // Auto Dark schedule state - true = currently in dark period, false = in light period
+    var autoDarkManagedEnabled by this.shared(KEY_AUTO_DARK_MANAGED_ENABLED, DEFAULT_AUTO_DARK_MANAGED_ENABLED)
+    // Saved system night mode before Auto Dark first took control (used to restore on disable)
+    var preAutoDarkSystemNightMode by this.shared(KEY_PRE_AUTO_DARK_SYSTEM_NIGHT_MODE, false)
+    // True once Auto Dark has fired at least once and saved a pre-state
+    var autoDarkHasManaged by this.shared(KEY_AUTO_DARK_HAS_MANAGED, false)
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
 
@@ -118,7 +135,14 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     }
 
     fun toIPCSetting(): IPCSetting {
-        return IPCSetting(enabled, oxygenForceDark, alwaysForceDark, sendAppCloses, isXposedActive = XposedSelfHooks.isXposedModuleEnabled())
+        return IPCSetting(
+            enabled = enabled,
+            autoDarkManagedEnabled = autoDarkManagedEnabled,
+            oxygenForceDark = oxygenForceDark,
+            alwaysForceDark = alwaysForceDark,
+            sendAppCloses = sendAppCloses,
+            isXposedActive = XposedSelfHooks.isXposedModuleEnabled()
+        )
     }
 
     fun getSettingsBackup(): SettingsBackup {

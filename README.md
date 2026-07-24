@@ -83,7 +83,11 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
   * **System & DarQ Dark Mode:** Toggles Android System Dark Mode and DarQ Per-App Force Dark simultaneously. Currently open apps switch instantly when the boundary crosses because Android OS broadcasts system-wide `uiMode` configuration changes.
   * **DarQ Force Dark Only:** Toggles per-app force dark without altering system dark mode. The updated rendering mode applies when target apps are next launched or reopened (this prevents DarQ from force-closing active apps or interrupting unsaved work in open sessions).
 
+> [!NOTE]
+> Disabling Auto Dark Schedule at any time (including during a light period) immediately restores full DarQ per-app force dark functionality. Your manual **Enable DarQ** toggle is never permanently modified by the schedule - the two states are always kept separate.
+
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
+
 
 ## Troubleshooting & Bug Reporting
 

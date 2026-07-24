@@ -80,6 +80,12 @@ The two Auto Dark schedule targets use different underlying Android system mecha
 - **System & DarQ Dark Mode**: Calls Android's `UiModeManager.setNightMode()`. The Android OS system framework broadcasts a system-wide `uiMode` configuration change to all running apps, which automatically recreates active app windows in real-time.
 - **DarQ Force Dark Only**: Updates the hardware graphics renderer property (`debug.hwui.force_dark`). Android's rendering engine only reads this property when an app process or window context is initialized. Because Android OS does not send any notification when renderer properties change, DarQ deliberately refrains from force-closing your open apps to prevent data loss. The updated rendering mode takes effect when the target app is next launched or reopened.
 
+### What happens to per-app force dark if I disable the Auto Dark Schedule while in a light period?
+
+Force dark immediately resumes normal operation. DarQ keeps your **Enable DarQ** master toggle and the **Auto Dark Schedule** state completely separate. Turning off the schedule (or having it in a light period) never permanently disables the **Enable DarQ** setting. The moment you turn off the Auto Dark Schedule, DarQ re-evaluates the currently open app and re-applies force dark according to your per-app selections, just as if the schedule had never been active.
+
+For **System & DarQ Mode**, the system night mode is also restored to whatever it was before Auto Dark first activated.
+
 ### Why does DarQ/force dark need the system dark theme to be enabled?
 
 For some reason, in the final beta of Android 10, a requirement was added to force dark to make it only work when the system dark theme is enabled. A workaround has not been found (and may not even exist) for this, so it is required for DarQ to work too.

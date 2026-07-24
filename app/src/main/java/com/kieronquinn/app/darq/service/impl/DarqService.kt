@@ -47,6 +47,7 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     }
 
     private var isEnabled = true
+    private var isAutoDarkBlocking = false  // true when Auto Dark schedule is in a light period
     private var isAlwaysForceDarkEnabled = false
     private var isOxygenForceDarkEnabled = false
     private var isXposedActive = false
@@ -104,9 +105,10 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         lifecycleScope.launch {
             currentApp.collect {
                 if(it == null && !sendAppCloses) return@collect
+                // Only apply force dark if DarQ is enabled AND Auto Dark is not blocking (light period)
+                if (!isEnabled || isAutoDarkBlocking) return@collect
                 setForceDarkEnabled(appWhitelist.contains(it))
             }
-
         }
         registerProcessObserver()
     }
@@ -139,6 +141,10 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         if(ipcSetting.enabled != null) {
             isEnabled = ipcSetting.enabled
         }
+        if(ipcSetting.autoDarkManagedEnabled != null) {
+            // false = Auto Dark schedule is in light period, so block force dark
+            isAutoDarkBlocking = !ipcSetting.autoDarkManagedEnabled
+        }
         if(ipcSetting.alwaysForceDark != null) {
             isAlwaysForceDarkEnabled = ipcSetting.alwaysForceDark
             if(isAlwaysForceDarkEnabled){
@@ -163,21 +169,26 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         when {
             ipcSetting.enabled != null -> {
                 isEnabled = ipcSetting.enabled
-                if(!isEnabled) {
+                if(!isEnabled || isAutoDarkBlocking) {
                     setForceDarkEnabled(false)
                 }else{
-                    val foregroundApp = try {
-                        activityManager.runningAppProcesses
-                            ?.firstOrNull { it.importance == android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND }
-                            ?.processName?.let { if (it.contains(":")) it.substring(0, it.indexOf(":")) else it }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    val currentOrForeground = foregroundApp ?: currentApp.value
-                    if (foregroundApp != null) {
-                        currentApp.tryEmit(foregroundApp)
-                    }
-                    val shouldForceDark = isAlwaysForceDarkEnabled || (currentOrForeground != null && appWhitelist.contains(currentOrForeground))
+                    val foregroundApp = getResolvedForegroundApp()
+                    if (foregroundApp != null) currentApp.tryEmit(foregroundApp)
+                    val shouldForceDark = isAlwaysForceDarkEnabled || appWhitelist.contains(foregroundApp ?: currentApp.value)
+                    setForceDarkEnabled(shouldForceDark)
+                }
+            }
+            ipcSetting.autoDarkManagedEnabled != null -> {
+                // Auto Dark schedule period changed
+                isAutoDarkBlocking = !ipcSetting.autoDarkManagedEnabled
+                if(!isEnabled || isAutoDarkBlocking) {
+                    // Light period OR DarQ master disabled - disable force dark
+                    setForceDarkEnabled(false)
+                } else {
+                    // Dark period (or Auto Dark disabled) - re-evaluate foreground app and restore
+                    val foregroundApp = getResolvedForegroundApp()
+                    if (foregroundApp != null) currentApp.tryEmit(foregroundApp)
+                    val shouldForceDark = isAlwaysForceDarkEnabled || appWhitelist.contains(foregroundApp ?: currentApp.value)
                     setForceDarkEnabled(shouldForceDark)
                 }
             }
@@ -196,6 +207,19 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
                     else appWhitelist.remove(packageName)
                 }
             }
+        }
+    }
+
+    /**
+     *  Helper: resolves the current foreground app process name from ActivityManager.
+     */
+    private fun getResolvedForegroundApp(): String? {
+        return try {
+            activityManager.runningAppProcesses
+                ?.firstOrNull { it.importance == android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND }
+                ?.processName?.let { if (it.contains(":")) it.substring(0, it.indexOf(":")) else it }
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -228,7 +252,8 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
      */
     private val processObserver = object : IProcessObserver.Stub() {
         override fun onForegroundActivitiesChanged(pid: Int, uid: Int, foregroundActivities: Boolean) {
-            if(!isEnabled || isAlwaysForceDarkEnabled) return
+            // Do not apply per-app force dark if DarQ is disabled or Auto Dark is in a light period
+            if(!isEnabled || isAutoDarkBlocking || isAlwaysForceDarkEnabled) return
             val packageName = activityManager.getPackageNameForPid(pid) ?: return
             if(ignoredPackages.contains(packageName)) return
             if(foregroundActivities){
@@ -333,6 +358,23 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     override fun setNightMode(nightMode: Boolean) {
         @Suppress("UsePropertyAccessSyntax")
         uiModeManager.setNightMode(if(nightMode) 2 else 1)
+    }
+
+    /**
+     *  Queries current system night mode state via IUiModeManager reflection.
+     *  Used by DarqAutoDarkForegroundService to save the pre-auto-dark system night mode before
+     *  Auto Dark first changes it, so it can be restored when Auto Dark is disabled.
+     *  Returns true if night mode is currently active (MODE_NIGHT_YES = 2).
+     */
+    @Suppress("UsePropertyAccessSyntax")
+    override fun isNightModeActive(): Boolean {
+        return try {
+            val getNightModeMethod = uiModeManager.javaClass.getMethod("getNightMode")
+            val mode = getNightModeMethod.invoke(uiModeManager) as? Int
+            mode == 2 // 2 = Configuration.UI_MODE_NIGHT_YES / UiModeManager.MODE_NIGHT_YES
+        } catch (e: Exception) {
+            false
+        }
     }
 
     /**

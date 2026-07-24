@@ -97,22 +97,23 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         lifecycleScope.launchWhenCreated {
             when (settings.autoDarkScheduleMode) {
                 0 -> {
-                    // Off mode: cancel any scheduled jobs & alarms
+                    // Off mode: cancel any scheduled jobs & alarms, then restore pre-auto-dark state
                     cancelAllScheduledAlarms()
                     workManager.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNSET)
                     workManager.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNRISE)
+                    restorePreAutoDarkState()
                 }
                 2 -> {
                     // Custom Schedule Mode: always evaluate state for current time
                     val isDark = AutoDarkUtils.isCustomScheduleDark(settings.autoDarkStartTime, settings.autoDarkEndTime)
-                    setDarkModeEnabled(isDark)
+                    applySchedulePeriod(isDark)
                     cancelAndScheduleCustomWork()
                 }
                 else -> {
                     // Sunset/Sunrise Mode (mode 1)
                     if(!justReschedule || intent?.hasExtra(KEY_ENABLE_DARK) == true) {
                         val enableDark = intent?.getBooleanExtra(KEY_ENABLE_DARK, false) ?: false
-                        setDarkModeEnabled(enableDark)
+                        applySchedulePeriod(enableDark)
                     }
                     val nextTriggerTimes = getNextTriggerTimes()
                     if(nextTriggerTimes != null) {
@@ -127,25 +128,82 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private suspend fun setDarkModeEnabled(enabled: Boolean) = withContext(Dispatchers.IO) {
+    /**
+     *  Applies the Auto Dark schedule period state (dark or light) to the DarQ service.
+     *  Critically, this writes ONLY to settings.autoDarkManagedEnabled - it NEVER touches
+     *  settings.enabled (the user's master DarQ toggle). This prevents the schedule from
+     *  corrupting the user's manual DarQ on/off state.
+     *
+     *  For System & DarQ mode (autoDarkTargetMode == 0): also saves the system night mode before
+     *  first activation so it can be restored when Auto Dark is disabled.
+     */
+    private suspend fun applySchedulePeriod(isDark: Boolean) = withContext(Dispatchers.IO) {
         val serviceResult = serviceProvider.getService()
         val isServiceConnected = serviceResult is DarqServiceConnectionProvider.ServiceResult.Success
 
         if (settings.autoDarkTargetMode == 0) {
             if (isServiceConnected) {
-                (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service.setNightMode(enabled)
+                val svc = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
+                // Save system night mode BEFORE Auto Dark first takes control
+                if (!settings.autoDarkHasManaged) {
+                    settings.preAutoDarkSystemNightMode = svc.isNightModeActive()
+                    settings.autoDarkHasManaged = true
+                }
+                svc.setNightMode(isDark)
             } else {
                 showFailedNotification()
             }
         }
 
-        settings.enabled = enabled
+        // Write ONLY to autoDarkManagedEnabled - the user's settings.enabled is untouched
+        settings.autoDarkManagedEnabled = isDark
         if (isServiceConnected) {
             val ipcService = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
             val isXposed = XposedSelfHooks.isXposedModuleEnabled()
-            ipcService.notifySettingsChange(IPCSetting(enabled = enabled, isXposedActive = isXposed))
+            ipcService.notifySettingsChange(IPCSetting(
+                autoDarkManagedEnabled = isDark,
+                isXposedActive = isXposed
+            ))
         } else if (settings.autoDarkTargetMode == 1) {
             showFailedNotification()
+        }
+    }
+
+    /**
+     *  Restores the pre-auto-dark state when Auto Dark Schedule is disabled by the user.
+     *  - For System & DarQ mode: restores the system night mode to what it was before Auto Dark
+     *    first activated.
+     *  - Always: clears autoDarkManagedEnabled (sets to true = no longer blocking) and sends
+     *    the IPC update so DarqService immediately re-enables force dark for the foreground app.
+     */
+    private suspend fun restorePreAutoDarkState() = withContext(Dispatchers.IO) {
+        if (!settings.autoDarkHasManaged) return@withContext
+
+        val serviceResult = serviceProvider.getService()
+        val isServiceConnected = serviceResult is DarqServiceConnectionProvider.ServiceResult.Success
+
+        if (isServiceConnected) {
+            val svc = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
+            // Restore system night mode for System & DarQ mode
+            if (settings.autoDarkTargetMode == 0) {
+                svc.setNightMode(settings.preAutoDarkSystemNightMode)
+            }
+            // Clear the Auto Dark blocking flag so force dark resumes immediately
+            settings.autoDarkManagedEnabled = true
+            // Reset tracking flags
+            settings.autoDarkHasManaged = false
+            settings.preAutoDarkSystemNightMode = false
+            // Notify DarqService to re-evaluate foreground app and restore force dark
+            val isXposed = XposedSelfHooks.isXposedModuleEnabled()
+            svc.notifySettingsChange(IPCSetting(
+                autoDarkManagedEnabled = true,
+                isXposedActive = isXposed
+            ))
+        } else {
+            // Service not connected - still clear the pref so it doesn't block on next reconnect
+            settings.autoDarkManagedEnabled = true
+            settings.autoDarkHasManaged = false
+            settings.preAutoDarkSystemNightMode = false
         }
     }
 

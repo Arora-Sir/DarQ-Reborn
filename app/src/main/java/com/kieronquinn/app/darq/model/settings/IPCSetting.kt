@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class IPCSetting(
     val enabled: Boolean? = null,
+    val autoDarkManagedEnabled: Boolean? = null,
     val oxygenForceDark: Boolean? = null,
     val alwaysForceDark: Boolean? = null,
     val sendAppCloses: Boolean? = null,
@@ -13,6 +14,6 @@ data class IPCSetting(
     val isXposedActive: Boolean? = null
 ): Parcelable {
     override fun toString(): String {
-        return "IPCSetting enabled=$enabled oxygenForceDark=$oxygenForceDark sendAppCloses=$sendAppCloses packageChange=[$packageChange] isXposedActive=$isXposedActive"
+        return "IPCSetting enabled=$enabled autoDarkManagedEnabled=$autoDarkManagedEnabled oxygenForceDark=$oxygenForceDark sendAppCloses=$sendAppCloses packageChange=[$packageChange] isXposedActive=$isXposedActive"
     }
 }
