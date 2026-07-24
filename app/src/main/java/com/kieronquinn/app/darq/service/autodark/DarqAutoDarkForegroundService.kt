@@ -111,13 +111,25 @@ class DarqAutoDarkForegroundService: LifecycleService() {
                 }
                 else -> {
                     // Sunset/Sunrise Mode (mode 1)
-                    if(!justReschedule || intent?.hasExtra(KEY_ENABLE_DARK) == true) {
-                        val enableDark = intent?.getBooleanExtra(KEY_ENABLE_DARK, false) ?: false
-                        applySchedulePeriod(enableDark)
-                    }
-                    val nextTriggerTimes = getNextTriggerTimes()
-                    if(nextTriggerTimes != null) {
-                        cancelAndScheduleWork(nextTriggerTimes)
+                    val sunTimes = getNextTriggerTimes()
+                    val riseDate = sunTimes?.rise
+                    val setDate = sunTimes?.set
+                    val enableDark = if (intent?.hasExtra(KEY_ENABLE_DARK) == true) {
+                        intent.getBooleanExtra(KEY_ENABLE_DARK, false)
+                    } else if (riseDate != null && setDate != null) {
+                        val now = System.currentTimeMillis()
+                        val sunrise = riseDate.time
+                        val sunset = setDate.time
+                        if (sunset < sunrise) {
+                            now >= sunset || now < sunrise
+                        } else {
+                            now >= sunset && now < sunrise
+                        }
+                    } else false
+
+                    applySchedulePeriod(enableDark)
+                    if(sunTimes != null) {
+                        cancelAndScheduleWork(sunTimes)
                     }
                 }
             }

@@ -261,18 +261,6 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
     }
 
     private fun rescheduleAutoDark(justReschedule: Boolean = false) {
-        if (!settings.autoDarkTheme) {
-            // If Auto Dark is turned OFF, cancel background jobs silently without altering device theme
-            try {
-                val wm = WorkManager.getInstance(requireContext())
-                wm.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNSET)
-                wm.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNRISE)
-            } catch (e: Exception) {
-                android.util.Log.e("SettingsAutoDark", "Failed to cancel auto dark jobs", e)
-            }
-            return
-        }
-
         try {
             val intent = Intent(requireContext(), DarqAutoDarkForegroundService::class.java).apply {
                 putExtra(DarqAutoDarkForegroundService.KEY_JUST_RESCHEDULE, justReschedule)
