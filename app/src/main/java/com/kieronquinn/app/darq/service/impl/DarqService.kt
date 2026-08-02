@@ -264,12 +264,24 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         // When Xposed/LSPosed is active, it intercepts SystemProperties.getBoolean() inside
         // every process via bytecode injection (see Xposed.kt). The hook always returns isDarkMode
         // regardless of the real system property value, so we never need to physically write it.
-        // This also makes Xposed users immune to the Samsung popup chrome race condition:
-        // even if force_dark briefly reads false globally, each process (including Samsung's
-        // multiwindow chrome) gets the corrected dark value from the hook, not the real property.
+        // Xposed users are immune to the Samsung popup chrome issue because the hook fires
+        // per-process and always returns the correct dark value regardless of the global property.
         if (isXposedActive) return
         val currentValue = SystemProperties[FORCE_DARK_PROP]?.toBoolean() ?: false
         if (currentValue == enabled) return
+        // Samsung One UI 6.x (S-series / Tab S-series) renders popup window chrome (the floating
+        // window title bar) using HWUI force_dark as a theming signal rather than using proper
+        // dark-mode theme attributes. When force_dark is set to false while the system is in
+        // dark night mode, the popup chrome reverts to its default light appearance, producing
+        // the "white popup frame" bug even though system dark mode is active.
+        //
+        // Guard: if we are about to turn force_dark OFF and the system night mode is currently
+        // active, keep force_dark = true instead. In dark mode this is the correct state:
+        //   - Apps with native dark mode support: unaffected (HWUI skips already-dark surfaces)
+        //   - Light-mode-only apps: correctly force-darked, popup chrome stays dark
+        // Exception: if Auto Dark schedule is actively blocking (light period), we must honour
+        // that and allow force_dark to be cleared regardless of night mode state.
+        if (!enabled && !isAutoDarkBlocking && isNightModeActive()) return
         SystemProperties[FORCE_DARK_PROP] = enabled.toString()
     }
 
