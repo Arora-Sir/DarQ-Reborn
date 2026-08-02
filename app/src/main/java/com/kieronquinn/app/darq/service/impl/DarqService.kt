@@ -87,8 +87,31 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         ILocationManager.Stub.asInterface(locationManagerProxy)
     }
 
-    //Packages to ignore foreground changes to. These include the launcher, recents provider and android itself.
-    private val ignoredPackages = arrayOf("android", "com.android.systemui", getLauncherPackage(), getQuickstepPackage()).distinct().filterNotNull()
+    //Packages to ignore foreground changes to. These include the launcher, recents provider, android itself,
+    //and Samsung OEM multi-window / system UI processes.
+    //
+    //Samsung-specific context: On Samsung One UI, processes like com.samsung.android.multistar
+    //(Pop-up View host) fire IProcessObserver foreground-change events when popup windows are
+    //created or resized. Without ignoring them, DarQ can briefly flip debug.hwui.force_dark at
+    //the exact moment the popup chrome (title bar) is rendered -- causing it to appear white/light
+    //even when the device is in dark mode. Xposed/LSPosed users are immune because the hook
+    //intercepts SystemProperties.getBoolean() per-process, always returning isDarkMode.
+    //On non-Samsung devices these package names simply never appear in process lists,
+    //so this is a zero-cost no-op for all other OEMs.
+    private val ignoredPackages = buildList {
+        // Core AOSP system packages
+        add("android")
+        add("com.android.systemui")
+        // Samsung OEM multi-window and SystemUI packages
+        add("com.samsung.android.multistar")        // Samsung Multi-Window / Pop-up View host
+        add("com.samsung.android.app.multiwindow")  // Legacy Samsung multi-window package
+        add("com.samsung.android.systemui")          // Samsung's SystemUI override process
+        // Device-specific: launcher and recents/quickstep
+        val launcher = getLauncherPackage()
+        if (launcher != null) add(launcher)
+        val quickstep = getQuickstepPackage()
+        if (quickstep != null) add(quickstep)
+    }.distinct()
 
     init {
         mDispatcher.onServicePreSuperOnCreate()
@@ -238,9 +261,15 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
      *  command (for speed)
      */
     private fun setForceDarkEnabled(enabled: Boolean) {
-        if(isXposedActive) return
+        // When Xposed/LSPosed is active, it intercepts SystemProperties.getBoolean() inside
+        // every process via bytecode injection (see Xposed.kt). The hook always returns isDarkMode
+        // regardless of the real system property value, so we never need to physically write it.
+        // This also makes Xposed users immune to the Samsung popup chrome race condition:
+        // even if force_dark briefly reads false globally, each process (including Samsung's
+        // multiwindow chrome) gets the corrected dark value from the hook, not the real property.
+        if (isXposedActive) return
         val currentValue = SystemProperties[FORCE_DARK_PROP]?.toBoolean() ?: false
-        if(currentValue == enabled) return
+        if (currentValue == enabled) return
         SystemProperties[FORCE_DARK_PROP] = enabled.toString()
     }
 
