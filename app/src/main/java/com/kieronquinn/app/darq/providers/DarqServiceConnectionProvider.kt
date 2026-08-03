@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.DeadObjectException
 import android.os.IBinder
+import android.util.Log
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.IDarqService
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
@@ -28,6 +29,11 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
 
     companion object {
         private const val SERVICE_TIMEOUT = 25000L
+
+        //Every failure path below logs under this tag. Service connection failures are otherwise
+        //silent, which means a user reporting "Service Timeout" gives us nothing to work with -
+        //the only clues end up being Shizuku's own logs rather than ours.
+        private const val TAG = "DarqServiceConn"
     }
 
     private val rootServiceIntent = Intent(context, DarqRootService::class.java)
@@ -73,7 +79,8 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                     }
                     return@suspendCancellableCoroutine
                 } catch (e: Exception) {
-                    // Service died
+                    // Service died, fall through and rebind
+                    Log.w(TAG, "Cached service did not respond to ping, rebinding", e)
                 }
             }
 
@@ -87,6 +94,9 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                             continuation.resume(ServiceResult.Success(rootService, serviceType))
                         }
                     } catch (e: Exception) {
+                        //The service connected but setup failed. Reported as TIMEOUT for
+                        //compatibility with existing UI handling, so log the real cause here.
+                        Log.e(TAG, "Service connected but setup failed", e)
                         if (continuation.isActive) {
                             continuation.resume(ServiceResult.Failed(ServiceFailureReason.TIMEOUT))
                         }
@@ -94,6 +104,7 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
+                    Log.w(TAG, "Service disconnected: $name")
                     rootService = null
                 }
             }
@@ -106,7 +117,7 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                         Shizuku.unbindUserService(darqProcessArgs, serviceConnection, true)
                     }
                 } catch (e: Exception) {
-                    // Ignore
+                    Log.w(TAG, "Failed to unbind service on cancellation", e)
                 }
             }
 
@@ -120,25 +131,33 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                     runCatching {
                         val selfPermission = Shizuku.checkSelfPermission()
                         if (selfPermission == PackageManager.PERMISSION_GRANTED) {
+                            Log.d(TAG, "Binding Shizuku user service")
                             Shizuku.bindUserService(darqProcessArgs, serviceConnection)
                         } else {
+                            Log.i(TAG, "Shizuku permission not granted")
                             if (continuation.isActive) {
                                 continuation.resume(ServiceResult.Failed(ServiceFailureReason.SHIZUKU_PERMISSION_REQUIRED))
                             }
                         }
                     }.onFailure {
+                        Log.e(TAG, "Shizuku bind failed, reporting service as not started", it)
                         if (continuation.isActive) {
                             continuation.resume(ServiceResult.Failed(ServiceFailureReason.SHIZUKU_NOT_STARTED))
                         }
                     }
                 }
             } else {
+                Log.i(TAG, "No root access and no Shizuku provider installed")
                 if (continuation.isActive) {
                     continuation.resume(ServiceResult.Failed(ServiceFailureReason.SHIZUKU_NOT_INSTALLED))
                 }
             }
         }
-    } ?: ServiceResult.Failed(ServiceFailureReason.TIMEOUT)
+    } ?: ServiceResult.Failed(ServiceFailureReason.TIMEOUT).also {
+        //Nothing called back within SERVICE_TIMEOUT. On Shizuku this usually means the spawned
+        //service process failed to start, which is only visible in Shizuku's own logs.
+        Log.e(TAG, "No service connection after ${SERVICE_TIMEOUT}ms (type=$serviceType)")
+    }
 
     private fun IDarqService.setupService(){
         GlobalScope.launch {
