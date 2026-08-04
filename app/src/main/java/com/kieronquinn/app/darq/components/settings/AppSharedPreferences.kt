@@ -19,7 +19,19 @@ import java.io.File
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-//These calls are from background threads and need to await changes so commit is required
+//Writes below are committed synchronously on the calling thread, deliberately.
+//
+//The settings UI starts services that immediately re-read these values: every Auto Dark toggle
+//calls rescheduleAutoDark() from its tapAction, and SettingsAdapter invokes tapAction BEFORE it
+//writes the new value. Committing on a background thread meant the service could win that race
+//and act on the previous value. Turning the Auto Dark schedule off started the service while the
+//schedule still read "on", so it applied the current period instead of restoring the system dark
+//mode the user had before, leaving them stuck in whatever the schedule had last set.
+//
+//commit() rather than apply(): the prefs file is world readable for the Xposed module and
+//notifyPrefChange() re-applies that permission. SharedPreferences persists by writing a new file
+//and renaming it over the old one, so the permission has to be re-applied after the replacement
+//has actually happened. apply() defers that write and would let the chmod race ahead of it.
 @SuppressLint("ApplySharedPref")
 class AppSharedPreferences(context: Context): DarqSharedPreferences() {
 
@@ -46,28 +58,22 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
     override fun shared(key: String, default: String) = ReadWriteProperty({
         sharedPreferences.getString(key, default) ?: default
     }, {
-        runInBackground {
-            sharedPreferences.edit().putString(key, it).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putString(key, it).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     override fun shared(key: String, default: Int) = ReadWriteProperty({
         sharedPreferences.getInt(key, default)
     }, {
-        runInBackground {
-            sharedPreferences.edit().putInt(key, it).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putInt(key, it).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     override fun shared(key: String, default: Boolean) = ReadWriteProperty({
         sharedPreferences.getBoolean(key, default)
     }, {
-        runInBackground {
-            sharedPreferences.edit().putBoolean(key, it).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putBoolean(key, it).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     //The following two, while their types are supported by SharedPreferences, are not by the SharedPrefsProvider
@@ -75,38 +81,30 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
     override fun shared(key: String, default: Float) = ReadWriteProperty({
         sharedPreferences.getString(key, default.toString())?.toFloatOrNull() ?: default
     }, {
-        runInBackground {
-            sharedPreferences.edit().putString(key, it.toString()).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putString(key, it.toString()).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     override fun shared(key: String, default: Long) = ReadWriteProperty({
         sharedPreferences.getString(key, default.toString())?.toLongOrNull() ?: default
     }, {
-        runInBackground {
-            sharedPreferences.edit().putString(key, it.toString()).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putString(key, it.toString()).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     override fun shared(key: String, default: Double) = ReadWriteProperty({
         sharedPreferences.getString(key, default.toString())?.toDoubleOrNull() ?: default
     }, {
-        runInBackground {
-            sharedPreferences.edit().putString(key, it.toString()).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putString(key, it.toString()).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     override fun sharedJSONArray(key: String): ReadWriteProperty<Any?, Array<String>> = ReadWriteProperty({
         val rawJson = sharedPreferences.getString(key, "[]") ?: "[]"
         JSONArray(rawJson).toStringArray()
     }, {
-        runInBackground {
-            sharedPreferences.edit().putString(key, it.toJSONArray().toString()).commit()
-            notifyPrefChange(key)
-        }
+        sharedPreferences.edit().putString(key, it.toJSONArray().toString()).commit()
+        runInBackground { notifyPrefChange(key) }
     })
 
     inline fun <reified T : Enum<T>> sharedEnum(key: String, default: Enum<T>): ReadWriteProperty<Any?, T> {
@@ -117,10 +115,8 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
             }
 
             override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    sharedPreferences.edit().putString(key, value.name).commit()
-                    notifyPrefChange(key)
-                }
+                sharedPreferences.edit().putString(key, value.name).commit()
+                GlobalScope.launch(Dispatchers.IO) { notifyPrefChange(key) }
             }
 
         }
