@@ -148,6 +148,21 @@ Adding System Framework or System UI to the scope is unnecessary and may cause s
 
 This appears to be a bug in Android, and as force dark is a developer option, may not be fixed. It may be possible to fix it with DarQ, and this is being investigated. In the meantime, you can mitigate this issue by enabling Force Dark on a per-app basis rather than enabling it globally for all apps at once.
 
+### On Samsung, a Pop-up View window sometimes has a white title bar. Why?
+
+This only happens if you summon the Pop-up View window within the first few seconds of launching an app you have selected in DarQ. Opening a pop-up at any other time is unaffected.
+
+Samsung's Pop-up View title bar takes its appearance from the same system-wide force dark switch that DarQ uses, and Android reads that switch **once**, at the instant a window is created. That creates a genuine conflict for a few seconds: the app you just launched needs the switch **on** while it builds its windows, and the pop-up being created at the same moment needs it **off**. There is only one switch, so one of the two has to lose.
+
+DarQ does not try to work around this. Attempting to force the switch off early so the title bar looks right makes the app you just opened render in its light theme instead, which is far more noticeable. The app wins.
+
+Two things avoid it entirely:
+
+- Wait a moment after opening an app before summoning the pop-up. Once the app has settled, the pop-up title bar is correct.
+- Use Xposed/LSPosed mode. It is immune to this, because it hooks each app process individually instead of using the shared system-wide switch, so two apps can get different answers at the same time.
+
+Repairing the title bar after the fact is not possible either: once a window has read the switch it keeps that value, and resizing or moving the window does not make it read again.
+
 ### Can you change the force dark colour in an app (eg. to full black)?
 
 No. There is no customisation with force dark, so you cannot change the colours.

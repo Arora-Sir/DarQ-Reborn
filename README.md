@@ -92,6 +92,15 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
 
 
+## Known Behaviour
+
+**Samsung Pop-up View title bar.** If you summon a Pop-up View window within the first few seconds of launching an app you have selected in DarQ, that pop-up's title bar can appear white. Opening a pop-up at any other time is unaffected, and the app itself is always correctly darkened.
+
+This is not a bug that can be fixed in Shizuku mode. Samsung's pop-up title bar reads the same system-wide force dark switch DarQ uses, and Android samples that switch once per window at creation time. For those few seconds the app being launched needs it on while the pop-up being created needs it off, and there is only one switch. DarQ does not try to work around it, because forcing the switch off early to satisfy the pop-up makes the app you just opened render in its light theme instead, which is far more noticeable. Waiting a moment before summoning the pop-up avoids it, and Xposed/LSPosed mode is immune because it hooks each app process individually rather than sharing one global switch.
+
+See the [FAQ](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for the full explanation.
+
+
 ## Troubleshooting & Bug Reporting
 
 If you encounter crashes or issues, sharing a logcat log is extremely helpful for diagnostics. Here is how to capture it on-device:
