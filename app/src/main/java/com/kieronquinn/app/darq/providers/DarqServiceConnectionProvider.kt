@@ -162,12 +162,26 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
     private fun IDarqService.setupService(){
         GlobalScope.launch {
             withContext(Dispatchers.IO){
-                onBind()
+                //Shizuku's UserServiceArgs defaults to daemon(true), so a service process outlives
+                //the app and survives app updates, and nothing reaped the leftovers:
+                //killOtherInstances() was only reachable from the Developer Options button. Two
+                //orphans were found alive for 7h and 8.5h on a test device after a 3.1.3 -> 3.1.4
+                //update, each with its own registered IProcessObserver and its own stale whitelist,
+                //writing conflicting debug.hwui.force_dark values. Reap them before we bind.
+                try {
+                    killOtherInstances()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to reap orphaned service instances", e)
+                }
+                //Send settings and the whitelist before onBind(), which is what registers the
+                //process observer. Registering first left a window where the observer was live with
+                //an empty whitelist and would clear force dark for apps that are actually selected.
                 setupSettings(settings.toIPCSetting())
                 val enabledApps = settings.enabledApps
                 enabledApps.forEachIndexed { index, app ->
                     setupWhitelist(index == 0, index == enabledApps.size - 1, app)
                 }
+                onBind()
             }
         }
     }

@@ -14,6 +14,8 @@ import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
@@ -27,6 +29,7 @@ import com.kieronquinn.app.darq.model.shizuku.ShizukuConstants
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.utils.SystemProperties
 import com.topjohnwu.superuser.internal.Utils
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import rikka.shizuku.SystemServiceHelper
@@ -40,6 +43,9 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     companion object {
         private const val TAG = "DarQService"
         private const val FORCE_DARK_PROP = "debug.hwui.force_dark"
+        //UiModeManager.MODE_NIGHT_YES, the value the framework stores the night mode as.
+        private const val MODE_NIGHT_YES = 2
+        private const val SETTING_UI_NIGHT_MODE = "ui_night_mode"
         private const val OXYGEN_OS_WORLD_FORCE_DARK = "op_force_dark_entire_world"
         private const val OXYGEN_OS_AOSP_FORCE_DARK = "aosp_force_dark_mode"
         private const val SHIZUKU_SERVICE_ID = "${BuildConfig.APPLICATION_ID}:${ShizukuConstants.SERVICE_NAME}"
@@ -54,6 +60,7 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     private val appWhitelist = emptySet<String>().toMutableSet()
     private var tempAppList = emptyList<String>().toMutableList()
     private var currentApp = MutableStateFlow<String?>(null)
+    private var currentAppJob: Job? = null
 
     private val mDispatcher by lazy {
         ServiceLifecycleDispatcher(this)
@@ -87,25 +94,19 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         ILocationManager.Stub.asInterface(locationManagerProxy)
     }
 
-    //Packages to ignore foreground changes to. These include the launcher, recents provider, android itself,
-    //and Samsung OEM multi-window / system UI processes.
+    //Packages to ignore foreground changes for: the launcher, recents provider and android itself.
     //
-    //Samsung-specific context: On Samsung One UI, processes like com.samsung.android.multistar
-    //(Pop-up View host) fire IProcessObserver foreground-change events when popup windows are
-    //created or resized. Without ignoring them, DarQ can briefly flip debug.hwui.force_dark at
-    //the exact moment the popup chrome (title bar) is rendered -- causing it to appear white/light
-    //even when the device is in dark mode. Xposed/LSPosed users are immune because the hook
-    //intercepts SystemProperties.getBoolean() per-process, always returning isDarkMode.
-    //On non-Samsung devices these package names simply never appear in process lists,
-    //so this is a zero-cost no-op for all other OEMs.
+    //3.1.3 also listed com.samsung.android.app.multiwindow and com.samsung.android.systemui here,
+    //thinking they hosted Pop-up View. Neither exists on One UI (Samsung ships SystemUI as
+    //com.android.systemui, which was already covered), so both were dead weight and are gone.
+    //Ignoring packages could not have fixed the popup title bar in any case: a popup window is
+    //created by the target app's own process, which is exactly the package DarQ must react to.
     private val ignoredPackages = buildList {
         // Core AOSP system packages
         add("android")
         add("com.android.systemui")
-        // Samsung OEM multi-window and SystemUI packages
-        add("com.samsung.android.multistar")        // Samsung Multi-Window / Pop-up View host
-        add("com.samsung.android.app.multiwindow")  // Legacy Samsung multi-window package
-        add("com.samsung.android.systemui")          // Samsung's SystemUI override process
+        // Samsung Good Lock multi-window module (exists on One UI, absent elsewhere)
+        add("com.samsung.android.multistar")
         // Device-specific: launcher and recents/quickstep
         val launcher = getLauncherPackage()
         if (launcher != null) add(launcher)
@@ -125,7 +126,11 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         Handler(Looper.getMainLooper()).post {
             mDispatcher.onServicePreSuperOnBind()
         }
-        lifecycleScope.launch {
+        //onBind() runs again on every rebind (app restart, Shizuku reconnect, service timeout
+        //retry). Without cancelling the previous collector, each rebind stacked another one on the
+        //same StateFlow, so one process ended up writing force_dark several times per app switch.
+        currentAppJob?.cancel()
+        currentAppJob = lifecycleScope.launch {
             currentApp.collect {
                 // Only apply force dark if DarQ is enabled AND Auto Dark is not blocking (light period)
                 if (!isEnabled || isAutoDarkBlocking) {
@@ -269,19 +274,13 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         if (isXposedActive) return
         val currentValue = SystemProperties[FORCE_DARK_PROP]?.toBoolean() ?: false
         if (currentValue == enabled) return
-        // Samsung One UI 6.x (S-series / Tab S-series) renders popup window chrome (the floating
-        // window title bar) using HWUI force_dark as a theming signal rather than using proper
-        // dark-mode theme attributes. When force_dark is set to false while the system is in
-        // dark night mode, the popup chrome reverts to its default light appearance, producing
-        // the "white popup frame" bug even though system dark mode is active.
-        //
-        // Guard: if we are about to turn force_dark OFF and the system night mode is currently
-        // active, keep force_dark = true instead. In dark mode this is the correct state:
-        //   - Apps with native dark mode support: unaffected (HWUI skips already-dark surfaces)
-        //   - Light-mode-only apps: correctly force-darked, popup chrome stays dark
-        // Exception: if Auto Dark schedule is actively blocking (light period), we must honour
-        // that and allow force_dark to be cleared regardless of night mode state.
-        if (!enabled && !isAutoDarkBlocking && isNightModeActive()) return
+        //3.1.3 added a guard here that refused to clear force_dark while system night mode was on,
+        //believing that a cleared flag was what turned the Samsung Pop-up View title bar white.
+        //An A/B on One UI 8.5 shows the opposite: the bar is white when force_dark is TRUE as the
+        //popup window is created, and correct when it is false. The guard also never actually ran,
+        //because the isNightModeActive() it depended on always threw and returned false. It is
+        //removed rather than repaired: repairing the night mode check alone would have activated a
+        //backwards guard and made the white title bar permanent.
         SystemProperties[FORCE_DARK_PROP] = enabled.toString()
     }
 
@@ -365,6 +364,12 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
      *  filtering the list by those that are the :root or :service processes, and killing the
      *  given pid using `kill`. If no other processes are found, nothing is killed.
      */
+    //Caveat: this matches purely on process name, with no notion of which Android user the
+    //instance belongs to. A Shizuku user service runs as `shell` whatever profile started it, so if
+    //DarQ AND Shizuku were both installed in a second profile (Dual App, Secure Folder), the two
+    //instances would reap each other. Not a problem in practice today because Shizuku has to be
+    //present in that profile too, which is unusual, but worth knowing before calling this anywhere
+    //new.
     override fun killOtherInstances(){
         val myPid = android.os.Process.myPid()
         val processesByName = runCommand("ps -A -o PID,NAME")
@@ -412,18 +417,32 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     }
 
     /**
-     *  Queries current system night mode state via IUiModeManager reflection.
-     *  Used by DarqAutoDarkForegroundService to save the pre-auto-dark system night mode before
-     *  Auto Dark first changes it, so it can be restored when Auto Dark is disabled.
-     *  Returns true if night mode is currently active (MODE_NIGHT_YES = 2).
+     *  Whether system night mode is on. Used by DarqAutoDarkForegroundService to remember the
+     *  system setting before Auto Dark changes it, so it can be put back afterwards.
+     *
+     *  This used to reflect IUiModeManager.getNightMode() and swallow the failure, which meant it
+     *  returned false on every device and every Android version: systemstubs' IUiModeManager.aidl
+     *  only declares setNightMode, so that lookup can never resolve. The visible consequence was
+     *  that Auto Dark always recorded "was not night", and turning the schedule off then forced
+     *  night mode off regardless of what the user actually had set.
+     *
+     *  Caveat that remains: both sources below report the night mode SETTING, not whether the
+     *  screen is currently dark. A user on "Sunset to sunrise" or Bedtime still reads as not-night.
      */
-    @Suppress("UsePropertyAccessSyntax")
     override fun isNightModeActive(): Boolean {
-        return try {
-            val getNightModeMethod = uiModeManager.javaClass.getMethod("getNightMode")
-            val mode = getNightModeMethod.invoke(uiModeManager) as? Int
-            mode == 2 // 2 = Configuration.UI_MODE_NIGHT_YES / UiModeManager.MODE_NIGHT_YES
+        //Works for the root service (uid 0). Under Shizuku the settings provider rejects the call,
+        //because the service runs as uid 2000 while the context reports our own package name.
+        try {
+            return Settings.Secure.getInt(context.contentResolver, SETTING_UI_NIGHT_MODE) == MODE_NIGHT_YES
         } catch (e: Exception) {
+            if (BuildConfig.DEBUG) Log.d(TAG, "Settings.Secure $SETTING_UI_NIGHT_MODE unavailable: ${e.javaClass.simpleName}")
+        }
+        //Ask the uimode service directly. Spawns a shell, so it must stay off any hot path; this is
+        //only reached when Auto Dark first takes control, where the cost does not matter.
+        return try {
+            runCommand("cmd uimode night").joinToString(" ").contains("yes", ignoreCase = true)
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not determine night mode, assuming off", e)
             false
         }
     }
