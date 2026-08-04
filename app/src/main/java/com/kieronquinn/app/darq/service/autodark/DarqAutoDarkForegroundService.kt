@@ -160,7 +160,10 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         if (settings.autoDarkTargetMode == 0) {
             if (isServiceConnected) {
                 val svc = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
-                // Save system night mode BEFORE Auto Dark first takes control
+                //Take the snapshot the first time we are actually about to change system night mode,
+                //so turning the schedule off can put it back exactly as the user had it. The flag is
+                //only set once the snapshot exists, so a period that runs while the service is down
+                //retries on the next evaluation instead of locking in the default.
                 if (!settings.autoDarkHasManaged) {
                     settings.preAutoDarkSystemNightMode = svc.isNightModeActive()
                     settings.autoDarkHasManaged = true
@@ -169,9 +172,21 @@ class DarqAutoDarkForegroundService: LifecycleService() {
             } else {
                 showFailedNotification()
             }
-        } else {
-            // Target Mode 1 ("DarQ Force Dark Only") - mark as managed so restorePreAutoDarkState tracks active schedule
-            settings.autoDarkHasManaged = true
+        } else if (settings.autoDarkHasManaged) {
+            //"DarQ Force Dark Only" never changes system night mode, so nothing is owed back here.
+            //Up to 3.1.4 this branch set autoDarkHasManaged = true anyway without saving a snapshot,
+            //and since it is the DEFAULT target mode the usual sequence was: enable the schedule,
+            //then switch to "System & DarQ Dark Mode". That switch skipped the snapshot because the
+            //flag was already set, so preAutoDarkSystemNightMode stayed at its default of false, and
+            //turning the schedule off afterwards dropped the user into light mode even if they had
+            //been in dark mode the whole time.
+            //
+            //Clear the pair rather than act on it. Getting here means either those stale prefs or
+            //the user leaving "System & DarQ Dark Mode" mid-schedule, and there is no way to tell
+            //the two apart, so leave system night mode where it is instead of restoring a value
+            //that may never have been theirs.
+            settings.autoDarkHasManaged = false
+            settings.preAutoDarkSystemNightMode = false
         }
 
         // Write ONLY to autoDarkManagedEnabled - the user's settings.enabled is untouched
