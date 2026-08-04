@@ -102,6 +102,8 @@
     <string name="bottom_sheet_service_timeout_title">Service Timeout</string>
     <string name="bottom_sheet_service_timeout_content">Timed out starting/connecting to the DarQ service. Try rebooting your device.</string>
     <string name="bottom_sheet_service_timeout_positive">Close</string>
+    <string name="bottom_sheet_service_timeout_neutral">Copy Diagnostics</string>
+    <string name="bottom_sheet_service_timeout_copied">Diagnostics copied to clipboard</string>
     <string name="bottom_sheet_shizuku_not_installed_title">Shizuku Not Installed</string>
     <string name="bottom_sheet_shizuku_not_installed_content">Shizuku is not installed and your device is not rooted (or you denied root permissions). Please install Shizuku to use DarQ without root.</string>
     <string name="bottom_sheet_shizuku_not_installed_positive">Get Shizuku</string>
