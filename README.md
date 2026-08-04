@@ -85,9 +85,10 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 
 > [!NOTE]
 > Toggling the Auto Dark Schedule ON or OFF immediately re-evaluates current schedule conditions against the active time:
-> - **Turning OFF the schedule:** Immediately restores your manual **Enable DarQ** settings and per-app force dark preferences.
+> - **Turning OFF the schedule:** Immediately restores your manual **Enable DarQ** settings and per-app force dark preferences. Under **System & DarQ Dark Mode**, your system dark mode is also returned to what it was before the schedule took control.
 > - **Turning ON the schedule:** Instantly checks current time against your schedule (or location-based sunset/sunrise) and applies the correct light or dark mode state.
 > - Your manual **Enable DarQ** toggle and whitelist selections are never permanently overwritten by the schedule.
+> - That system dark mode restore reads Android's night mode *setting*. If your system dark theme is on **Sunset to sunrise** or **Bedtime** rather than a plain On, Android reports a schedule rather than "on", so DarQ restores light mode. See the FAQ.
 
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
 

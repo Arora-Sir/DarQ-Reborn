@@ -89,6 +89,14 @@ DarQ immediately re-evaluates all schedule rules and conditions the moment you t
 
 Your manual **Enable DarQ** toggle and per-app whitelist choices are never permanently modified or lost when using the schedule.
 
+### Turning off the Auto Dark Schedule left me in light mode. Why?
+
+Under **System & DarQ Dark Mode**, DarQ saves your system dark mode before the schedule first changes it, then puts that value back when you turn the schedule off. The saved value comes from Android's night mode *setting*, not from whether the screen happens to be dark at that moment.
+
+If your system dark theme is set to **Sunset to sunrise** or **Bedtime** rather than a plain On, Android reports the setting as `auto` or `custom_schedule` instead of `yes`. DarQ records that as "not dark", so turning the schedule off restores light mode even though your screen was dark at the time.
+
+To avoid this, either set your system dark theme to a plain On, or use the **DarQ Force Dark Only** target, which never changes your system dark mode.
+
 ### Why does DarQ/force dark need the system dark theme to be enabled?
 
 For some reason, in the final beta of Android 10, a requirement was added to force dark to make it only work when the system dark theme is enabled. A workaround has not been found (and may not even exist) for this, so it is required for DarQ to work too.
