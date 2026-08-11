@@ -71,3 +71,10 @@ fastlane/readme.md
 
 # graphify
 graphify-out/
+
+# Research notes & documentation
+Research/
+RESEARCH_ANALYSIS/
+
+# AI tooling config (internal, not for public repos)
+CLAUDE.md
