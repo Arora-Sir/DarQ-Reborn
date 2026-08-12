@@ -6,6 +6,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentSettingsAdvancedBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
@@ -36,20 +37,25 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
                 getString(R.string.item_persistent_service_content),
                 settings::persistentService,
                 tapAction = { isChecked ->
-                    val intent = Intent(requireContext(), DarqPersistentService::class.java)
-                    try {
-                        if (isChecked) {
-                            requireContext().startForegroundService(intent)
-                        } else {
-                            requireContext().stopService(intent)
+                    if (!isChecked && settings.autoDarkScheduleMode == 3) {
+                        // Confirmation is asynchronous (an AlertDialog), but tapAction's return
+                        // value gates persistence synchronously (see SettingsAdapter.
+                        // setupSettingSwitch) - so return false now to revert the switch and skip
+                        // persisting, then apply the disable manually if/when the user confirms.
+                        showDisablePersistentServiceWarning {
+                            setPersistentServiceRunning(false)
+                            binding.recyclerView.post {
+                                adapter.notifyDataSetChanged()
+                            }
                         }
-                    } catch (e: Exception) {
-                        android.util.Log.e("SettingsAdvanced", "Failed to start/stop persistent service", e)
+                        false
+                    } else {
+                        setPersistentServiceRunning(isChecked)
+                        binding.recyclerView.post {
+                            adapter.notifyDataSetChanged()
+                        }
+                        true
                     }
-                    binding.recyclerView.post {
-                        adapter.notifyDataSetChanged()
-                    }
-                    true
                 }
             ),
             SettingsItem.Setting(
@@ -122,6 +128,29 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView(binding.recyclerView, adapter)
         setupSnackbarPadding(binding.recyclerView)
+    }
+
+    private fun setPersistentServiceRunning(running: Boolean) {
+        settings.persistentService = running
+        val intent = Intent(requireContext(), DarqPersistentService::class.java)
+        try {
+            if (running) {
+                requireContext().startForegroundService(intent)
+            } else {
+                requireContext().stopService(intent)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("SettingsAdvanced", "Failed to start/stop persistent service", e)
+        }
+    }
+
+    private fun showDisablePersistentServiceWarning(onConfirmed: () -> Unit) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.dialog_disable_persistent_service_title)
+            .setMessage(R.string.dialog_disable_persistent_service_message)
+            .setPositiveButton(R.string.dialog_disable_persistent_service_confirm) { _, _ -> onConfirmed() }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
 }

@@ -28,6 +28,12 @@
     <string name="item_auto_dark_mode_sun_content">Turn on dark mode at sunset and off at sunrise</string>
     <string name="item_auto_dark_mode_custom_title">Custom Time Schedule</string>
     <string name="item_auto_dark_mode_custom_content">Turn on dark mode according to custom start and end times</string>
+    <string name="item_auto_dark_mode_system_title">Follow System Theme</string>
+    <string name="item_auto_dark_mode_system_content">Mirror your phone\'s Dark Theme setting live, DarQ switches the moment you toggle it</string>
+    <string name="auto_dark_persistent_service_auto_enabled">Persistent Background Service was turned on so Follow System Theme can update instantly</string>
+    <string name="dialog_disable_persistent_service_title">Disable Persistent Service?</string>
+    <string name="dialog_disable_persistent_service_message">Follow System Theme needs Persistent Service to update instantly. Turning it off means DarQ will only sync to your system theme when opened or the device reboots.</string>
+    <string name="dialog_disable_persistent_service_confirm">Disable Anyway</string>
     <string name="item_auto_dark_header_sunset_options">Sunset &amp; Sunrise Options</string>
     <string name="item_auto_dark_header_custom_options">Custom Time Options</string>
     <string name="item_auto_dark_header_target">Schedule Target</string>

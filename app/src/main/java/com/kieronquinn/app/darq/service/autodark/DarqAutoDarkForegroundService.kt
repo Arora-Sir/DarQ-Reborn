@@ -16,6 +16,7 @@ import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.utils.AutoDarkUtils
 import com.kieronquinn.app.darq.utils.TimeZoneUtils
+import com.kieronquinn.app.darq.utils.extensions.isDarkTheme
 import com.kieronquinn.app.darq.work.DarqSunriseSunsetWork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -112,6 +113,22 @@ class DarqAutoDarkForegroundService: LifecycleService() {
                     }
                     applySchedulePeriod(isDark)
                     cancelAndScheduleCustomWork()
+                }
+                3 -> {
+                    // Follow System Theme: event-driven, no AlarmManager/WorkManager scheduling.
+                    // Clean up any leftover alarms/work left behind by switching away from mode 1/2.
+                    cancelAllScheduledAlarms()
+                    workManager.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNSET)
+                    workManager.cancelAllWorkByTag(DarqSunriseSunsetWork.TAG_SUNRISE)
+
+                    val isDark = if (intent?.hasExtra(KEY_ENABLE_DARK) == true) {
+                        intent.getBooleanExtra(KEY_ENABLE_DARK, false)
+                    } else {
+                        // Self-correcting fallback: re-read the live rendered theme directly
+                        // rather than trusting a stale settings.autoDarkManagedEnabled value.
+                        applicationContext.isDarkTheme
+                    }
+                    applySchedulePeriod(isDark)
                 }
                 else -> {
                     // Sunset/Sunrise Mode (mode 1)

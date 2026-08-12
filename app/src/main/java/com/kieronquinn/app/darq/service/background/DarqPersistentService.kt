@@ -12,10 +12,13 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
+import com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService
+import com.kieronquinn.app.darq.service.autodark.SystemThemeListener
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.utils.extensions.isDarkTheme
 import com.kieronquinn.app.darq.utils.extensions.isShizukuInstalled
 import com.kieronquinn.app.darq.utils.extensions.Shizuku_awaitBinderReceived
 import com.topjohnwu.superuser.Shell
@@ -36,7 +39,9 @@ class DarqPersistentService : LifecycleService() {
 
     private val connectionProvider by inject<DarqServiceConnectionProvider>()
     private val settings by inject<DarqSharedPreferences>()
-    
+
+    private var systemThemeListener: SystemThemeListener? = null
+
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
         Log.d(TAG, "Shizuku binder received. Attempting to bind service...")
         lifecycleScope.launch {
@@ -66,9 +71,34 @@ class DarqPersistentService : LifecycleService() {
             Shizuku.addBinderReceivedListener(binderReceivedListener)
             Shizuku.addBinderDeadListener(binderDeadListener)
         }
+        refreshSystemThemeListener()
+    }
+
+    /**
+     *  Registers/unregisters [SystemThemeListener] to match the current Auto Dark schedule mode.
+     *  Idempotent - safe to call on every onCreate/onStartCommand, including repeated
+     *  startForegroundService calls on an already-running service.
+     */
+    private fun refreshSystemThemeListener() {
+        val shouldListen = settings.autoDarkScheduleMode == 3
+        if (shouldListen && systemThemeListener == null) {
+            val listener = SystemThemeListener(applicationContext) { isDark ->
+                startForegroundService(Intent(this, DarqAutoDarkForegroundService::class.java).apply {
+                    putExtra(DarqAutoDarkForegroundService.KEY_ENABLE_DARK, isDark)
+                })
+            }
+            applicationContext.registerComponentCallbacks(listener)
+            systemThemeListener = listener
+            Log.d(TAG, "Registered SystemThemeListener")
+        } else if (!shouldListen && systemThemeListener != null) {
+            applicationContext.unregisterComponentCallbacks(systemThemeListener)
+            systemThemeListener = null
+            Log.d(TAG, "Unregistered SystemThemeListener")
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        refreshSystemThemeListener()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(
                 NotificationChannel(
@@ -131,9 +161,15 @@ class DarqPersistentService : LifecycleService() {
             Log.d(TAG, "Service binding result: $result")
             if (result is DarqServiceConnectionProvider.ServiceResult.Success && settings.autoDarkTheme) {
                 try {
-                    startForegroundService(Intent(this@DarqPersistentService, com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService::class.java).apply {
-                        putExtra(com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService.KEY_JUST_RESCHEDULE, true)
-                    })
+                    val intent = Intent(this@DarqPersistentService, DarqAutoDarkForegroundService::class.java)
+                        .putExtra(DarqAutoDarkForegroundService.KEY_JUST_RESCHEDULE, true)
+                    if (settings.autoDarkScheduleMode == 3) {
+                        // Re-sync immediately to whatever the system theme currently is, in case
+                        // it changed while this process was dead and the live listener wasn't
+                        // registered to observe it.
+                        intent.putExtra(DarqAutoDarkForegroundService.KEY_ENABLE_DARK, applicationContext.isDarkTheme)
+                    }
+                    startForegroundService(intent)
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to start auto dark foreground service from persistent service", e)
                 }
@@ -149,6 +185,8 @@ class DarqPersistentService : LifecycleService() {
             Shizuku.removeBinderReceivedListener(binderReceivedListener)
             Shizuku.removeBinderDeadListener(binderDeadListener)
         }
+        systemThemeListener?.let { applicationContext.unregisterComponentCallbacks(it) }
+        systemThemeListener = null
         super.onDestroy()
     }
 }

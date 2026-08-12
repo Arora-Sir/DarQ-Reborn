@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentSettingsAutoDarkBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService
+import com.kieronquinn.app.darq.service.background.DarqPersistentService
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
@@ -147,6 +149,39 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
                     true
                 }
             ),
+            SettingsItem.SwitchSetting(
+                icon = R.drawable.ic_day_night_auto,
+                title = getString(R.string.item_auto_dark_mode_system_title),
+                content = getString(R.string.item_auto_dark_mode_system_content),
+                getValue = { settings.autoDarkScheduleMode == 3 },
+                setValue = { checked ->
+                    if (checked) {
+                        settings.autoDarkScheduleMode = 3
+                    } else if (settings.autoDarkScheduleMode == 3) {
+                        settings.autoDarkScheduleMode = 1
+                    }
+                },
+                visible = { settings.autoDarkTheme },
+                tapAction = { checked ->
+                    // tapAction runs BEFORE setValue (see SettingsAdapter.setupSettingSwitch), so
+                    // the persistentService auto-enable must key off the `checked` parameter
+                    // directly rather than settings.autoDarkScheduleMode, which hasn't been
+                    // written yet at this point.
+                    if (checked && !settings.persistentService) {
+                        settings.persistentService = true
+                        Snackbar.make(
+                            binding.recyclerView,
+                            R.string.auto_dark_persistent_service_auto_enabled,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    rescheduleAutoDark(justReschedule = false)
+                    binding.recyclerView.post {
+                        adapter.notifyDataSetChanged()
+                    }
+                    true
+                }
+            ),
 
             // Section 3: Sunset & Sunrise Options
             SettingsItem.Header(
@@ -266,6 +301,11 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
                 putExtra(DarqAutoDarkForegroundService.KEY_JUST_RESCHEDULE, justReschedule)
             }
             requireContext().startForegroundService(intent)
+            if (settings.persistentService) {
+                // Nudges DarqPersistentService to (de)register its live system-theme listener
+                // immediately, rather than waiting for its next natural restart.
+                requireContext().startForegroundService(Intent(requireContext(), DarqPersistentService::class.java))
+            }
         } catch (e: Exception) {
             android.util.Log.e("SettingsAutoDark", "Failed to reschedule auto dark service", e)
         }

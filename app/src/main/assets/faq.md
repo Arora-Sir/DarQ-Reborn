@@ -97,6 +97,12 @@ If your system dark theme is set to **Sunset to sunrise** or **Bedtime** rather 
 
 To avoid this, either set your system dark theme to a plain On, or use the **DarQ Force Dark Only** target, which never changes your system dark mode.
 
+### How is "Follow System Theme" different from the restore behaviour above?
+
+It reads `Configuration.uiMode`, the theme Android is actually rendering right now, instead of the `ui_night_mode` setting used by the System & DarQ restore snapshot. Since Android always resolves the rendered theme to a concrete on/off value regardless of whether a manual toggle, Bedtime, or Sunset-to-sunrise produced it, this mode does not hit the auto/custom_schedule ambiguity described above. Recommended if your system Dark Theme is itself on an Android-managed schedule.
+
+This mode requires Persistent Service to stay running so it can react instantly. It's turned on automatically the first time you select Follow System Theme; if you turn Persistent Service off afterward, DarQ will only re-sync to your system theme when you open the app or reboot your device.
+
 ### Why does DarQ/force dark need the system dark theme to be enabled?
 
 For some reason, in the final beta of Android 10, a requirement was added to force dark to make it only work when the system dark theme is enabled. A workaround has not been found (and may not even exist) for this, so it is required for DarQ to work too.

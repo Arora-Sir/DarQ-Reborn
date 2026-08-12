@@ -79,6 +79,7 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 * **Schedule Modes:**
   * **Sunset to Sunrise:** Automatically switches dark theme at sunset and sunrise using location calculations or optional GPS positioning.
   * **Custom Time Schedule:** Set custom start (Dark Mode ON) and end (Dark Mode OFF) times according to your routine.
+  * **Follow System Theme:** Mirrors your phone's own Dark Theme setting live, no clock schedule of its own. Reacts within moments whenever you (or another app, or an Android schedule like Bedtime/Sunset-to-sunrise) change the system theme. Requires Persistent Service, which is enabled automatically when you select this mode.
 * **Schedule Targets:**
   * **System & DarQ Dark Mode:** Toggles Android System Dark Mode and DarQ Per-App Force Dark simultaneously. Currently open apps switch instantly when the boundary crosses because Android OS broadcasts system-wide `uiMode` configuration changes.
   * **DarQ Force Dark Only:** Toggles per-app force dark without altering system dark mode. The updated rendering mode applies when target apps are next launched or reopened (this prevents DarQ from force-closing active apps or interrupting unsaved work in open sessions).
@@ -89,6 +90,7 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 > - **Turning ON the schedule:** Instantly checks current time against your schedule (or location-based sunset/sunrise) and applies the correct light or dark mode state.
 > - Your manual **Enable DarQ** toggle and whitelist selections are never permanently overwritten by the schedule.
 > - That system dark mode restore reads Android's night mode *setting*. If your system dark theme is on **Sunset to sunrise** or **Bedtime** rather than a plain On, Android reports a schedule rather than "on", so DarQ restores light mode. See the FAQ.
+> - **Follow System Theme** is unaffected by that ambiguity: it reads the currently rendered theme state directly, not the underlying setting.
 
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
 
