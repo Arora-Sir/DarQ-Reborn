@@ -17,7 +17,7 @@ DarQ provides a per-app selectable force dark option for Android 10 and above.
 > 3. Install this version.
 > 4. Import your backup from Step 1.
 >
-> All future DarQ Reborn updates (from this version onwards) will install as normal upgrades — no reinstall needed.
+> All future DarQ Reborn updates (from this version onwards) will install as normal upgrades, no reinstall needed.
 
 It uses a root or [Shizuku](https://shizuku.rikka.app/) (ADB) service to apply the theme seamlessly and quickly, without needing an accessibility service.
 

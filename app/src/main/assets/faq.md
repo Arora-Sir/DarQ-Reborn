@@ -39,7 +39,7 @@ Starting from v3.0, DarQ Reborn's package name changed from `com.kieronquinn.app
 3. Install the new version.
 4. Import your backup from Step 1.
 
-All future updates from this point onwards will install as normal upgrades — no reinstall needed.
+All future updates from this point onwards will install as normal upgrades, no reinstall needed.
 
 ### How can I keep DarQ up to date? Is DarQ available on the Play Store?
 

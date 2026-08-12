@@ -78,3 +78,5 @@ RESEARCH_ANALYSIS/
 
 # AI tooling config (internal, not for public repos)
 CLAUDE.md
+.claude/settings.local.json
+.claude/hooks/

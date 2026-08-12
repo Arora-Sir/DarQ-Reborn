@@ -19,7 +19,7 @@ import java.io.File
 
 class UpdateChecker(private val settings: DarqSharedPreferences) {
 
-    // GitHub API requires a User-Agent header — requests without one are rejected with 403.
+    // GitHub API requires a User-Agent header: requests without one are rejected with 403.
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -51,7 +51,7 @@ class UpdateChecker(private val settings: DarqSharedPreferences) {
             val parts = clean.split("-", limit = 2)
             val mainStr = parts[0]
             val preRelease = if (parts.size > 1) parts[1] else null
-            
+
             val mainNumbers = mainStr.split(".").mapNotNull { it.toIntOrNull() }
             return Pair(mainNumbers, preRelease)
         }
