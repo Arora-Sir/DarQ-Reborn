@@ -204,4 +204,8 @@
         android:id="@+id/action_global_socialLinksBottomSheetFragment"
         app:destination="@id/socialLinksBottomSheetFragment" />
 
+    <action
+        android:id="@+id/action_global_settingsAdvancedFragment"
+        app:destination="@id/settingsAdvancedFragment" />
+
 </navigation>

@@ -228,7 +228,9 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
             // Section 5: Schedule Target (DarQ Force Dark Only listed FIRST)
             SettingsItem.Header(
                 getString(R.string.item_auto_dark_header_target),
-                visible = { settings.autoDarkTheme }
+                // Doesn't apply to Follow System Theme (mode 3): that mode reads FROM the system
+                // theme, so there's nothing meaningful for this section to target.
+                visible = { settings.autoDarkTheme && settings.autoDarkScheduleMode != 3 }
             ),
             SettingsItem.SwitchSetting(
                 icon = R.drawable.ic_app_whitelist,
@@ -242,7 +244,7 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
                         settings.autoDarkTargetMode = 0
                     }
                 },
-                visible = { settings.autoDarkTheme },
+                visible = { settings.autoDarkTheme && settings.autoDarkScheduleMode != 3 },
                 tapAction = { _ ->
                     rescheduleAutoDark(justReschedule = false)
                     binding.recyclerView.post {
@@ -263,7 +265,7 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
                         settings.autoDarkTargetMode = 1
                     }
                 },
-                visible = { settings.autoDarkTheme },
+                visible = { settings.autoDarkTheme && settings.autoDarkScheduleMode != 3 },
                 tapAction = { _ ->
                     rescheduleAutoDark(justReschedule = false)
                     binding.recyclerView.post {

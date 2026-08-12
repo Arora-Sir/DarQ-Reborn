@@ -2,6 +2,7 @@ package com.kieronquinn.app.darq.ui.activities
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,10 @@ import com.kieronquinn.monetcompat.app.MonetCompatActivity
 import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
 
 class DarqActivity: MonetCompatActivity() {
+
+    companion object {
+        const val EXTRA_OPEN_ADVANCED_SETTINGS = "open_advanced_settings"
+    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -36,6 +41,11 @@ class DarqActivity: MonetCompatActivity() {
         }
 
         askNotificationPermission()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 
     private fun askNotificationPermission() {

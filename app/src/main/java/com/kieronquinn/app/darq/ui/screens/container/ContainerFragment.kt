@@ -23,6 +23,7 @@ import com.kieronquinn.app.darq.databinding.FragmentContainerBinding
 import com.kieronquinn.app.darq.model.darq.DarqConstants
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService
+import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.ui.base.*
 import com.kieronquinn.app.darq.utils.extensions.*
 import com.kieronquinn.monetcompat.extensions.views.applyMonet
@@ -262,6 +263,21 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     override fun onResume() {
         super.onResume()
         sharedViewModel.loadService()
+        handlePendingNotificationNavigation()
+    }
+
+    /**
+     *  Checked on every onResume (not just once via the async Navigation bus) so this reliably
+     *  fires whether the app was cold-started or brought back from the background via
+     *  singleTask's onNewIntent - a one-shot SharedFlow collector registered only in
+     *  onViewCreated can race with the fragment not yet being RESUMED when the notification is
+     *  tapped while backgrounded.
+     */
+    private fun handlePendingNotificationNavigation() {
+        val activityIntent = requireActivity().intent ?: return
+        if (activityIntent.getBooleanExtra(DarqActivity.EXTRA_OPEN_ADVANCED_SETTINGS, false) != true) return
+        activityIntent.removeExtra(DarqActivity.EXTRA_OPEN_ADVANCED_SETTINGS)
+        navController.navigateSafely(R.id.action_global_settingsAdvancedFragment)
     }
 
     private var snackbarAnimation: Animation? = null

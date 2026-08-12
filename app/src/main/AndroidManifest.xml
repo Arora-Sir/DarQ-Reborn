@@ -33,6 +33,7 @@
 		<activity
 			android:name="com.kieronquinn.app.darq.ui.activities.DarqActivity"
 			android:theme="@style/AppTheme"
+			android:launchMode="singleTask"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

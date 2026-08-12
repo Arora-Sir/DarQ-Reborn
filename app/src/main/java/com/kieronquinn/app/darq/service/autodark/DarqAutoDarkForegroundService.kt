@@ -174,7 +174,11 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         val serviceResult = serviceProvider.getService()
         val isServiceConnected = serviceResult is DarqServiceConnectionProvider.ServiceResult.Success
 
-        if (settings.autoDarkTargetMode == 0) {
+        // Follow System Theme (mode 3) derives isDark FROM the system's rendered theme, so
+        // writing it back to system night mode would just be a redundant echo - always treat
+        // this mode as "DarQ Force Dark Only" at runtime regardless of the stored target
+        // preference, which still governs Custom Schedule / Sunrise-Sunset.
+        if (settings.autoDarkTargetMode == 0 && settings.autoDarkScheduleMode != 3) {
             if (isServiceConnected) {
                 val svc = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
                 //Take the snapshot the first time we are actually about to change system night mode,

@@ -54,11 +54,13 @@ class DarqPersistentService : LifecycleService() {
     }
 
     private val launchIntent by lazy {
-        Intent(this, DarqActivity::class.java).let { notificationIntent ->
+        Intent(this, DarqActivity::class.java).apply {
+            putExtra(DarqActivity.EXTRA_OPEN_ADVANCED_SETTINGS, true)
+        }.let { notificationIntent ->
             val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             } else {
-                0
+                PendingIntent.FLAG_UPDATE_CURRENT
             }
             PendingIntent.getActivity(this, 0, notificationIntent, flags)
         }

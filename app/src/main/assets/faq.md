@@ -103,6 +103,8 @@ It reads `Configuration.uiMode`, the theme Android is actually rendering right n
 
 This mode requires Persistent Service to stay running so it can react instantly. It's turned on automatically the first time you select Follow System Theme; if you turn Persistent Service off afterward, DarQ will only re-sync to your system theme when you open the app or reboot your device.
 
+The **Schedule Target** section (DarQ Force Dark Only / System & DarQ Dark Mode) doesn't apply here and is hidden while Follow System Theme is selected: this mode's input already *is* your system dark theme, so having DarQ also write that same value back to it would be a pointless echo. DarQ always just mirrors the system theme into its own per-app force dark.
+
 ### Why does DarQ/force dark need the system dark theme to be enabled?
 
 For some reason, in the final beta of Android 10, a requirement was added to force dark to make it only work when the system dark theme is enabled. A workaround has not been found (and may not even exist) for this, so it is required for DarQ to work too.

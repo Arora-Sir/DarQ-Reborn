@@ -100,6 +100,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
                 autoDarkScheduleMode = 0
             } else if (autoDarkScheduleMode == 0) {
                 autoDarkScheduleMode = 2
+                autoDarkTargetMode = 1
             }
         }
     var autoDarkTargetMode by this.shared(KEY_AUTO_DARK_TARGET_MODE, DEFAULT_AUTO_DARK_TARGET_MODE)
