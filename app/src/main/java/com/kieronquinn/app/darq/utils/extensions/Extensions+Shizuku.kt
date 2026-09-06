@@ -40,11 +40,26 @@ private fun Context.getShizukuPermissionInfo(): PermissionInfo? {
 
 /**
  * Returns the package name of the installed Shizuku provider, if available.
- * Queries dynamic REQUEST_BINDER intent receivers first, then falls back to
- * direct package lookup and permission verification.
+ * Tries direct lookup of known packages and permissions first, then falls back to a
+ * dynamic REQUEST_BINDER receiver query for any other Shizuku-compatible manager.
+ * The device-wide query is last-resort rather than first-choice so the common case
+ * (stock Shizuku or Shizuku+ installed under their known package names) never needs it.
  */
 fun Context.getShizukuPackageName(): String? {
-    // 1. Dynamic intent query: find any manager registering the Shizuku REQUEST_BINDER receiver
+    // 1. Direct package lookup for known packages
+    for (pkg in SHIZUKU_PACKAGES) {
+        val exists = runCatching {
+            packageManager.getPackageInfo(pkg, 0)
+        }.isSuccess
+        if (exists) return pkg
+    }
+
+    // 2. Defined permission fallback
+    val permPackage = getShizukuPermissionInfo()?.packageName
+    if (permPackage != null) return permPackage
+
+    // 3. Dynamic intent query: find any manager registering the Shizuku REQUEST_BINDER receiver.
+    // Only reached when neither a known package nor a known permission was found.
     val receiverIntent = Intent(ACTION_SHIZUKU_REQUEST_BINDER)
     val receivers = runCatching {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -69,18 +84,6 @@ fun Context.getShizukuPackageName(): String? {
         val firstPkg = receivers.firstNotNullOfOrNull { it.activityInfo?.packageName }
         if (firstPkg != null) return firstPkg
     }
-
-    // 2. Direct package lookup fallback for known packages
-    for (pkg in SHIZUKU_PACKAGES) {
-        val exists = runCatching {
-            packageManager.getPackageInfo(pkg, 0)
-        }.isSuccess
-        if (exists) return pkg
-    }
-
-    // 3. Defined permission fallback
-    val permPackage = getShizukuPermissionInfo()?.packageName
-    if (permPackage != null) return permPackage
 
     return null
 }
