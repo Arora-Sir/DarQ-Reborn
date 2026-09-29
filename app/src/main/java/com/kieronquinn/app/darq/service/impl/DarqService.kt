@@ -33,7 +33,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import rikka.shizuku.SystemServiceHelper
-import kotlin.streams.toList
 import kotlin.system.exitProcess
 
 
@@ -371,25 +370,29 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     //present in that profile too, which is unusual, but worth knowing before calling this anywhere
     //new.
     override fun killOtherInstances(){
-        val myPid = android.os.Process.myPid()
-        val processesByName = runCommand("ps -A -o PID,NAME")
-        //Find just my processes & retrieve the PIDs that don't match our own
-        val otherPids = processesByName
-            .map { it.trim() }
-            .filter { it.endsWith(SHIZUKU_SERVICE_ID) || it.endsWith(ROOT_SERVICE_ID) }
-            .mapNotNull { line ->
-                val tokens = line.trim().split("\\s+".toRegex())
-                if (tokens.size < 2) return@mapNotNull null
-                val pid = tokens[0].toIntOrNull() ?: return@mapNotNull null
-                val name = tokens[1]
-                if ((name == SHIZUKU_SERVICE_ID || name == ROOT_SERVICE_ID) && pid > 100) pid else null
+        try {
+            val myPid = android.os.Process.myPid()
+            val processesByName = runCommand("ps -A -o PID,NAME")
+            //Find just my processes & retrieve the PIDs that don't match our own
+            val otherPids = processesByName
+                .map { it.trim() }
+                .filter { it.endsWith(SHIZUKU_SERVICE_ID) || it.endsWith(ROOT_SERVICE_ID) }
+                .mapNotNull { line ->
+                    val tokens = line.trim().split("\\s+".toRegex())
+                    if (tokens.size < 2) return@mapNotNull null
+                    val pid = tokens[0].toIntOrNull() ?: return@mapNotNull null
+                    val name = tokens[1]
+                    if ((name == SHIZUKU_SERVICE_ID || name == ROOT_SERVICE_ID) && pid > 100) pid else null
+                }
+                .filterNot { it == myPid }
+            if (otherPids.isEmpty()) {
+                return
             }
-            .filterNot { it == myPid }
-        if (otherPids.isEmpty()) {
-            return
+            val killCommands = otherPids.map { "kill $it" }
+            runCommands(*killCommands.toTypedArray())
+        } catch (t: Throwable) {
+            Log.w(TAG, "killOtherInstances failed", t)
         }
-        val killCommands = otherPids.map { "kill $it" }
-        runCommands(*killCommands.toTypedArray())
     }
 
     /**
@@ -444,8 +447,8 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         //only reached when Auto Dark first takes control, where the cost does not matter.
         return try {
             runCommand("cmd uimode night").joinToString(" ").contains("yes", ignoreCase = true)
-        } catch (e: Exception) {
-            Log.e(TAG, "Could not determine night mode, assuming off", e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Could not determine night mode, assuming off", t)
             false
         }
     }
@@ -456,17 +459,21 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     private fun runCommand(command: String): List<String> {
         val process = try {
             ProcessBuilder().command("sh", "-c", command).start()
-        } catch (e: Exception) {
-            Log.w(TAG, "runCommand could not start process for: $command", e)
+        } catch (t: Throwable) {
+            Log.w(TAG, "runCommand could not start process for: $command", t)
             return emptyList()
         }
         return try {
-            process.inputStream.bufferedReader().lines().toList()
-        } catch (e: Exception) {
-            Log.w(TAG, "runCommand failed reading output for: $command", e)
+            process.inputStream.bufferedReader().use { it.readLines() }
+        } catch (t: Throwable) {
+            Log.w(TAG, "runCommand failed reading output for: $command", t)
             emptyList()
         } finally {
-            process.destroy()
+            try {
+                process.destroy()
+            } catch (t: Throwable) {
+                // Ignore process destruction errors
+            }
         }
     }
 
@@ -478,12 +485,12 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
             commands.forEach { cmd ->
                 try {
                     ProcessBuilder().command("sh", "-c", cmd).start().waitFor()
-                } catch (e: Exception) {
-                    Log.w(TAG, "runCommands failed for: $cmd", e)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "runCommands failed for: $cmd", t)
                 }
             }
-        } catch (e: Exception) {
-            Log.w(TAG, "runCommands process execution failed", e)
+        } catch (t: Throwable) {
+            Log.w(TAG, "runCommands process execution failed", t)
         }
     }
 

@@ -28,7 +28,7 @@ import kotlin.coroutines.resume
 class DarqServiceConnectionProvider(private val context: Context, private val settings: DarqSharedPreferences) {
 
     companion object {
-        private const val SERVICE_TIMEOUT = 25000L
+        private const val SERVICE_TIMEOUT = 40000L
 
         //Every failure path below logs under this tag. Service connection failures are otherwise
         //silent, which means a user reporting "Service Timeout" gives us nothing to work with -
@@ -44,6 +44,7 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
         processNameSuffix(ShizukuConstants.SERVICE_NAME)
         debuggable(BuildConfig.DEBUG)
         version(BuildConfig.VERSION_CODE)
+        daemon(false)
     }
 
     sealed class ServiceResult {
@@ -108,8 +109,8 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                             if (continuation.isActive) {
                                 continuation.resume(ServiceResult.Success(rootService, serviceType))
                             }
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Service connected but setup failed (${e.javaClass.simpleName})", e)
+                        } catch (t: Throwable) {
+                            Log.e(TAG, "Service connected but setup failed (${t.javaClass.simpleName})", t)
                             this@DarqServiceConnectionProvider.rootService = null
                             if (continuation.isActive) {
                                 continuation.resume(ServiceResult.Failed(ServiceFailureReason.TIMEOUT))
@@ -180,8 +181,8 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
         //does not abort the more critical setup steps below.
         try {
             killOtherInstances()
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to reap orphaned service instances", e)
+        } catch (t: Throwable) {
+            Log.w(TAG, "Failed to reap orphaned service instances", t)
         }
         //Send settings and whitelist before onBind() registers the process observer.
         //Any Binder failure here (DeadObjectException, RemoteException) propagates up
