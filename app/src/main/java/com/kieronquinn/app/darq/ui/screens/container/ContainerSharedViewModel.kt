@@ -189,7 +189,7 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
             try {
                 service.service.killOtherInstances()
                 true
-            }catch (e: DeadObjectException){
+            }catch (e: Exception){
                 false
             }
         }else false
@@ -225,7 +225,7 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
             try {
                 service.service.notifySettingsChange(ipcSetting)
                 true
-            }catch (e: DeadObjectException){
+            }catch (e: Exception){
                 false
             }
         }else false

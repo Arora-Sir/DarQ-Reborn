@@ -374,14 +374,17 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         val myPid = android.os.Process.myPid()
         val processesByName = runCommand("ps -A -o PID,NAME")
         //Find just my processes & retrieve the PIDs that don't match our own
-        val otherPids = processesByName.map { it.trim() }
+        val otherPids = processesByName
+            .map { it.trim() }
             .filter { it.endsWith(SHIZUKU_SERVICE_ID) || it.endsWith(ROOT_SERVICE_ID) }
-            .mapNotNull {
-                val split = it.split(" ")
-                val pid = split[0]
-                val name = split[1]
-                if (name == SHIZUKU_SERVICE_ID || name == ROOT_SERVICE_ID) pid.toIntOrNull() else null
-            }.filterNot { it == myPid }
+            .mapNotNull { line ->
+                val tokens = line.trim().split("\\s+".toRegex())
+                if (tokens.size < 2) return@mapNotNull null
+                val pid = tokens[0].toIntOrNull() ?: return@mapNotNull null
+                val name = tokens[1]
+                if ((name == SHIZUKU_SERVICE_ID || name == ROOT_SERVICE_ID) && pid > 100) pid else null
+            }
+            .filterNot { it == myPid }
         if (otherPids.isEmpty()) {
             return
         }
@@ -448,24 +451,39 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
     }
 
     /**
-     *  Runs a given command *without root*, wrapping it in `sh` and returning the output lines
+     *  Runs a given command without root, wrapping it in sh and returning the output lines.
      */
     private fun runCommand(command: String): List<String> {
-        ProcessBuilder().command("sh", "-c", command).start().run {
-            val lines = inputStream.bufferedReader().lines().toList()
-            destroy()
-            return lines
+        val process = try {
+            ProcessBuilder().command("sh", "-c", command).start()
+        } catch (e: Exception) {
+            Log.w(TAG, "runCommand could not start process for: $command", e)
+            return emptyList()
+        }
+        return try {
+            process.inputStream.bufferedReader().lines().toList()
+        } catch (e: Exception) {
+            Log.w(TAG, "runCommand failed reading output for: $command", e)
+            emptyList()
+        } finally {
+            process.destroy()
         }
     }
 
     /**
-     *  Runs a set of commands, wrapping each in `sh`, ignoring output
+     *  Runs a set of commands, wrapping each in sh, ignoring output.
      */
     private fun runCommands(vararg commands: String) {
-        ProcessBuilder().run {
-            commands.forEach {
-                command("sh", "-c", it).start().waitFor()
+        try {
+            commands.forEach { cmd ->
+                try {
+                    ProcessBuilder().command("sh", "-c", cmd).start().waitFor()
+                } catch (e: Exception) {
+                    Log.w(TAG, "runCommands failed for: $cmd", e)
+                }
             }
+        } catch (e: Exception) {
+            Log.w(TAG, "runCommands process execution failed", e)
         }
     }
 

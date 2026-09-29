@@ -61,6 +61,19 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
 
     private var serviceType: ServiceType = ServiceType.UNKNOWN
 
+    init {
+        if (context.isShizukuInstalled()) {
+            try {
+                Shizuku.addBinderDeadListener {
+                    Log.w(TAG, "Shizuku binder died, invalidating cached service")
+                    rootService = null
+                }
+            } catch (e: Throwable) {
+                Log.w(TAG, "Failed to register Shizuku binder dead listener", e)
+            }
+        }
+    }
+
     suspend fun getService(): ServiceResult {
         return serviceLock.withLock {
             withContext(Dispatchers.Main) {
@@ -81,24 +94,26 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
                 } catch (e: Exception) {
                     // Service died, fall through and rebind
                     Log.w(TAG, "Cached service did not respond to ping, rebinding", e)
+                    rootService = null
                 }
             }
 
             val serviceConnection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    try {
-                        val rootService = IDarqService.Stub.asInterface(service)
-                        rootService.setupService()
-                        this@DarqServiceConnectionProvider.rootService = rootService
-                        if (continuation.isActive) {
-                            continuation.resume(ServiceResult.Success(rootService, serviceType))
-                        }
-                    } catch (e: Exception) {
-                        //The service connected but setup failed. Reported as TIMEOUT for
-                        //compatibility with existing UI handling, so log the real cause here.
-                        Log.e(TAG, "Service connected but setup failed", e)
-                        if (continuation.isActive) {
-                            continuation.resume(ServiceResult.Failed(ServiceFailureReason.TIMEOUT))
+                    val rootService = IDarqService.Stub.asInterface(service)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            rootService.setupService()
+                            this@DarqServiceConnectionProvider.rootService = rootService
+                            if (continuation.isActive) {
+                                continuation.resume(ServiceResult.Success(rootService, serviceType))
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Service connected but setup failed (${e.javaClass.simpleName})", e)
+                            this@DarqServiceConnectionProvider.rootService = null
+                            if (continuation.isActive) {
+                                continuation.resume(ServiceResult.Failed(ServiceFailureReason.TIMEOUT))
+                            }
                         }
                     }
                 }
@@ -159,31 +174,24 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
         Log.e(TAG, "No service connection after ${SERVICE_TIMEOUT}ms (type=$serviceType)")
     }
 
-    private fun IDarqService.setupService(){
-        GlobalScope.launch {
-            withContext(Dispatchers.IO){
-                //Shizuku's UserServiceArgs defaults to daemon(true), so a service process outlives
-                //the app and survives app updates, and nothing reaped the leftovers:
-                //killOtherInstances() was only reachable from the Developer Options button. Two
-                //orphans were found alive for 7h and 8.5h on a test device after a 3.1.3 -> 3.1.4
-                //update, each with its own registered IProcessObserver and its own stale whitelist,
-                //writing conflicting debug.hwui.force_dark values. Reap them before we bind.
-                try {
-                    killOtherInstances()
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to reap orphaned service instances", e)
-                }
-                //Send settings and the whitelist before onBind(), which is what registers the
-                //process observer. Registering first left a window where the observer was live with
-                //an empty whitelist and would clear force dark for apps that are actually selected.
-                setupSettings(settings.toIPCSetting())
-                val enabledApps = settings.enabledApps
-                enabledApps.forEachIndexed { index, app ->
-                    setupWhitelist(index == 0, index == enabledApps.size - 1, app)
-                }
-                onBind()
-            }
+    private suspend fun IDarqService.setupService() = withContext(Dispatchers.IO) {
+        //Reap stale orphaned service processes from previous app version launches.
+        //killOtherInstances is already guarded. Keep it isolated so a failure here
+        //does not abort the more critical setup steps below.
+        try {
+            killOtherInstances()
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to reap orphaned service instances", e)
         }
+        //Send settings and whitelist before onBind() registers the process observer.
+        //Any Binder failure here (DeadObjectException, RemoteException) propagates up
+        //so onServiceConnected can return Failed instead of crashing the application process.
+        setupSettings(settings.toIPCSetting())
+        val enabledApps = settings.enabledApps
+        enabledApps.forEachIndexed { index, app ->
+            setupWhitelist(index == 0, index == enabledApps.size - 1, app)
+        }
+        onBind()
     }
 
 }

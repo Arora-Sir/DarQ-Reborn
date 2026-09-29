@@ -185,11 +185,15 @@ class DarqAutoDarkForegroundService: LifecycleService() {
                 //so turning the schedule off can put it back exactly as the user had it. The flag is
                 //only set once the snapshot exists, so a period that runs while the service is down
                 //retries on the next evaluation instead of locking in the default.
-                if (!settings.autoDarkHasManaged) {
-                    settings.preAutoDarkSystemNightMode = svc.isNightModeActive()
-                    settings.autoDarkHasManaged = true
+                try {
+                    if (!settings.autoDarkHasManaged) {
+                        settings.preAutoDarkSystemNightMode = svc.isNightModeActive()
+                        settings.autoDarkHasManaged = true
+                    }
+                    svc.setNightMode(isDark)
+                } catch (e: Exception) {
+                    android.util.Log.e("DarqAutoDarkService", "Failed to apply system night mode via service", e)
                 }
-                svc.setNightMode(isDark)
             } else {
                 showFailedNotification()
             }
@@ -213,15 +217,20 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         // Write ONLY to autoDarkManagedEnabled - the user's settings.enabled is untouched
         settings.autoDarkManagedEnabled = isDark
         if (isServiceConnected) {
-            val ipcService = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
-            val isXposed = XposedSelfHooks.isXposedModuleEnabled()
-            ipcService.notifySettingsChange(IPCSetting(
-                autoDarkManagedEnabled = isDark,
-                isXposedActive = isXposed
-            ))
+            try {
+                val ipcService = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
+                val isXposed = XposedSelfHooks.isXposedModuleEnabled()
+                ipcService.notifySettingsChange(IPCSetting(
+                    autoDarkManagedEnabled = isDark,
+                    isXposedActive = isXposed
+                ))
+            } catch (e: Exception) {
+                android.util.Log.e("DarqAutoDarkService", "Failed to notify service of auto dark change", e)
+            }
         } else if (settings.autoDarkTargetMode == 1) {
             showFailedNotification()
         }
+        Unit
     }
 
     /**
@@ -240,19 +249,27 @@ class DarqAutoDarkForegroundService: LifecycleService() {
 
         if (isServiceConnected) {
             val svc = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
-            // Restore system night mode for System & DarQ mode if a pre-state was saved
-            if (settings.autoDarkTargetMode == 0 && settings.autoDarkHasManaged) {
-                svc.setNightMode(settings.preAutoDarkSystemNightMode)
+            try {
+                // Restore system night mode for System & DarQ mode if a pre-state was saved
+                if (settings.autoDarkTargetMode == 0 && settings.autoDarkHasManaged) {
+                    svc.setNightMode(settings.preAutoDarkSystemNightMode)
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("DarqAutoDarkService", "Failed to restore system night mode", e)
             }
             // Reset tracking flags
             settings.autoDarkHasManaged = false
             settings.preAutoDarkSystemNightMode = false
             // Notify DarqService to clear isAutoDarkBlocking and re-evaluate foreground app
             val isXposed = XposedSelfHooks.isXposedModuleEnabled()
-            svc.notifySettingsChange(IPCSetting(
-                autoDarkManagedEnabled = true,
-                isXposedActive = isXposed
-            ))
+            try {
+                svc.notifySettingsChange(IPCSetting(
+                    autoDarkManagedEnabled = true,
+                    isXposedActive = isXposed
+                ))
+            } catch (e: Exception) {
+                android.util.Log.e("DarqAutoDarkService", "Failed to notify service of restored state", e)
+            }
         } else {
             // Service not connected - still clear tracking flags so it doesn't block on next reconnect
             settings.autoDarkHasManaged = false
@@ -264,7 +281,11 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         val latLng = if(settings.useLocation){
             val service = serviceProvider.getService()
             if(service is DarqServiceConnectionProvider.ServiceResult.Success){
-                service.service.location ?: getTimezoneLocation() ?: return@withContext null
+                try {
+                    service.service.location ?: getTimezoneLocation() ?: return@withContext null
+                } catch (e: Exception) {
+                    getTimezoneLocation() ?: return@withContext null
+                }
             }else getTimezoneLocation() ?: return@withContext null
         }else getTimezoneLocation() ?: return@withContext null
         SunTimes.compute().on(Calendar.getInstance()).at(latLng.latitude, latLng.longitude).execute()

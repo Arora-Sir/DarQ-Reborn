@@ -35,7 +35,11 @@ class SettingsDeveloperOptionsViewModelImpl(private val navigation: Navigation):
     private suspend fun getServiceState(serviceCall: suspend () -> DarqServiceConnectionProvider.ServiceResult): String? {
         val service = serviceCall.invoke()
         if(service is DarqServiceConnectionProvider.ServiceResult.Success){
-            return service.service.serviceType
+            return try {
+                service.service.serviceType
+            } catch (e: Exception) {
+                null
+            }
         }
         return null
     }
