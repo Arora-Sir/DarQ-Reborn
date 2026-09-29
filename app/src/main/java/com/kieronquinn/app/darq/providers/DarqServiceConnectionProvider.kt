@@ -30,9 +30,9 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
     companion object {
         private const val SERVICE_TIMEOUT = 40000L
 
-        //Every failure path below logs under this tag. Service connection failures are otherwise
-        //silent, which means a user reporting "Service Timeout" gives us nothing to work with -
-        //the only clues end up being Shizuku's own logs rather than ours.
+        // Every failure path below logs under this tag. Service connection failures are otherwise
+        // silent. A report of a timeout provides little diagnostic value without local log entries.
+        // The only remaining indicators would be external Shizuku system logs.
         private const val TAG = "DarqServiceConn"
     }
 

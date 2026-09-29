@@ -472,7 +472,7 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
             try {
                 process.destroy()
             } catch (t: Throwable) {
-                // Ignore process destruction errors
+                // Process may have already terminated.
             }
         }
     }
