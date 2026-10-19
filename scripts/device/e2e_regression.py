@@ -120,17 +120,33 @@ def set_probe_selected(dev: Device, selected: bool) -> bool:
     open_main(dev)
     dev.tap_text(MAIN_LIST_TEXT)
     search = None
-    for _ in range(20):
-        matches = dev.find(resource_id=":id/searchBox")
-        if matches:
-            search = matches[0]
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        nodes = dev.dump_ui()
+        search = next((node for node in nodes if node.resource_id.endswith(":id/searchBox")), None)
+        if search is not None:
             break
-        time.sleep(1)
+        # A tap swallowed by a busy emulator leaves the settings list on screen, so the entry is tapped again.
+        entry = next((node for node in nodes if node.text == MAIN_LIST_TEXT), None)
+        if entry is not None:
+            dev.tap(*entry.center)
+        time.sleep(2)
     if search is None:
         raise RuntimeError("App picker search box did not appear")
-    dev.tap(*search.center)
-    dev.type_text("DarQ")
-    title = dev.wait_for_text(PROBE_LABEL, timeout=60)
+    title = None
+    for attempt in range(2):
+        dev.tap(*search.center)
+        if attempt:
+            # A keyboard that was not ready can drop the first input, so the field is cleared and typed again.
+            dev.sh("input keyevent KEYCODE_MOVE_END; input keyevent --longpress KEYCODE_DEL", check=False)
+        dev.type_text("DarQ")
+        try:
+            title = dev.wait_for_text(PROBE_LABEL, timeout=30)
+            break
+        except TimeoutError:
+            dev.screenshot(ROOT / ".e2e" / f"picker-miss-{dev.serial.replace(':', '_')}-{int(time.time())}.png")
+    if title is None:
+        raise TimeoutError(f"'{PROBE_LABEL}' did not appear in the app picker after typing twice")
     switch = row_switch(dev, title.bounds)
     if switch.checked != selected:
         dev.tap(*switch.center)
@@ -172,7 +188,7 @@ def main() -> int:
     parser.add_argument("--min-idle", type=int, default=60)
     args = parser.parse_args()
 
-    out_dir = ROOT / "build/e2e" / datetime.now().strftime("%Y%m%d-%H%M%S-regression")
+    out_dir = ROOT / ".e2e" / datetime.now().strftime("%Y%m%d-%H%M%S-regression")
     out_dir.mkdir(parents=True, exist_ok=True)
     report = Report(out_dir)
     dev = Device(args.serial)
