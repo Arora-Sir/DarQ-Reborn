@@ -26,7 +26,6 @@ import com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.ui.base.*
 import com.kieronquinn.app.darq.utils.extensions.*
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -73,7 +72,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     }
 
     private fun setupBackground(){
-        val backgroundColor = monet.getBackgroundColor(requireContext())
+        val backgroundColor = themeColors.getBackgroundColor(requireContext())
         binding.root.setBackgroundColor(backgroundColor)
         binding.appBar.setBackgroundColor(android.graphics.Color.TRANSPARENT)
     }
@@ -127,11 +126,11 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                     navigation.navigateBack()
                 }
             }
-            collapsingToolbar.setBackgroundColor(monet.getBackgroundColor(requireContext()))
-            collapsingToolbar.setContentScrimColor(monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext()))
+            collapsingToolbar.setBackgroundColor(themeColors.getBackgroundColor(requireContext()))
+            collapsingToolbar.setContentScrimColor(themeColors.getBackgroundColorSecondary(requireContext()))
             collapsingToolbar.setExpandedTitleTypeface(ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium))
             collapsingToolbar.setCollapsedTitleTypeface(ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium))
-            toolbar.overflowIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.toolbar_overflow))
+            toolbar.overflowIcon?.setTint(themeColors.getOnSurfaceColor(requireContext()))
         }
     }
 
@@ -178,9 +177,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
             view.updatePadding(bottom = bottomInsets)
             insets
         }
-        val background = monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext())
+        val background = themeColors.getBackgroundColorSecondary(requireContext())
         binding.snackbar.backgroundTintList = ColorStateList.valueOf(background)
-        binding.snackbarRoot.snackbarProgress.applyMonet()
         lifecycleScope.launchWhenResumed {
             launch {
                 sharedViewModel.showSnackbar.collect {

@@ -1,23 +1,20 @@
 package com.kieronquinn.app.darq.ui.activities
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.view.menu.ListMenuItemView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import com.kieronquinn.app.darq.R
-import com.kieronquinn.monetcompat.app.MonetCompatActivity
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
+import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.components.theme.ThemeManager
+import org.koin.android.ext.android.inject
 
-class DarqActivity: MonetCompatActivity() {
+class DarqActivity: AppCompatActivity() {
 
     companion object {
         const val EXTRA_OPEN_ADVANCED_SETTINGS = "open_advanced_settings"
@@ -29,18 +26,25 @@ class DarqActivity: MonetCompatActivity() {
         // Permission request handled
     }
 
+    private val settings by inject<DarqSharedPreferences>()
+    private var appliedTheme: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        appliedTheme = ThemeManager.apply(this, settings)
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setUseLightStatusNav(false)
-        lifecycleScope.launchWhenResumed {
-            monet.awaitMonetReady()
-            setContentView(R.layout.activity_darq)
-            val lightStatusNav = resources.getBoolean(R.bool.lightStatusNav)
-            setUseLightStatusNav(lightStatusNav)
-        }
+        setContentView(R.layout.activity_darq)
+        setUseLightStatusNav(resources.getBoolean(R.bool.lightStatusNav))
 
         askNotificationPermission()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //An accent or pure black change made elsewhere (a restore, another task) only shows after the theme is applied again
+        if(ThemeManager.signature(settings) != appliedTheme){
+            recreate()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -54,26 +58,6 @@ class DarqActivity: MonetCompatActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    }
-
-    /**
-     *  Applies Monet to the overflow menu's checkbox
-     */
-    override fun onCreateView(
-        parent: View?,
-        name: String,
-        context: Context,
-        attrs: AttributeSet
-    ): View? {
-        if (applyBackgroundColorToMenu && name == ListMenuItemView::class.java.name) {
-            //Toolbar dropdown menu list item
-            (parent?.parent as? View)?.run {
-                post {
-                    applyMonetRecursively()
-                }
-            }
-        }
-        return super.onCreateView(parent, name, context, attrs)
     }
 
     private fun setUseLightStatusNav(enabled: Boolean){

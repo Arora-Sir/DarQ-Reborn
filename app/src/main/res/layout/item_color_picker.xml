@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="72dp"
-    android:layout_height="72dp"
-    android:clipToPadding="false"
-    android:padding="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:clipToPadding="false">
 
     <View
         android:id="@+id/item_color_picker_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
         android:clickable="true"
         android:focusable="true"
         android:background="@drawable/monet_color_picker_circle_background"
-        android:elevation="4dp"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         tools:backgroundTint="@color/material_on_primary_disabled" />
+
+    <!-- NOTE: The outline keeps very dark or very light swatches visible on any sheet color. -->
+    <View
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:background="@drawable/color_swatch_outline" />
 
     <ImageView
         android:id="@+id/item_color_picker_check"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/padding_16"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:padding="12dp"
         android:src="@drawable/ic_check"
-        android:elevation="4dp"
-        android:outlineProvider="none"
+        android:importantForAccessibility="no"
         android:visibility="gone"
         tools:visibility="visible" />
 

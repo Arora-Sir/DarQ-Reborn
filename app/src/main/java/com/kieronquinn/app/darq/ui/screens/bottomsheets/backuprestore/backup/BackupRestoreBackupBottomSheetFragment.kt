@@ -11,7 +11,6 @@ import androidx.navigation.fragment.navArgs
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetBackupBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,7 +25,6 @@ class BackupRestoreBackupBottomSheetFragment: BaseBottomSheetFragment<FragmentBo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding){
-            fragmentBackupProgress.applyMonet()
             ViewCompat.setOnApplyWindowInsetsListener(root){ view, insets ->
                 val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
                 val extraPadding = resources.getDimension(R.dimen.padding_8).toInt()

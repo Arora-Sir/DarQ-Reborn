@@ -22,6 +22,7 @@ abstract class SettingsViewModel: ViewModel() {
     abstract val developerOptionsVisible: Flow<Boolean>
 
     abstract fun onAdvancedOptionsClicked()
+    abstract fun onAppearanceClicked()
     abstract fun onXposedClicked()
     abstract fun onBackupRestoreClicked()
     abstract fun onAppWhitelistClicked()
@@ -72,6 +73,12 @@ class SettingsViewModelImpl(
     override fun onAppWhitelistClicked() {
         viewModelScope.launch {
             navigation.navigate(SettingsFragmentDirections.actionSettingsFragmentToSettingsAppPickerFragment())
+        }
+    }
+
+    override fun onAppearanceClicked() {
+        viewModelScope.launch {
+            navigation.navigate(SettingsFragmentDirections.actionSettingsFragmentToSettingsAppearanceFragment())
         }
     }
 

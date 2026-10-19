@@ -24,7 +24,6 @@ import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
 import com.kieronquinn.app.darq.ui.screens.settings.SettingsAdapter
 import com.kieronquinn.app.darq.utils.AutoDarkUtils
 import com.kieronquinn.app.darq.work.DarqSunriseSunsetWork
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
 
 class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBinding>(
     FragmentSettingsAutoDarkBinding::inflate
@@ -287,7 +286,6 @@ class SettingsAutoDarkFragment : BaseSettingsFragment<FragmentSettingsAutoDarkBi
         savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 

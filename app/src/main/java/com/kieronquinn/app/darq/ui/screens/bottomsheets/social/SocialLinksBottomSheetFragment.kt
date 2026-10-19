@@ -44,7 +44,7 @@ class SocialLinksBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
                 dismiss()
             }
 
-            val accent = ColorStateList.valueOf(monet.getAccentColor(requireContext()))
+            val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             socialIcWebsite.imageTintList = accent
             socialIcGithubProfile.imageTintList = accent
             socialIcLinkedinProfile.imageTintList = accent
@@ -53,7 +53,7 @@ class SocialLinksBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
             socialIcReddit.imageTintList = accent
             socialLinksCancel.setTextColor(accent)
 
-            val cardBg = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.bottom_sheet_card_background)
+            val cardBg = themeColors.getBackgroundColorSecondary(requireContext())
             val backgroundTint = ColorStateList.valueOf(cardBg)
             socialWebsite.backgroundTintList = backgroundTint
             socialGithubProfile.backgroundTintList = backgroundTint

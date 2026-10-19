@@ -1,13 +1,13 @@
 package com.kieronquinn.app.darq.utils.extensions
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import androidx.recyclerview.widget.RecyclerView
-import com.kieronquinn.monetcompat.core.MonetCompat
 
-fun RecyclerView.applyMonetToFastScroller() {
-    val monet = MonetCompat.getInstance()
+fun RecyclerView.applyThemeToFastScroller() {
+    val themeColors = ThemeColors
     val fastScrollerClass = Class.forName("androidx.recyclerview.widget.FastScroller")
     for (i in 0 until itemDecorationCount) {
         val decoration = getItemDecorationAt(i)
@@ -20,10 +20,10 @@ fun RecyclerView.applyMonetToFastScroller() {
                 fastScrollerClass.getDeclaredField("mVerticalTrackDrawable").apply {
                     isAccessible = true
                 }.get(decoration) as Drawable
-            mVerticalThumbDrawable.setTintList(ColorStateList.valueOf(monet.getAccentColor(context)))
+            mVerticalThumbDrawable.setTintList(ColorStateList.valueOf(themeColors.getAccentColor(context)))
             mVerticalTrackDrawable.setTintList(
                 ColorStateList.valueOf(
-                    monet.getBackgroundColorSecondary(context) ?: monet.getBackgroundColor(context)
+                    themeColors.getBackgroundColorSecondary(context)
                 )
             )
         }

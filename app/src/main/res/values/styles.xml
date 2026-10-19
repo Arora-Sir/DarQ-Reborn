@@ -1,9 +1,7 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+    <!-- NOTE: Accent roles come from a ThemeOverlay.Darq.Accent overlay or from dynamic colors, applied by ThemeManager before the activity inflates. -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
@@ -12,6 +10,20 @@
         <item name="searchBoxBackground">@color/search_box_background</item>
         <item name="textAppearanceLargePopupMenu">@style/AppTheme.TextAppearance.Popup</item>
         <item name="actionOverflowMenuStyle">@style/DarqOverflowMenu</item>
+        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+    </style>
+
+    <!-- NOTE: Pure black for AMOLED screens, applied on top of the accent only while the app is dark. -->
+    <!-- NOTE: Containers keep small steps above black so cards and sheets stay distinguishable. -->
+    <style name="ThemeOverlay.Darq.PureBlack" parent="">
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="colorSurface">@android:color/black</item>
+        <item name="colorSurfaceDim">@android:color/black</item>
+        <item name="colorSurfaceContainerLowest">@android:color/black</item>
+        <item name="colorSurfaceContainerLow">#FF0B0B0C</item>
+        <item name="colorSurfaceContainer">#FF121214</item>
+        <item name="colorSurfaceContainerHigh">#FF1A1A1D</item>
+        <item name="colorSurfaceContainerHighest">#FF232327</item>
     </style>
 
     <style name="TextAppearance.AppCompat.Small.Darq" parent="TextAppearance.AppCompat.Small">
@@ -37,27 +49,27 @@
         <item name="android:textFontWeight">400</item>
     </style>
 
-    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+    <style name="BaseBottomSheetDialog" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="BaseBottomSheetDialog.Dark" parent="@style/Theme.Design.BottomSheetDialog">
+    <style name="BaseBottomSheetDialog.Dark" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet.Dark</item>
         <item name="android:windowLightNavigationBar">false</item>
-        <item name="android:navigationBarColor">@color/toolbar_dark</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+    <style name="BottomSheet" parent="@style/Widget.Material3.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_rounded_bg</item>
     </style>
 
-    <style name="BottomSheet.Dark" parent="@style/Widget.Design.BottomSheet.Modal">
+    <style name="BottomSheet.Dark" parent="@style/Widget.Material3.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_rounded_bg_dark</item>
     </style>
 
@@ -70,11 +82,9 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
-    <style name="DarqOverflowMenu" parent="@style/Widget.MaterialComponents.PopupMenu.Overflow">
-        <item name="android:popupBackground">@drawable/background_menu</item>
-    </style>
+    <style name="DarqOverflowMenu" parent="@style/Widget.Material3.PopupMenu.Overflow" />
 
-    <style name="AppTheme.ThirdPartyLicences" parent="Theme.MaterialComponents.DayNight">
+    <style name="AppTheme.ThirdPartyLicences" parent="Theme.Material3.DayNight">
         <item name="actionBarStyle">@style/ThirdPartyLicencesToolbarTheme</item>
         <item name="android:statusBarColor">?android:windowBackground</item>
         <item name="android:windowLightStatusBar">@bool/lightStatusNav</item>
@@ -95,12 +105,12 @@
     <style name="ThirdPartyLicencesToolbarTheme" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="background">?android:windowBackground</item>
         <item name="titleTextStyle">@style/ThirdPartyLicencesToolbarTitleStyle</item>
-        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
         <item name="homeAsUpIndicator">@drawable/ic_back</item>
     </style>
 
     <style name="ThirdPartyLicencesToolbarTitleStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:fontFamily">@font/google_sans_text_medium</item>
     </style>
 

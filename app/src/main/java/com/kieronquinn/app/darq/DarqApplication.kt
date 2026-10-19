@@ -39,7 +39,7 @@ import com.kieronquinn.app.darq.ui.screens.settings.apppicker.SettingsAppPickerV
 import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperOptionsViewModel
 import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperOptionsViewModelImpl
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
-import com.kieronquinn.monetcompat.core.MonetCompat
+import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -113,7 +113,7 @@ class DarqApplication : Application() {
         Sui.init(packageName)
         ShizukuProvider.enableMultiProcessSupport(true)
         restoreSettingsSnapshot()
-        setupMonet()
+        ThemeManager.applyNightMode(get())
         
         val settings = get<DarqSharedPreferences>()
         if (settings.persistentService) {
@@ -192,15 +192,6 @@ class DarqApplication : Application() {
             } catch (e: Exception) {
                 Log.w("DarQA", "Failed to notify service of Xposed state", e)
             }
-        }
-    }
-
-    private fun setupMonet(){
-        val settings = get<DarqSharedPreferences>()
-        MonetCompat.wallpaperColorPicker = {
-            val selectedColor = settings.monetColor
-            if(selectedColor != Integer.MAX_VALUE && it?.contains(selectedColor) == true) selectedColor
-            else it?.firstOrNull()
         }
     }
 

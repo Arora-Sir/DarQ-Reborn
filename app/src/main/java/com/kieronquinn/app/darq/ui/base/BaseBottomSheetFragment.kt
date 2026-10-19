@@ -1,5 +1,6 @@
 package com.kieronquinn.app.darq.ui.base
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.animation.ValueAnimator
 import android.app.Dialog
 import android.content.res.ColorStateList
@@ -18,14 +19,11 @@ import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.providers.blur.BlurProvider
 import com.kieronquinn.app.darq.ui.utils.autoCleared
 import com.kieronquinn.app.darq.utils.extensions.isDarkTheme
-import com.kieronquinn.monetcompat.core.MonetCompat
 import org.koin.android.ext.android.inject
 
 abstract class BaseBottomSheetFragment<T: ViewBinding>(private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> T): BottomSheetDialogFragment() {
 
-    internal val monet by lazy {
-        MonetCompat.getInstance()
-    }
+    internal val themeColors = ThemeColors
 
     internal var binding by autoCleared<T>()
 
@@ -120,7 +118,7 @@ abstract class BaseBottomSheetFragment<T: ViewBinding>(private val inflate: (Lay
         super.onStart()
         val dialog = dialog as? BottomSheetDialog ?: return
         val sheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return
-        val sheetBg = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.bottom_sheet_background)
+        val sheetBg = themeColors.getSheetColor(requireContext())
         sheet.backgroundTintList = ColorStateList.valueOf(sheetBg)
         (sheet.parent as? View)?.backgroundTintList = ColorStateList.valueOf(sheetBg)
         behavior = BottomSheetBehavior.from(sheet).apply {

@@ -16,6 +16,13 @@
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
     <dimen name="snackbar_max_height">72dp</dimen>
 
+    <!-- Grouped settings sections -->
+    <dimen name="settings_group_corner_outer">24dp</dimen>
+    <dimen name="settings_group_corner_inner">4dp</dimen>
+    <dimen name="settings_group_gap">2dp</dimen>
+    <dimen name="main_switch_corner">28dp</dimen>
+    <dimen name="main_switch_min_height">72dp</dimen>
+
     <dimen name="item_app_height">56dp</dimen>
     <dimen name="search_box_height">48dp</dimen>
     <dimen name="search_box_corners">24dp</dimen>

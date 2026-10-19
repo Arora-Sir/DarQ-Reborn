@@ -13,7 +13,6 @@ import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
 import com.kieronquinn.app.darq.ui.screens.settings.SettingsAdapter
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,22 +24,20 @@ class SettingsDeveloperOptionsFragment: BaseSettingsFragment<FragmentSettingsDev
     override val settingsItems by lazy {
         listOf<SettingsItem>(
             SettingsItem.Setting(
-                R.drawable.ic_monet,
-                getString(R.string.item_developer_options_monet_color_picker_title),
-                getString(R.string.item_developer_options_monet_color_picker_content),
-                tapAction = viewModel::onMonetColorPickerClicked
-            ),
-            SettingsItem.Setting(
                 R.drawable.ic_developer_options_kill,
                 getString(R.string.item_developer_options_kill_service_title),
                 getString(R.string.item_developer_options_kill_service_content),
                 tapAction = this::onKillOtherInstancesClicked
             ),
-            SettingsItem.Setting(
-                R.drawable.ic_developer_options_service_info,
-                getString(R.string.item_developer_options_service_info)
-            )
+            serviceInfoItem
         ).toMutableList()
+    }
+
+    private val serviceInfoItem by lazy {
+        SettingsItem.Setting(
+            R.drawable.ic_developer_options_service_info,
+            getString(R.string.item_developer_options_service_info)
+        )
     }
 
     private val adapter by lazy {
@@ -49,7 +46,6 @@ class SettingsDeveloperOptionsFragment: BaseSettingsFragment<FragmentSettingsDev
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 
@@ -63,12 +59,12 @@ class SettingsDeveloperOptionsFragment: BaseSettingsFragment<FragmentSettingsDev
     private fun loadServiceState(){
         lifecycleScope.launchWhenResumed {
             viewModel.getServiceInfo(sharedViewModel).collect {
-                (settingsItems[2] as SettingsItem.Setting).content = if(it.second == null){
+                serviceInfoItem.content = if(it.second == null){
                     getString(it.first)
                 }else{
                     getString(it.first, it.second)
                 }
-                adapter.notifyItemChanged(2)
+                adapter.notifyItemChanged(settingsItems.indexOf(serviceInfoItem))
             }
         }
     }

@@ -20,5 +20,10 @@ data class SettingsBackup(
     val autoDarkTargetMode: Int = 0,
     val autoDarkStartTime: Int = 1200,
     val autoDarkEndTime: Int = 420,
-    val enabledApps: List<String>
+    val enabledApps: List<String>,
+    //Nullable because Gson leaves a missing field null and ignores Kotlin defaults, so older backups restore without touching the theme
+    val themeMode: Int? = null,
+    val themePureBlack: Boolean? = null,
+    val themeAccent: String? = null,
+    val themeTintedIcons: Boolean? = null
 )

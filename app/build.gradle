@@ -29,6 +29,12 @@ android {
         }
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     buildFeatures {
         viewBinding true
         // AGP 8 turns these off by default. DarQ uses AIDL for its service and BuildConfig fields.
@@ -69,9 +75,9 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
 
     //AndroidX
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation "androidx.fragment:fragment-ktx:1.4.1"
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
@@ -87,7 +93,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
 
     //Material
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
     //Network
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -119,9 +125,6 @@ dependencies {
     compileOnly 'io.github.libxposed:api:101.0.1'
     implementation 'io.github.libxposed:service:101.0.0'
 
-    //MonetCompat
-    implementation 'com.github.KieronQuinn:MonetCompat:0.4.1'
-
     //Bypass Hidden APIs
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.2'
 
@@ -132,6 +135,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     //android.jar only stubs org.json, so the real implementation is used on the JVM
     testImplementation 'org.json:json:20240303'
+    //Robolectric runs the theme tests, which need real Android color math and theme resolution
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test:core:1.6.1'
 
 }
 

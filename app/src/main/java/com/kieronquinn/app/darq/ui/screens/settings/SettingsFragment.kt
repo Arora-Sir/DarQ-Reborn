@@ -21,7 +21,6 @@ import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.components.xposed.XposedState
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -56,6 +55,12 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 getString(R.string.item_advanced_options_title),
                 getString(R.string.item_advanced_options_content),
                 tapAction = viewModel::onAdvancedOptionsClicked
+            ),
+            SettingsItem.Setting(
+                R.drawable.ic_appearance_round,
+                getString(R.string.item_appearance_title),
+                getString(R.string.item_appearance_content),
+                tapAction = viewModel::onAppearanceClicked
             ),
             SettingsItem.Setting(
                 R.drawable.ic_xposed_round,
@@ -109,7 +114,6 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 

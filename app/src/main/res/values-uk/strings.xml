@@ -55,8 +55,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">Розробляється та підтримується &lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;. <br/><br/>Вихідний код доступний на &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt;.</string>
     <string name="item_developer_options_title">Параметри розробника</string>
-    <string name="item_developer_options_monet_color_picker_title">Вибір кольору Monet</string>
-    <string name="item_developer_options_monet_color_picker_content">Обрати колір із вашого фонового зображення</string>
     <string name="item_developer_options_kill_service_title">Завершити дублікати служб</string>
     <string name="item_developer_options_kill_service_content">Завершує будь-які дублікати служб DarQ. Зазвичай це не потрібно завдяки способу керування службою, але може знадобитись при перемиканні між режимами Shizuku та root.</string>
     <string name="item_developer_options_kill_service_toast_success">Успішно</string>
@@ -81,7 +79,6 @@
     <string name="item_xposed_invert_status_bar_fix_title">Виправити інверсію панелі стану</string>
     <string name="item_xposed_invert_status_bar_fix_content">Спроба вимкнути інверсію панелі стану в додатках з примусовою темною темою, виправляючи темні іконки на темному фоні</string>
     <string name="item_xposed_info_title">Примітки щодо Xposed</string>
-    <string name="color_picker_unavailable">Вибір кольору Monet недоступний для поточно обраного фонового зображення</string>
     <string name="loading_service_connect">Підключення до служби…</string>
     <string name="snackbar_syncing_text">Синхронізація змін зі службою…</string>
     <string name="snackbar_syncing_complete_text">Зміни синхронізовано зі службою.</string>

@@ -75,7 +75,20 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_XPOSED_INVERT_STATUS_BAR = "xposed_invert_status_bar"
         const val DEFAULT_XPOSED_INVERT_STATUS_BAR = true
 
+        // NOTE: The key keeps its old name so the color picked before the theme system arrived becomes the custom accent.
         private const val KEY_UI_MONET_COLOR = "monet_color"
+
+        private const val KEY_THEME_MODE = "theme_mode"
+        const val DEFAULT_THEME_MODE = 0
+
+        private const val KEY_THEME_PURE_BLACK = "theme_pure_black"
+        const val DEFAULT_THEME_PURE_BLACK = false
+
+        private const val KEY_THEME_ACCENT = "theme_accent"
+        const val DEFAULT_THEME_ACCENT = "wallpaper"
+
+        private const val KEY_THEME_TINTED_ICONS = "theme_tinted_icons"
+        const val DEFAULT_THEME_TINTED_ICONS = false
 
         const val KEY_ENABLED_APPS = "enabled_apps"
 
@@ -120,6 +133,10 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     // True once Auto Dark has fired at least once and saved a pre-state
     var autoDarkHasManaged by this.shared(KEY_AUTO_DARK_HAS_MANAGED, false)
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
+    var themeMode by this.shared(KEY_THEME_MODE, DEFAULT_THEME_MODE)
+    var themePureBlack by this.shared(KEY_THEME_PURE_BLACK, DEFAULT_THEME_PURE_BLACK)
+    var themeAccent by this.shared(KEY_THEME_ACCENT, DEFAULT_THEME_ACCENT)
+    var themeTintedIcons by this.shared(KEY_THEME_TINTED_ICONS, DEFAULT_THEME_TINTED_ICONS)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
 
     var xposedAggressiveDark by this.shared(KEY_XPOSED_AGGRESSIVE_DARK, DEFAULT_XPOSED_AGGRESSIVE_DARK)
@@ -167,7 +184,11 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             autoDarkTargetMode = this.autoDarkTargetMode,
             autoDarkStartTime = this.autoDarkStartTime,
             autoDarkEndTime = this.autoDarkEndTime,
-            enabledApps = this.enabledApps.toList()
+            enabledApps = this.enabledApps.toList(),
+            themeMode = this.themeMode,
+            themePureBlack = this.themePureBlack,
+            themeAccent = this.themeAccent,
+            themeTintedIcons = this.themeTintedIcons
         )
     }
 
@@ -195,6 +216,11 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         autoDarkStartTime = settingsBackup.autoDarkStartTime
         autoDarkEndTime = settingsBackup.autoDarkEndTime
         enabledApps = settingsBackup.enabledApps.toTypedArray()
+        //Backups made before the theme system have no theme fields, so the current theme stays
+        settingsBackup.themeMode?.let { themeMode = it }
+        settingsBackup.themePureBlack?.let { themePureBlack = it }
+        settingsBackup.themeAccent?.let { themeAccent = it }
+        settingsBackup.themeTintedIcons?.let { themeTintedIcons = it }
         //Each write above mirrors its own key to the LibXposed remote preferences, this final pass covers a write that raced a rebind
         XposedBridge.syncAll()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation

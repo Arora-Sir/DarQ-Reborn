@@ -50,7 +50,7 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:layout_marginEnd="@dimen/padding_16"
         android:id="@+id/item_setting_switch_switch"
         android:layout_width="wrap_content"

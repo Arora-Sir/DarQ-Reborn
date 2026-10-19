@@ -1,5 +1,6 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
@@ -12,8 +13,6 @@ import com.kieronquinn.app.darq.databinding.ItemSnackbarPaddingBinding
 import com.kieronquinn.app.darq.model.settings.AppPickerItem
 import com.kieronquinn.app.darq.model.settings.AppPickerItemType
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
-import com.kieronquinn.monetcompat.core.MonetCompat
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import com.squareup.picasso.Picasso
 
 class SettingsAppPickerAdapter(
@@ -34,9 +33,7 @@ class SettingsAppPickerAdapter(
         Picasso.get()
     }
 
-    private val monet by lazy {
-        MonetCompat.getInstance()
-    }
+    private val themeColors = ThemeColors
 
     override fun getItemCount(): Int {
         return items.size
@@ -70,7 +67,6 @@ class SettingsAppPickerAdapter(
             title.text = item.label
             val uri = Uri.parse("${AppIconRequestHandler.SCHEME_PNAME}:${item.packageName}")
             picasso.load(uri).into(icon)
-            appSwitch.applyMonet()
             appSwitch.setOnCheckedChangeListener(null)
             appSwitch.isChecked = item.enabled
             appSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -86,7 +82,7 @@ class SettingsAppPickerAdapter(
     private fun setupHeader(binding: ItemHeaderBinding, item: AppPickerItem.Header) {
         with(binding) {
             itemHeadingTitle.setText(item.titleResId)
-            itemHeadingTitle.setTextColor(monet.getAccentColor(itemHeadingTitle.context))
+            itemHeadingTitle.setTextColor(themeColors.getAccentColor(itemHeadingTitle.context))
         }
     }
 

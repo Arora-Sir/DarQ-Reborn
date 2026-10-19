@@ -14,7 +14,6 @@ import com.kieronquinn.app.darq.databinding.FragmentBottomSheetUpdateDownloadBin
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,8 +49,7 @@ class UpdateDownloadBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomS
             view.updatePadding(bottom = bottomInset + extraPadding)
             insets
         }
-        binding.fragmentUpdateDownloadProgress.applyMonet()
-        val accentColor = monet.getAccentColor(requireContext())
+        val accentColor = themeColors.getAccentColor(requireContext())
         binding.fragmentUpdateDownloadCancel.setTextColor(accentColor)
         binding.fragmentUpdateDownloadInstall.setTextColor(accentColor)
         viewLifecycleOwner.lifecycleScope.launch {

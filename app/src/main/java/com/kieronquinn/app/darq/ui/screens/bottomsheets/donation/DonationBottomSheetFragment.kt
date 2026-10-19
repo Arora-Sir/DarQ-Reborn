@@ -29,12 +29,12 @@ class DonationBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetD
                 dismiss()
             }
 
-            val accent = ColorStateList.valueOf(monet.getAccentColor(requireContext()))
+            val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             donationIcUpi.imageTintList = accent
             donationIcPaypal.imageTintList = accent
             donationCancel.setTextColor(accent)
 
-            val cardBg = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.bottom_sheet_card_background)
+            val cardBg = themeColors.getBackgroundColorSecondary(requireContext())
             donationUpi.backgroundTintList = ColorStateList.valueOf(cardBg)
             donationPaypal.backgroundTintList = ColorStateList.valueOf(cardBg)
 

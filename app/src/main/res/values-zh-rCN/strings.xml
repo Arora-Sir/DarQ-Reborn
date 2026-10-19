@@ -25,8 +25,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">开发与维护：&lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;。 <br/><br/>项目源码已在 &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt; 开源。</string>
     <string name="item_developer_options_title">开发者选项</string>
-    <string name="item_developer_options_monet_color_picker_title">动态颜色选择器</string>
-    <string name="item_developer_options_monet_color_picker_content">从壁纸中选取一种颜色</string>
     <string name="item_developer_options_kill_service_title">关闭重复的服务</string>
     <string name="item_developer_options_kill_service_content">关闭所有重复的 DarQ 服务。按理来讲这个选项是不必要的，但是可能会在 Shizuku 和 root 模式之间切换时用到。</string>
     <string name="item_developer_options_kill_service_toast_success">成功</string>
@@ -51,7 +49,6 @@
     <string name="item_xposed_aggressive_dark_content">当开启深色模式时，覆盖应用转为亮色的行为。这可能会在一些软件中出现颜色上的问题。</string>
     <string name="item_xposed_invert_status_bar_fix_content">尝试在一些强制深色应用中禁用装谈来反色，修复黑底黑图标。</string>
     <string name="item_xposed_info_title">Xposed 注意事项</string>
-    <string name="color_picker_unavailable">动态颜色选择器对当前选取的壁纸不可用</string>
     <string name="loading_service_connect">正在连接服务…</string>
     <string name="snackbar_syncing_text">正在将更改同步至服务…</string>
     <string name="snackbar_syncing_complete_text">已将更改同步至服务。</string>

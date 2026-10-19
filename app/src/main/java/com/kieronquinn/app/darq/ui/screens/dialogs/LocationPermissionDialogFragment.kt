@@ -12,7 +12,6 @@ import com.kieronquinn.app.darq.databinding.FragmentDialogLocationPermissionBind
 import com.kieronquinn.app.darq.ui.base.BaseDialogFragment
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.overrideRippleColor
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LocationPermissionDialogFragment: BaseDialogFragment<FragmentDialogLocationPermissionBinding>(FragmentDialogLocationPermissionBinding::inflate) {
@@ -22,22 +21,22 @@ class LocationPermissionDialogFragment: BaseDialogFragment<FragmentDialogLocatio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val background = monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext())
+        val background = themeColors.getBackgroundColorSecondary(requireContext())
         dialog?.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.background_dialog_location_permission)?.apply {
             setTint(background)
         })
-        val accent = monet.getAccentColor(requireContext())
+        val accent = themeColors.getAccentColor(requireContext())
         binding.dialogLocationPermissionIcon.imageTintList = ColorStateList.valueOf(accent)
         binding.dialogLocationPermissionAccept.run {
             strokeColor = ColorStateList.valueOf(accent)
-            overrideRippleColor(accent)
+            rippleColor = ColorStateList.valueOf(accent).withAlpha(0x33)
             setOnClickListener {
                 viewModel.onUseLocationClicked(sharedViewModel)
             }
         }
         binding.dialogLocationPermissionDeny.run {
             strokeColor = ColorStateList.valueOf(accent)
-            overrideRippleColor(accent)
+            rippleColor = ColorStateList.valueOf(accent).withAlpha(0x33)
             setOnClickListener {
                 viewModel.onUseTimezoneClicked(sharedViewModel)
             }

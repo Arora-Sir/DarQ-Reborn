@@ -1,5 +1,6 @@
 package com.kieronquinn.app.darq.ui.screens.settings
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,14 +15,24 @@ import com.kieronquinn.app.darq.databinding.*
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.model.settings.SettingsItemType
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import android.content.res.ColorStateList
+import android.graphics.drawable.LayerDrawable
+import android.view.View
+import androidx.core.view.updateLayoutParams
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import android.content.DialogInterface
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.ui.utils.MultiTapDetector
 import com.kieronquinn.app.darq.utils.openLink
-import com.kieronquinn.monetcompat.core.MonetCompat
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 
-class SettingsAdapter(context: Context, private var items: List<SettingsItem>): RecyclerView.Adapter<SettingsAdapter.ViewHolder>() {
+class SettingsAdapter(context: Context, private var items: List<SettingsItem>): RecyclerView.Adapter<SettingsAdapter.ViewHolder>(), KoinComponent {
+
+    private val settings by inject<DarqSharedPreferences>()
+    private val resources = context.resources
 
     init {
         setHasStableIds(true)
@@ -31,9 +42,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 
-    private val monet by lazy {
-        MonetCompat.getInstance()
-    }
+    private val themeColors = ThemeColors
 
     private val visibleItems
         get() = items.filter { it.visible.invoke() }
@@ -65,7 +74,8 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = visibleItems[holder.adapterPosition]
+        val visible = visibleItems
+        val item = visible[holder.adapterPosition]
         when(holder){
             is ViewHolder.Header -> setupHeader(holder.binding, item as SettingsItem.Header)
             is ViewHolder.SettingsSetting -> setupSetting(holder.binding, item as SettingsItem.Setting)
@@ -73,11 +83,59 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
             is ViewHolder.SettingsSwitchSetting -> setupSettingSwitch(holder.binding, item as SettingsItem.SwitchSetting)
             is ViewHolder.SnackbarPadding -> {}
         }
+        if(holder !is ViewHolder.Header && holder !is ViewHolder.SnackbarPadding){
+            applyGroupShape(holder.binding.root, visible, holder.adapterPosition)
+            tintIcon(holder)
+        }
+    }
+
+    private fun SettingsItem?.isGroupBreak() = this == null || this is SettingsItem.Header || this is SettingsItem.SnackbarPadding
+
+    // NOTE: Rows between two headers form one rounded section, with large outer corners and small inner corners, as in the Android 16 settings app.
+    // NOTE: The outline clips the row ripple to the same shape.
+    private fun applyGroupShape(root: View, visible: List<SettingsItem>, position: Int) {
+        val isFirst = visible.getOrNull(position - 1).isGroupBreak()
+        val isLast = visible.getOrNull(position + 1).isGroupBreak()
+        val outer = resources.getDimension(R.dimen.settings_group_corner_outer)
+        val inner = resources.getDimension(R.dimen.settings_group_corner_inner)
+        val shape = ShapeAppearanceModel.builder()
+            .setTopLeftCornerSize(if(isFirst) outer else inner)
+            .setTopRightCornerSize(if(isFirst) outer else inner)
+            .setBottomLeftCornerSize(if(isLast) outer else inner)
+            .setBottomRightCornerSize(if(isLast) outer else inner)
+            .build()
+        root.background = MaterialShapeDrawable(shape).apply {
+            fillColor = ColorStateList.valueOf(ThemeColors.getContainerColor(root.context))
+        }
+        root.clipToOutline = true
+        root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            val horizontal = resources.getDimensionPixelSize(R.dimen.padding_16)
+            marginStart = horizontal
+            marginEnd = horizontal
+            topMargin = if(isFirst) 0 else resources.getDimensionPixelSize(R.dimen.settings_group_gap)
+            bottomMargin = 0
+        }
+    }
+
+    // NOTE: Round icons are a colored circle layer and a glyph layer. Tinted icons recolor both from the accent, plain glyphs stay as they are.
+    private fun tintIcon(holder: ViewHolder) {
+        if(!settings.themeTintedIcons) return
+        val icon = when(holder){
+            is ViewHolder.SettingsSetting -> holder.binding.itemSettingIcon
+            is ViewHolder.SettingsSwitchSetting -> holder.binding.itemSettingSwitchIcon
+            is ViewHolder.SettingsAboutSetting -> holder.binding.itemSettingIcon
+            else -> return
+        }
+        val layers = icon.drawable?.mutate() as? LayerDrawable ?: return
+        if(layers.numberOfLayers < 2) return
+        layers.getDrawable(0).setTint(ThemeColors.getIconContainerColor(icon.context))
+        layers.getDrawable(1).setTint(ThemeColors.getOnIconContainerColor(icon.context))
+        icon.setImageDrawable(layers)
     }
 
     private fun setupHeader(binding: ItemHeaderBinding, item: SettingsItem.Header) = with(binding) {
         itemHeadingTitle.text = item.title
-        itemHeadingTitle.setTextColor(monet.getAccentColor(itemHeadingTitle.context))
+        itemHeadingTitle.setTextColor(themeColors.getAccentColor(itemHeadingTitle.context))
     }
 
     private fun setupSetting(binding: ItemSettingBinding, item: SettingsItem.Setting) = with(binding) {
@@ -108,7 +166,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
     }
 
     private fun setupTripleTapActionSetting(binding: ItemSettingAboutBinding, item: SettingsItem.AboutSetting) = with(binding) {
-        val secondaryBackground = monet.getBackgroundColorSecondary(root.context) ?: monet.getBackgroundColor(root.context)
+        val secondaryBackground = themeColors.getBackgroundColorSecondary(root.context)
         val backgroundTint = android.content.res.ColorStateList.valueOf(secondaryBackground)
         chipSocials.chipBackgroundColor = backgroundTint
 
@@ -160,7 +218,6 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
 
     private fun setupSettingSwitch(binding: ItemSettingSwitchBinding, item: SettingsItem.SwitchSetting) = with(binding) {
         itemSettingSwitchTitle.text = item.title
-        itemSettingSwitchSwitch.applyMonet()
         if(item.content.isNullOrEmpty()){
             itemSettingSwitchContent.isVisible = false
         }else{

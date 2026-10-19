@@ -57,6 +57,26 @@ class SettingsSnapshotTest {
     }
 
     @Test
+    fun snapshotFromBeforeTheThemeSystemLeavesThemeFieldsUnset() {
+        val stored = SettingsSnapshot.Stored(revision = 7, settings = backup)
+        val legacyJson = SettingsSnapshot.encode(stored)
+            .replace(Regex(""",\s*"theme[A-Za-z]+"\s*:\s*[^,}]+"""), "")
+        val decoded = SettingsSnapshot.decode(legacyJson)!!.settings
+        assertNull(decoded.themeMode)
+        assertNull(decoded.themePureBlack)
+        assertNull(decoded.themeAccent)
+        assertNull(decoded.themeTintedIcons)
+        assertEquals(backup.enabledApps, decoded.enabledApps)
+    }
+
+    @Test
+    fun themeFieldsRoundTrip() {
+        val themed = backup.copy(themeMode = 2, themePureBlack = true, themeAccent = "teal", themeTintedIcons = true)
+        val stored = SettingsSnapshot.Stored(revision = 8, settings = themed)
+        assertEquals(themed, SettingsSnapshot.decode(SettingsSnapshot.encode(stored))!!.settings)
+    }
+
+    @Test
     fun corruptSnapshotIsIgnored() {
         assertNull(SettingsSnapshot.decode("{not json"))
         assertNull(SettingsSnapshot.decode(""))

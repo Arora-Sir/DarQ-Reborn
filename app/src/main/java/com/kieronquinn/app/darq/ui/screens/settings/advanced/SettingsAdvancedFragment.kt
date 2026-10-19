@@ -15,7 +15,6 @@ import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
 import com.kieronquinn.app.darq.ui.screens.settings.SettingsAdapter
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
 
 class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBinding>(
     FragmentSettingsAdvancedBinding::inflate), AutoExpandOnRotate, BackAvailable {
@@ -120,7 +119,6 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 

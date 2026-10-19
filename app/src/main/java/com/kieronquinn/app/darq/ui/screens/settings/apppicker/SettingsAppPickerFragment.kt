@@ -21,11 +21,9 @@ import com.kieronquinn.app.darq.ui.base.BoundFragment
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.ui.utils.TransitionUtils
-import com.kieronquinn.app.darq.utils.extensions.applyMonetToFastScroller
+import com.kieronquinn.app.darq.utils.extensions.applyThemeToFastScroller
 import com.kieronquinn.app.darq.utils.extensions.expandAppBar
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
-import com.kieronquinn.monetcompat.extensions.views.enableStretchOverscroll
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -67,7 +65,6 @@ class SettingsAppPickerFragment :
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 
@@ -89,8 +86,7 @@ class SettingsAppPickerFragment :
                 updatePadding(left = requiredInsets.left, right = requiredInsets.right, bottom = requiredInsets.bottom)
                 insets
             }
-            enableStretchOverscroll()
-            applyMonetToFastScroller()
+            applyThemeToFastScroller()
         }
     }
 
@@ -131,8 +127,8 @@ class SettingsAppPickerFragment :
 
     private fun setupSearch() {
         with(binding.appPickerSearch) {
-            val background = monet.getBackgroundColor(requireContext())
-            val secondaryBackground = monet.getBackgroundColorSecondary(requireContext()) ?: background
+            val background = themeColors.getBackgroundColor(requireContext())
+            val secondaryBackground = themeColors.getBackgroundColorSecondary(requireContext()) ?: background
             root.setBackgroundColor(background)
             searchBox.backgroundTintList = ColorStateList.valueOf(secondaryBackground)
             searchBox.text.run {

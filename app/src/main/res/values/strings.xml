@@ -61,8 +61,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">Developed &amp; Maintained by &lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;. <br/><br/>Source code is available on &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt;.</string>
     <string name="item_developer_options_title">Developer Options</string>
-    <string name="item_developer_options_monet_color_picker_title">Monet Color Picker</string>
-    <string name="item_developer_options_monet_color_picker_content">Pick a color to use from your wallpaper</string>
     <string name="item_developer_options_kill_service_title">Kill duplicate services</string>
     <string name="item_developer_options_kill_service_content">Kill any duplicate DarQ services, this shouldn\'t be required due to how the service is handled, but may be if you switch between Shizuku and root modes.</string>
     <string name="item_developer_options_kill_service_toast_success">Success</string>
@@ -97,7 +95,6 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="xposed_scope_failed">LSPosed scope request failed: %1$s</string>
     <string name="xposed_scope_already">All selected apps are already in the LSPosed scope</string>
     <string name="xposed_scope_unavailable">Needs LSPosed 2.x or Vector with the DarQ module enabled</string>
-    <string name="color_picker_unavailable">Monet Color Picker unavailable for the currently selected wallpaper</string>
     <string name="loading_service_connect">Connecting to service…</string>
     <string name="snackbar_syncing_text">Syncing changes with service…</string>
     <string name="snackbar_syncing_complete_text">Changes synced with service.</string>
@@ -191,5 +188,31 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="social_instagram_summary">instagram.com/arora.sir</string>
     <string name="social_reddit_title">Reddit</string>
     <string name="social_reddit_summary">reddit.com/user/AroraSir</string>
+
+    <!-- Appearance -->
+    <string name="item_appearance_title">Appearance</string>
+    <string name="item_appearance_content">Theme, accent color, pure black and icons</string>
+    <string name="appearance_theme_title">Theme</string>
+    <string name="appearance_theme_system">Follow system</string>
+    <string name="appearance_theme_light">Light</string>
+    <string name="appearance_theme_dark">Dark</string>
+    <string name="appearance_pure_black_title">Pure black</string>
+    <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
+    <string name="appearance_accent_title">Accent color</string>
+    <string name="appearance_accent_wallpaper">Wallpaper</string>
+    <string name="appearance_accent_custom">Wallpaper color %1$d</string>
+    <string name="appearance_accent_custom_summary">Wallpaper color</string>
+    <string name="appearance_accent_fallback">Android 10 and 11 use the preset closest to this color</string>
+    <string-array name="appearance_accent_presets">
+        <item>Blue</item>
+        <item>Teal</item>
+        <item>Green</item>
+        <item>Purple</item>
+        <item>Orange</item>
+        <item>Rose</item>
+        <item>Monochrome</item>
+    </string-array>
+    <string name="appearance_tinted_icons_title">Tinted icons</string>
+    <string name="appearance_tinted_icons_content">Colors the settings icons with the accent color instead of the classic multicolor set</string>
 
 </resources>
