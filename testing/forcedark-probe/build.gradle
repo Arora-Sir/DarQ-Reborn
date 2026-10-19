@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.darq.forcedarkprobe'
-    compileSdkVersion 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.darq.forcedarkprobe"

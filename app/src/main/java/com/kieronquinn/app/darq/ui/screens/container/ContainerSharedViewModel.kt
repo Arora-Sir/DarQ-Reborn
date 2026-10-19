@@ -125,6 +125,7 @@ class ContainerSharedViewModelImpl(context: Context, private val serviceProvider
             collect {
                 when(it){
                     is ServiceState.Loading -> loadService()
+                    else -> {}
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.kieronquinn.app.darq.model.settings
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class IPCSetting(

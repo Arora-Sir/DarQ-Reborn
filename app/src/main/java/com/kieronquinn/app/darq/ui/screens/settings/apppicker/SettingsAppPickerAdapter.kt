@@ -60,6 +60,8 @@ class SettingsAppPickerAdapter(
         when(holder){
             is ViewHolder.ItemAppViewHolder -> setupApp(holder.binding, item as AppPickerItem.App)
             is ViewHolder.ItemHeaderViewHolder -> setupHeader(holder.binding, item as AppPickerItem.Header)
+            //The snackbar padding row has nothing to bind
+            else -> {}
         }
     }
 

@@ -160,10 +160,10 @@ class SettingsAppPickerViewModelImpl(
                     selected.contains(it.packageName)
                 )
             }
-        }.sortedBy { it.label.toString().toLowerCase(Locale.getDefault()) }.run {
+        }.sortedBy { it.label.toString().lowercase(Locale.getDefault()) }.run {
             if (search.isNotEmpty()) filter {
-                it.label.toString().toLowerCase(Locale.getDefault()).contains(
-                    search.toLowerCase(
+                it.label.toString().lowercase(Locale.getDefault()).contains(
+                    search.lowercase(
                         Locale.getDefault()
                     )
                 )

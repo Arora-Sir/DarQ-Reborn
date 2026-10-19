@@ -5,12 +5,16 @@ plugins {
 
 android {
     namespace 'com.kieronquinn.systemstubs'
-    compileSdkVersion 34
-    buildToolsVersion "30.0.3"
+    compileSdk 36
 
     defaultConfig {
         minSdkVersion 30
         targetSdkVersion 34
+    }
+
+    // The hidden framework interfaces are declared as AIDL, which AGP 8 no longer generates by default.
+    buildFeatures {
+        aidl true
     }
 
     buildTypes {
@@ -23,8 +27,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+        }
     }
 }
 

@@ -83,3 +83,9 @@ CLAUDE.md
 
 # Python bytecode
 __pycache__/
+
+# Device test reports (kept outside build/ so clean does not delete them)
+.e2e/
+
+# Kotlin 2 compiler session files
+.kotlin/

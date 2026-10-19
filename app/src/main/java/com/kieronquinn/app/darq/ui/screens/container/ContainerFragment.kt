@@ -323,6 +323,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                     binding.snackbarRoot.snackbarAction.isVisible = true
                 }
             }
+            //NotSyncing leaves the snackbar as it is
+            else -> {}
         }
     }
 
