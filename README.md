@@ -43,6 +43,8 @@ If your device is not rooted, you must set up **Shizuku** before running DarQ:
 
 ### Xposed / LSPosed Mode Setup
 
+DarQ works with **LSPosed 1.9.2**, its maintained forks and **Vector**. Any of them is fine, there is no need to switch managers.
+
 If you are using the **Xposed / LSPosed** mode (to override apps that block Force Dark in code), the setup requires two steps:
 
 1. **LSPosed Manager -> DarQ module scope**: Add the apps you want Force Dark to work on. This gives DarQ permission to inject into those app processes.

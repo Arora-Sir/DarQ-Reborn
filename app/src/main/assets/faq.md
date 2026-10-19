@@ -131,6 +131,10 @@ Historically, in older Android versions (like Android 10/11), the Android system
 
 During testing; LinkedIn, Facebook and Google Opinion Rewards were found to be usable with force dark enabled. Plenty more will work too, it's up to you to experiment and see what works.
 
+### Which Xposed managers does DarQ support?
+
+DarQ works with LSPosed 1.9.2 (the last official release), its maintained forks and Vector. All of them load DarQ through the classic Xposed module format, so you do not need to switch managers. Support for the newer LibXposed format used by LSPosed 2.x is built in and will be switched on in a later release, once it no longer breaks LSPosed 1.9.2.
+
 ### Can Force Dark be made to work on all apps without Xposed?
 
 No. Apps are able to disable force dark in code, so Xposed is the only way to prevent that.

@@ -29,6 +29,7 @@ class XposedLegacy : IXposedHookLoadPackage {
         get() = Resources.getSystem().configuration.isDarkTheme
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
+        if(BuildConfig.DEBUG) Log.i(TAG, "Legacy entry loaded in ${lpparam.packageName}")
         if(lpparam.packageName == BuildConfig.APPLICATION_ID){
             setupSelfHooks(lpparam.classLoader)
         }

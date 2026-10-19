@@ -87,9 +87,8 @@
     <string name="item_xposed_invert_status_bar_fix_title">Fix Status Bar Inversion</string>
     <string name="item_xposed_invert_status_bar_fix_content">Attempt to disable status bar inversion in force dark apps, fixing dark icons on dark background</string>
     <string name="item_xposed_info_title">Xposed Notes</string>
-    <string name="item_xposed_info_content">DarQ supports both LSPosed 2.x or Vector and older Xposed frameworks.
-On LSPosed 2.x or Vector, picking an app in DarQ asks the framework to add it to the module scope, and setting changes apply the next time you open the app.
-On older frameworks, also enable each app in your Xposed manager, then restart the app after changing settings.
+    <string name="item_xposed_info_content">DarQ works with LSPosed 1.9.2, its maintained forks and Vector.
+Enable each app in your Xposed manager as well as in DarQ, then restart the app after changing settings.
 DarQ keeps a backup of your settings, so switching the module off and on no longer resets them.</string>
     <string name="item_xposed_request_scope_title">Add selected apps to LSPosed scope</string>
     <string name="item_xposed_request_scope_content">Ask LSPosed or Vector to add every app you picked in DarQ to the module scope</string>

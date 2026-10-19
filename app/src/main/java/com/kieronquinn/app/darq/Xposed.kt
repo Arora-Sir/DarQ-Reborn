@@ -59,6 +59,7 @@ class Xposed : XposedModule() {
         if (param.packageName == BuildConfig.APPLICATION_ID) return
         if (!hooksInstalled.compareAndSet(false, true)) return
         targetPackage = param.packageName
+        if (BuildConfig.DEBUG) log(Log.INFO, TAG, "Modern entry loaded in $targetPackage")
         try {
             remotePrefs?.registerOnSharedPreferenceChangeListener(prefsListener)
         } catch (t: Throwable) {

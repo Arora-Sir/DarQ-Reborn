@@ -46,6 +46,13 @@ android {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
         }
     }
+
+    // NOTE: LSPosed 1.9.2 prefers META-INF/xposed/java_init.list when it exists and then never loads assets/xposed_init, which silently breaks DarQ there.
+    // NOTE: Every current manager (LSPosed 1.9.2, its forks, Vector 2.2) loads the legacy entry, so the default build ships only that one.
+    // NOTE: Build with -PxposedModernEntry=true to add the LibXposed 101 entry for Vector and LSPosed 2.x.
+    if (project.findProperty('xposedModernEntry') == 'true') {
+        sourceSets.main.resources.srcDir 'src/xposedModern/resources'
+    }
 }
 
 dependencies {
@@ -107,8 +114,7 @@ dependencies {
     implementation "dev.rikka.shizuku:api:$shizuku_version"
     implementation "dev.rikka.shizuku:provider:$shizuku_version"
 
-    //Xposed: the legacy API (82) for old frameworks and LibXposed (101) for LSPosed 2.x and Vector.
-    //Both entries ship in one APK: assets/xposed_init and META-INF/xposed/java_init.list.
+    //Xposed: the legacy API (82) entry ships by default, the LibXposed (101) entry only with -PxposedModernEntry=true.
     compileOnly 'de.robv.android.xposed:api:82'
     compileOnly 'io.github.libxposed:api:101.0.1'
     implementation 'io.github.libxposed:service:101.0.0'
