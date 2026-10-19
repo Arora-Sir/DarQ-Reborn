@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<application
+		android:label="DarQ Probe"
+		android:allowBackup="false">
+
+		<!-- Default light theme: force dark applies only when debug.hwui.force_dark reads true. -->
+		<activity
+			android:name=".ProbeActivity"
+			android:theme="@style/ProbeTheme"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<!-- Theme not flagged as light, so the system skips force dark: only DarQ's Aggressive Force Dark (Xposed) can darken it. -->
+		<activity
+			android:name=".OptOutProbeActivity"
+			android:theme="@style/ProbeTheme.OptOut"
+			android:exported="true" />
+
+	</application>
+
+</manifest>

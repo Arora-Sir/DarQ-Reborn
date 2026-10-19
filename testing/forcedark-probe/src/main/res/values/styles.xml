@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Theme.Material.Light sets isLightTheme but not forceDarkAllowed, so the system default (the force dark property) decides. -->
+    <style name="ProbeTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#FFFFFFFF</item>
+    </style>
+
+    <!-- Not flagged as a light theme: the system skips force dark for the window while views still allow it. -->
+    <!-- This is the case Aggressive Force Dark exists for. A theme-level forceDarkAllowed=false would also block every view, which no hook on the renderer can override. -->
+    <style name="ProbeTheme.OptOut">
+        <item name="android:isLightTheme">false</item>
+    </style>
+
+</resources>

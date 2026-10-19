@@ -1,0 +1,23 @@
+// NOTE: Debug-only test fixture for device automation. It is never shipped and has no dependencies.
+// NOTE: Its white panel turns dark only when force dark reaches it, which makes screenshot luminance a reliable oracle.
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.darq.forcedarkprobe'
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.darq.forcedarkprobe"
+        minSdkVersion 29
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
