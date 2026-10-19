@@ -1,5 +1,6 @@
 package com.kieronquinn.app.darq
 
+import android.Manifest
 import android.app.Application
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -53,6 +54,8 @@ import android.content.pm.PackageManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import androidx.core.content.ContextCompat
 
 class DarqApplication : Application() {
 
@@ -101,6 +104,7 @@ class DarqApplication : Application() {
         Log.d("DarQA", "ApplicationThread $applicationThread")
         Sui.init(packageName)
         ShizukuProvider.enableMultiProcessSupport(true)
+        restoreSettingsSnapshot()
         setupMonet()
         
         val settings = get<DarqSharedPreferences>()
@@ -152,6 +156,19 @@ class DarqApplication : Application() {
                     Log.e("DarQA", "Failed to check Shizuku status on startup", e)
                 }
             }
+        }
+    }
+
+    //Runs before anything reads settings, so a snapshot restored after an LSPosed preferences redirect change is what every component sees
+    private fun restoreSettingsSnapshot(){
+        val settings = get<DarqSharedPreferences>() as? AppSharedPreferences ?: return
+        val hasLocationPermission = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        try {
+            runBlocking { settings.restoreSnapshotIfNewer(hasLocationPermission) }
+        } catch (e: Exception) {
+            Log.e("DarQA", "Failed to restore settings snapshot", e)
         }
     }
 

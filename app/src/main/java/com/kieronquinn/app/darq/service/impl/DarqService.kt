@@ -166,7 +166,7 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
      */
     override fun setupSettings(ipcSetting: IPCSetting) {
         if(ipcSetting.isXposedActive != null) {
-            isXposedActive = ipcSetting.isXposedActive
+            updateXposedActive(ipcSetting.isXposedActive)
         }
         if(ipcSetting.enabled != null) {
             isEnabled = ipcSetting.enabled
@@ -197,7 +197,7 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
      */
     override fun notifySettingsChange(ipcSetting: IPCSetting) {
         if(ipcSetting.isXposedActive != null) {
-            isXposedActive = ipcSetting.isXposedActive
+            updateXposedActive(ipcSetting.isXposedActive)
         }
         when {
             ipcSetting.enabled != null -> {
@@ -244,6 +244,19 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
                     }
                 }
             }
+        }
+    }
+
+    /**
+     *  In Xposed mode the hooks own force dark inside each selected app, so this service stops
+     *  writing the global property. A value it left behind in Shizuku or root mode would otherwise
+     *  stay set for every app on the device, so it is cleared once when Xposed becomes active.
+     */
+    private fun updateXposedActive(active: Boolean) {
+        val wasActive = isXposedActive
+        isXposedActive = active
+        if (active && !wasActive && SystemProperties[FORCE_DARK_PROP]?.toBoolean() == true) {
+            SystemProperties[FORCE_DARK_PROP] = "false"
         }
     }
 

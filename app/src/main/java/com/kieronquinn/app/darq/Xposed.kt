@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.util.Log
 import android.view.View
 import com.kieronquinn.app.darq.components.settings.XposedSharedPreferences
+import com.kieronquinn.app.darq.model.xposed.ForceDarkMapping
 import com.kieronquinn.app.darq.model.xposed.XposedSettings
 import com.kieronquinn.app.darq.utils.extensions.isDarkTheme
 import de.robv.android.xposed.*
@@ -90,16 +91,37 @@ class Xposed : IXposedHookLoadPackage {
                 }
             }
         })
-        XposedHelpers.findAndHookMethod("android.graphics.HardwareRenderer", lpparam.classLoader, "setForceDark", Boolean::class.java, object: XC_MethodHook(){
+        setupAggressiveDarkHook(lpparam.classLoader)
+    }
+
+    // NOTE: HardwareRenderer.setForceDark took a boolean up to Android 14 and takes a ForceDarkType int from Android 15.
+    // NOTE: Hooking only the boolean variant threw NoSuchMethodError on Android 15 and later, so Aggressive Force Dark never applied there.
+    // NOTE: The int variant is tried first and the boolean variant is the fallback for Android 10 to 14.
+    private fun setupAggressiveDarkHook(classLoader: ClassLoader) {
+        val hook = object: XC_MethodHook(){
             override fun beforeHookedMethod(param: MethodHookParam) {
-                super.beforeHookedMethod(param)
                 val settings = getXposedSettings(context)
                 if(settings?.enabled == true && !settings.isScheduleBlocking && settings.aggressiveDark == true) {
-                    Log.i(TAG, "Overriding setForceDark to $isDarkMode for ${lpparam.packageName}")
-                    param.args[0] = isDarkMode
+                    val incoming = param.args[0]
+                    param.args[0] = when(incoming) {
+                        is Int -> ForceDarkMapping.mapType(incoming, isDarkMode)
+                        else -> ForceDarkMapping.mapBoolean(isDarkMode)
+                    }
+                    if(BuildConfig.DEBUG) Log.d(TAG, "setForceDark $incoming -> ${param.args[0]} for ${context.packageName}")
                 }
             }
-        })
+        }
+        try {
+            val rendererClass = XposedHelpers.findClass("android.graphics.HardwareRenderer", classLoader)
+            val hookedTypeVariant = runCatching {
+                XposedHelpers.findAndHookMethod(rendererClass, "setForceDark", Int::class.javaPrimitiveType, hook)
+            }.isSuccess
+            if(!hookedTypeVariant) {
+                XposedHelpers.findAndHookMethod(rendererClass, "setForceDark", Boolean::class.javaPrimitiveType, hook)
+            }
+        }catch (t: Throwable){
+            Log.e(TAG, "Failed to hook HardwareRenderer.setForceDark", t)
+        }
     }
 
     private fun setupSelfHooks(classLoader: ClassLoader){
