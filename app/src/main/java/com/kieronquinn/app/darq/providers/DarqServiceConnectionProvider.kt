@@ -139,7 +139,10 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
 
             if (Shell.rootAccess()) {
                 serviceType = ServiceType.ROOT
-                RootService.stop(rootServiceIntent)
+                // NOTE: Bind without calling RootService.stop() first, because DarqRootService.onUnbind returns true and libsu keeps the :root server alive as a daemon after the app process dies.
+                // NOTE: On a fresh app process libsu has no manager yet, so stop() and bind() each spawn a helper through the root shell and both run at the same time.
+                // NOTE: The bind helper could find the daemon the stop helper was killing, ask it to broadcast, and exit without starting a new server, which left the bind queued until SERVICE_TIMEOUT.
+                // NOTE: Rebinding reuses the daemon's DarqService, and setupService() pushes fresh settings and whitelist and re-runs onBind(), which is safe to repeat.
                 RootService.bind(rootServiceIntent, serviceConnection)
             } else if (context.isShizukuInstalled()) {
                 serviceType = ServiceType.SHIZUKU
