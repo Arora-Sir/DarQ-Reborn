@@ -55,6 +55,9 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
     private val _changed = MutableSharedFlow<IPCSetting>()
     override val changed: Flow<IPCSetting> = _changed.asSharedFlow()
 
+    private val snapshot by lazy { SettingsSnapshot(context.filesDir) }
+    private val snapshotLock = Any()
+
     override fun shared(key: String, default: String) = ReadWriteProperty({
         sharedPreferences.getString(key, default) ?: default
     }, {
@@ -123,11 +126,52 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
     }
 
     fun notifyPrefChange(key: String){
+        //The revision commit rewrites the file, so it runs before the permission is re-applied
+        recordSnapshot()
         makeWorldReadable()
         val ipcSetting = getIPCSettingForKey(key) ?: return
         GlobalScope.launch(Dispatchers.IO) {
             _changed.emit(ipcSetting)
         }
+    }
+
+    /**
+     *  Bumps the settings revision and writes the snapshot. Runs on a background thread after the
+     *  commit, and reads the settings at that moment, so the last snapshot written always matches
+     *  the latest committed state even when several writes finish out of order.
+     */
+    private fun recordSnapshot(){
+        synchronized(snapshotLock) {
+            val revision = sharedPreferences.getLong(SettingsSnapshot.KEY_REVISION, 0L) + 1
+            sharedPreferences.edit().putLong(SettingsSnapshot.KEY_REVISION, revision).commit()
+            snapshot.write(SettingsSnapshot.Stored(revision, getSettingsBackup()))
+        }
+    }
+
+    /**
+     *  Restores the snapshot when it is newer than the preferences file, which happens when
+     *  LSPosed stops redirecting the preferences folder. Must run before anything reads settings.
+     *  @return Whether settings were restored
+     */
+    suspend fun restoreSnapshotIfNewer(hasLocationPermission: Boolean): Boolean {
+        val stored = snapshot.read()
+        if (stored == null) {
+            //First launch with snapshots: protect existing settings straight away
+            if (sharedPreferences.all.isNotEmpty()) {
+                recordSnapshot()
+                makeWorldReadable()
+            }
+            return false
+        }
+        val preferencesRevision = sharedPreferences.getLong(SettingsSnapshot.KEY_REVISION, 0L)
+        if (!SettingsSnapshot.shouldRestore(preferencesRevision, stored.revision)) return false
+        Log.i("AppSharedPreferences", "Restoring settings snapshot revision ${stored.revision} over $preferencesRevision")
+        fromSettingsBackup(stored.settings)
+        //A backup restore asks before enabling location, but here the permission is already known
+        if (stored.settings.useLocation && hasLocationPermission) {
+            useLocation = true
+        }
+        return true
     }
 
     private fun runInBackground(method: suspend () -> Unit){

@@ -10,9 +10,16 @@ import org.koin.core.context.GlobalContext
 
 class BootReceiver: BroadcastReceiver() {
 
+    companion object {
+        private val HANDLED_ACTIONS = setOf(Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED)
+    }
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        if(context == null || intent?.action != Intent.ACTION_BOOT_COMPLETED) return
+        //An app update cancels DarQ's alarms and stops its services just like a reboot does,
+        //so MY_PACKAGE_REPLACED takes the same path. Both broadcasts may start foreground services.
+        if(context == null || intent?.action !in HANDLED_ACTIONS) return
         val settings = GlobalContext.get().get<DarqSharedPreferences>()
+        android.util.Log.i("BootReceiver", "Starting services after ${intent?.action}")
         try {
             if (settings.persistentService) {
                 context.startForegroundService(Intent(context, DarqPersistentService::class.java))

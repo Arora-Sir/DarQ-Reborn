@@ -80,3 +80,6 @@ RESEARCH_ANALYSIS/
 CLAUDE.md
 .claude/settings.local.json
 .claude/hooks/
+
+# Python bytecode
+__pycache__/
