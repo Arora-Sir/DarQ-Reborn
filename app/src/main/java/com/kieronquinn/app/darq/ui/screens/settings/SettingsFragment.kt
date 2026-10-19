@@ -17,7 +17,8 @@ import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentSettingsBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
-import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
+import com.kieronquinn.app.darq.components.xposed.XposedState
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
 import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
@@ -60,7 +61,7 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 R.drawable.ic_xposed_round,
                 getString(R.string.item_xposed_title),
                 getString(R.string.item_xposed_content),
-                visible = { XposedSelfHooks.isXposedModuleEnabled() },
+                visible = { XposedState.isActive },
                 tapAction = viewModel::onXposedClicked
             ),
             SettingsItem.Setting(
@@ -119,6 +120,7 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         setupSnackbarPadding(binding.recyclerView)
         setupAutoDarkTheme()
         setupDeveloperOptions()
+        setupXposedState()
         setupRestoreListener()
     }
 
@@ -166,6 +168,15 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
     private fun setupDeveloperOptions(){
         lifecycleScope.launchWhenResumed {
             viewModel.developerOptionsVisible.collect {
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    //The LibXposed service binds asynchronously, so the Xposed entry appears once LSPosed or Vector delivers it
+    private fun setupXposedState(){
+        lifecycleScope.launchWhenResumed {
+            XposedBridge.isActive.collect {
                 adapter.notifyDataSetChanged()
             }
         }

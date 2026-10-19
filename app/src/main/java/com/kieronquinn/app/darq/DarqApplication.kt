@@ -16,6 +16,8 @@ import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.navigation.NavigationImpl
 import com.kieronquinn.app.darq.components.settings.AppSharedPreferences
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
+import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.providers.blur.BlurProvider
 import com.kieronquinn.app.darq.ui.screens.bottomsheets.backuprestore.BackupRestoreBottomSheetViewModel
@@ -85,6 +87,12 @@ class DarqApplication : Application() {
         single { BlurProvider.getBlurProvider(resources) }
     }
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        //LSPosed 2.x and Vector deliver their service binder through a content provider, so the listener is registered before any provider runs
+        XposedBridge.register()
+    }
+
     override fun onCreate() {
         super.onCreate()
         runCatching {
@@ -117,6 +125,9 @@ class DarqApplication : Application() {
         }
 
         val connectionProvider = get<DarqServiceConnectionProvider>()
+        XposedBridge.attach(settings.sharedPreferences) { active ->
+            notifyXposedActive(connectionProvider, active)
+        }
         if (!Shell.rootAccess() && isShizukuInstalled()) {
                 val binderReceivedListener = object : Shizuku.OnBinderReceivedListener {
                 override fun onBinderReceived() {
@@ -169,6 +180,18 @@ class DarqApplication : Application() {
             runBlocking { settings.restoreSnapshotIfNewer(hasLocationPermission) }
         } catch (e: Exception) {
             Log.e("DarQA", "Failed to restore settings snapshot", e)
+        }
+    }
+
+    //A privileged service that bound before the framework service did must learn the new state, so it stops or resumes managing the global force dark property
+    private fun notifyXposedActive(connectionProvider: DarqServiceConnectionProvider, active: Boolean) {
+        val service = connectionProvider.getConnectedServiceOrNull() ?: return
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                service.notifySettingsChange(IPCSetting(isXposedActive = active))
+            } catch (e: Exception) {
+                Log.w("DarQA", "Failed to notify service of Xposed state", e)
+            }
         }
     }
 

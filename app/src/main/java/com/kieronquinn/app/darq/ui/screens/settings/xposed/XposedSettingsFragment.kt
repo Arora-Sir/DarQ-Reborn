@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.databinding.FragmentSettingsXposedBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
@@ -31,12 +33,32 @@ class XposedSettingsFragment: BaseSettingsFragment<FragmentSettingsXposedBinding
                 settings::xposedInvertStatus
             ),
             SettingsItem.Setting(
+                R.drawable.ic_app_whitelist,
+                getString(R.string.item_xposed_request_scope_title),
+                getString(R.string.item_xposed_request_scope_content),
+                visible = { XposedBridge.isActiveNow },
+                tapAction = ::requestMissingScope
+            ),
+            SettingsItem.Setting(
                 R.drawable.ic_about_small,
                 getString(R.string.item_xposed_info_title),
                 getText(R.string.item_xposed_info_content),
                 centerIconVertically = false
             )
         ).toMutableList()
+    }
+
+    private fun requestMissingScope(){
+        XposedBridge.requestScope(settings.enabledApps.toList()) { result ->
+            val context = context ?: return@requestScope
+            val message = when(result){
+                is XposedBridge.ScopeResult.Approved -> getString(R.string.xposed_scope_approved_count, result.packages.size)
+                is XposedBridge.ScopeResult.Failed -> getString(R.string.xposed_scope_failed, result.message)
+                XposedBridge.ScopeResult.AlreadyInScope -> getString(R.string.xposed_scope_already)
+                XposedBridge.ScopeResult.Unavailable -> getString(R.string.xposed_scope_unavailable)
+            }
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     private val adapter by lazy {

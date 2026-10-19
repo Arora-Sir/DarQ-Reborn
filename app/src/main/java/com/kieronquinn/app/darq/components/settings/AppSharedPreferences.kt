@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.kieronquinn.app.darq.BuildConfig
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
 import com.kieronquinn.app.darq.utils.extensions.ReadWriteProperty
@@ -129,6 +130,8 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
         //The revision commit rewrites the file, so it runs before the permission is re-applied
         recordSnapshot()
         makeWorldReadable()
+        //The LibXposed entry reads the framework's remote preferences instead of this file
+        XposedBridge.mirror(key)
         val ipcSetting = getIPCSettingForKey(key) ?: return
         GlobalScope.launch(Dispatchers.IO) {
             _changed.emit(ipcSetting)

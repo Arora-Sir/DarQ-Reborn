@@ -87,7 +87,17 @@
     <string name="item_xposed_invert_status_bar_fix_title">Fix Status Bar Inversion</string>
     <string name="item_xposed_invert_status_bar_fix_content">Attempt to disable status bar inversion in force dark apps, fixing dark icons on dark background</string>
     <string name="item_xposed_info_title">Xposed Notes</string>
-    <string name="item_xposed_info_content">If you are using EdXposed in app whitelist mode, or are using lsposed, you must also enable all the apps you want to apply to in your Xposed manager, as well as in DarQ.\nApps must be restarted after settings changes for them to apply.\nIf a setting or newly selected force dark app is not applying, try rebooting, launching DarQ then launching your selected app.\n<b>Warning:</b> If you uninstall Xposed or enable/disable DarQ\'s module, your DarQ settings may be reset due to Xposed\'s internal settings hooks. Use the backup/restore feature to save your settings before doing this.</string>
+    <string name="item_xposed_info_content">DarQ supports both LSPosed 2.x or Vector and older Xposed frameworks.
+On LSPosed 2.x or Vector, picking an app in DarQ asks the framework to add it to the module scope, and setting changes apply the next time you open the app.
+On older frameworks, also enable each app in your Xposed manager, then restart the app after changing settings.
+DarQ keeps a backup of your settings, so switching the module off and on no longer resets them.</string>
+    <string name="item_xposed_request_scope_title">Add selected apps to LSPosed scope</string>
+    <string name="item_xposed_request_scope_content">Ask LSPosed or Vector to add every app you picked in DarQ to the module scope</string>
+    <string name="xposed_scope_approved">%1$s added to the LSPosed scope</string>
+    <string name="xposed_scope_approved_count">%1$d apps added to the LSPosed scope</string>
+    <string name="xposed_scope_failed">LSPosed scope request failed: %1$s</string>
+    <string name="xposed_scope_already">All selected apps are already in the LSPosed scope</string>
+    <string name="xposed_scope_unavailable">Needs LSPosed 2.x or Vector with the DarQ module enabled</string>
     <string name="color_picker_unavailable">Monet Color Picker unavailable for the currently selected wallpaper</string>
     <string name="loading_service_connect">Connecting to service…</string>
     <string name="snackbar_syncing_text">Syncing changes with service…</string>

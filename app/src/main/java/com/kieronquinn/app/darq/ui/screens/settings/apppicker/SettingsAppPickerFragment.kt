@@ -1,6 +1,8 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
 import android.content.res.ColorStateList
+import android.widget.Toast
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -164,6 +166,17 @@ class SettingsAppPickerFragment :
     private fun onPackageEnabledChanged(appPickerItem: AppPickerItem.App){
         viewModel.onPackageEnabledChanged(appPickerItem)
         sharedViewModel.queueIPCSync(appPickerItem.toIPCSetting())
+        //On LSPosed 2.x and Vector the app can be added to the module scope directly, so users do not have to do it in the manager
+        if(appPickerItem.enabled && XposedBridge.isActiveNow){
+            XposedBridge.requestScope(listOf(appPickerItem.packageName)) { result ->
+                val context = context ?: return@requestScope
+                when(result){
+                    is XposedBridge.ScopeResult.Approved -> Toast.makeText(context, getString(R.string.xposed_scope_approved, appPickerItem.label), Toast.LENGTH_SHORT).show()
+                    is XposedBridge.ScopeResult.Failed -> Toast.makeText(context, getString(R.string.xposed_scope_failed, result.message), Toast.LENGTH_LONG).show()
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun setupSnackbarPadding(){

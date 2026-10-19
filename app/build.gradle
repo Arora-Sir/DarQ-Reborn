@@ -107,8 +107,11 @@ dependencies {
     implementation "dev.rikka.shizuku:api:$shizuku_version"
     implementation "dev.rikka.shizuku:provider:$shizuku_version"
 
-    //Xposed
+    //Xposed: the legacy API (82) for old frameworks and LibXposed (101) for LSPosed 2.x and Vector.
+    //Both entries ship in one APK: assets/xposed_init and META-INF/xposed/java_init.list.
     compileOnly 'de.robv.android.xposed:api:82'
+    compileOnly 'io.github.libxposed:api:101.0.1'
+    implementation 'io.github.libxposed:service:101.0.0'
 
     //MonetCompat
     implementation 'com.github.KieronQuinn:MonetCompat:0.4.1'
@@ -121,6 +124,8 @@ dependencies {
 
     //Unit tests
     testImplementation 'junit:junit:4.13.2'
+    //android.jar only stubs org.json, so the real implementation is used on the JVM
+    testImplementation 'org.json:json:20240303'
 
 }
 

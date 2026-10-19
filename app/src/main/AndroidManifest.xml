@@ -22,6 +22,7 @@
 
 	<application
 		android:name=".DarqApplication"
+		android:description="@string/xposed_desc"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
@@ -115,6 +116,18 @@
 		<meta-data
 			android:name="xposedsharedprefs"
 			android:value="true" />
+
+		<!-- NOTE: The libxposed service library ships an exported provider that accepts a framework binder from any caller. -->
+		<!-- NOTE: It is replaced by DarqSecureXposedProvider, which only accepts the binder from root or the system UID. -->
+		<provider
+			android:name="io.github.libxposed.service.XposedProvider"
+			android:authorities="${applicationId}.XposedService"
+			tools:node="remove" />
+		<provider
+			android:name="io.github.libxposed.service.DarqSecureXposedProvider"
+			android:authorities="${applicationId}.XposedService"
+			android:exported="true"
+			tools:ignore="ExportedContentProvider" />
 
 		<receiver
 			android:name=".receivers.TimeChangeReceiver"

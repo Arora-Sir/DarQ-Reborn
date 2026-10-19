@@ -2,7 +2,8 @@ package com.kieronquinn.app.darq.components.settings
 
 import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.model.settings.SettingsBackup
-import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
+import com.kieronquinn.app.darq.components.xposed.XposedState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -125,7 +126,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     var xposedInvertStatus by this.shared(KEY_XPOSED_INVERT_STATUS_BAR, DEFAULT_XPOSED_INVERT_STATUS_BAR)
 
     fun getIPCSettingForKey(key: String): IPCSetting? {
-        val xposed = XposedSelfHooks.isXposedModuleEnabled()
+        val xposed = XposedState.isActive
         return when(key){
             KEY_ENABLED -> IPCSetting(enabled = enabled, isXposedActive = xposed)
             KEY_ALWAYS_FORCE_DARK -> IPCSetting(alwaysForceDark = alwaysForceDark, isXposedActive = xposed)
@@ -142,7 +143,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             oxygenForceDark = oxygenForceDark,
             alwaysForceDark = alwaysForceDark,
             sendAppCloses = sendAppCloses,
-            isXposedActive = XposedSelfHooks.isXposedModuleEnabled()
+            isXposedActive = XposedState.isActive
         )
     }
 
@@ -194,6 +195,8 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         autoDarkStartTime = settingsBackup.autoDarkStartTime
         autoDarkEndTime = settingsBackup.autoDarkEndTime
         enabledApps = settingsBackup.enabledApps.toTypedArray()
+        //Each write above mirrors its own key to the LibXposed remote preferences, this final pass covers a write that raced a rebind
+        XposedBridge.syncAll()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation
     }
 

@@ -51,7 +51,6 @@
     <string name="item_xposed_aggressive_dark_content">当开启深色模式时，覆盖应用转为亮色的行为。这可能会在一些软件中出现颜色上的问题。</string>
     <string name="item_xposed_invert_status_bar_fix_content">尝试在一些强制深色应用中禁用装谈来反色，修复黑底黑图标。</string>
     <string name="item_xposed_info_title">Xposed 注意事项</string>
-    <string name="item_xposed_info_content">如果您正在使用 Edxposed 或者 lsposed 的白名单模式，和在 DarQ 中相同，您必须在 Xposed 管理器中启用所有您想要更改的软件。\n软件需要重启才能应用您更改过的设置。\n如果改变设置或者新选择了强制深色软件之后没有见效，那么请尝试重启，启动 DarQ，然后打开目标应用。\n<b>警告：</b>如果您卸载了 Xposed 或者启用/禁用了  DarQ 模块，您的 DarQ 设置可能会由于 Xposed 的内部设置 hook 而被重置。在此之前，请使用备份与恢复功能来保存您的设置。</string>
     <string name="color_picker_unavailable">动态颜色选择器对当前选取的壁纸不可用</string>
     <string name="loading_service_connect">正在连接服务…</string>
     <string name="snackbar_syncing_text">正在将更改同步至服务…</string>
