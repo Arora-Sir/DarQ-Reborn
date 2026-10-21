@@ -33,7 +33,7 @@ body:
     attributes:
       label: DarQ version
       description: Shown at the bottom of DarQ settings.
-      placeholder: 3.2.0 (330, release)
+      placeholder: 3.2.0 (326, release)
     validations:
       required: true
 
