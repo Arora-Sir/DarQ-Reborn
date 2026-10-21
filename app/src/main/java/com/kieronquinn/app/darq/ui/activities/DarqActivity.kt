@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsDialogs
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import org.koin.android.ext.android.inject
 
@@ -35,6 +36,9 @@ class DarqActivity: AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_darq)
         setUseLightStatusNav(resources.getBoolean(R.bool.lightStatusNav))
+        if(savedInstanceState == null){
+            DiagnosticsDialogs.offerPendingReport(this)
+        }
 
         askNotificationPermission()
     }

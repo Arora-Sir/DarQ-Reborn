@@ -1,6 +1,6 @@
 """Runs the DarQ device matrix: physical devices plus the shared emulator fleet, one emulator at a time.
 
-Normal emulators get Shizuku and the regression suite. Rooted emulators get the Xposed suite with the
+Normal emulators get Shizuku, the regression suite and the diagnostics suite. Rooted emulators get the Xposed suite with the
 module enabled, then the regression suite in plain root mode with the module disabled. Physical devices
 run the regression suite with a five minute idle requirement and are skipped (not forced) when busy.
 
@@ -65,6 +65,7 @@ def main() -> int:
             subprocess.run(["adb", "-s", serial, "install", "-r", str(DEBUG_APK)], capture_output=True)
             run(str(HERE / "emulator.py"), "bootstrap", serial)
             output = run(str(HERE / "e2e_regression.py"), "--serial", serial, "--min-idle", "0")
+            output += run(str(HERE / "e2e_diagnostics.py"), "--serial", serial)
         else:
             serial, framework = ROOTED[key]
             run(str(FLEET), "up", key)

@@ -79,6 +79,10 @@ class DarqServiceConnectionProvider(private val context: Context, private val se
     //Returns the already bound service without starting a new bind, for callers that only update a running service
     fun getConnectedServiceOrNull(): IDarqService? = rootService
 
+    //How the bound service runs, for diagnostic reports. UNKNOWN while nothing is bound.
+    val connectedServiceType: ServiceType
+        get() = if(rootService != null) serviceType else ServiceType.UNKNOWN
+
     suspend fun getService(): ServiceResult {
         return serviceLock.withLock {
             withContext(Dispatchers.Main) {

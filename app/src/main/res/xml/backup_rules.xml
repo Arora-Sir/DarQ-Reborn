@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: Crash reports stay on the device that produced them, everything else keeps the default backup behavior. -->
+<full-backup-content>
+    <exclude domain="file" path="diagnostics/" />
+    <exclude domain="sharedpref" path="darq_diagnostics.xml" />
+</full-backup-content>

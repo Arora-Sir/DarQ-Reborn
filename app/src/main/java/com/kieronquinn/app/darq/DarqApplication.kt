@@ -40,6 +40,8 @@ import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperO
 import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperOptionsViewModelImpl
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
 import com.kieronquinn.app.darq.components.theme.ThemeManager
+import com.kieronquinn.app.darq.components.diagnostics.CrashReporter
+import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsHeader
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -69,6 +71,7 @@ class DarqApplication : Application() {
         single<DarqSharedPreferences> { AppSharedPreferences(get()) }
         single<Navigation> { NavigationImpl() }
         single { UpdateChecker(get()) }
+        single { DiagnosticsHeader(get(), get()) }
     }
 
     private val viewModelsModule = module {
@@ -95,6 +98,8 @@ class DarqApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        //First, so a crash anywhere in startup still leaves a report
+        CrashReporter.install(this)
         runCatching {
             //Allows blurs on some devices, doesn't really matter if it fails
             HiddenApiBypass.addHiddenApiExemptions("L")
@@ -121,6 +126,7 @@ class DarqApplication : Application() {
                 startForegroundService(Intent(this, DarqPersistentService::class.java))
             } catch (e: Exception) {
                 Log.e("DarQA", "Failed to start persistent service from Application context (likely background execution)", e)
+                CrashReporter.recordHandled(this, "Persistent service start", e)
             }
         }
 

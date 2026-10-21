@@ -58,4 +58,6 @@ uv run --with pillow python scripts/device/run_matrix.py --targets a10 a16root -
 
 `e2e_xposed.py` covers the Xposed module: module and scope setup through the Vector CLI or the LSPosed database, the self-hook, the SystemProperties hook, Aggressive Force Dark on an opted-out app, clearing a stale global force dark value, the settings snapshot surviving the LSPosed preferences redirect going away, and the hook failure log.
 
+`e2e_diagnostics.py` covers the crash report flow on emulators with a debug build: a test crash through the debug-only receiver, the prompt on the next launch, the redacted preview (a planted app name must appear only as a hash), the prefilled GitHub bug form opening in the browser, the prompt appearing only once, and the two settings entries.
+
 Reports and screenshots land in `.e2e/<timestamp>/` (git-ignored, and outside `build/` so `gradlew clean` keeps them).

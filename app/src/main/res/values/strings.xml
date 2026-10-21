@@ -215,4 +215,31 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_tinted_icons_title">Tinted icons</string>
     <string name="appearance_tinted_icons_content">Colors the settings icons with the accent color instead of the classic multicolor set</string>
 
+    <!-- Diagnostics -->
+    <string name="item_report_issue_title">Report an issue</string>
+    <string name="item_report_issue_content">Report a bug or suggest a feature on GitHub</string>
+    <string name="item_diagnostics_title">Diagnostic log</string>
+    <string name="item_diagnostics_content">Review a log with your apps and location removed, then send it with a bug report</string>
+    <string name="diagnostics_crash_title">DarQ closed unexpectedly</string>
+    <string name="diagnostics_crash_content">A crash report was saved on this device. Nothing is sent unless you choose to send it.</string>
+    <string name="diagnostics_crash_review">Review report</string>
+    <string name="diagnostics_crash_not_now">Not now</string>
+    <string name="diagnostics_report_title">DarQ diagnostic log</string>
+    <string name="diagnostics_report_send">Send</string>
+    <string name="diagnostics_report_close">Close</string>
+    <string name="diagnostics_send_title">Send the log</string>
+    <string-array name="diagnostics_send_options">
+        <item>Open a bug report on GitHub</item>
+        <item>Add to an existing issue</item>
+        <item>Save to Downloads</item>
+        <item>Share</item>
+        <item>Copy to clipboard</item>
+    </string-array>
+    <string name="diagnostics_copied_form">Log copied. Paste it into Relevant log output on the form.</string>
+    <string name="diagnostics_copied_comment">Log copied. Open the issue and paste it into a comment.</string>
+    <string name="diagnostics_copied">Log copied to the clipboard</string>
+    <string name="diagnostics_saved">Log saved to Downloads</string>
+    <string name="diagnostics_save_failed">Could not save the log to Downloads</string>
+    <string name="diagnostics_no_browser">No browser found to open GitHub</string>
+
 </resources>

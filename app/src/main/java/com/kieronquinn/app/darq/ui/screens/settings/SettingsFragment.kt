@@ -15,6 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
+import androidx.appcompat.app.AppCompatActivity
+import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsDialogs
 import com.kieronquinn.app.darq.databinding.FragmentSettingsBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.components.xposed.XposedBridge
@@ -94,6 +96,18 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 tapAction = {
                     viewModel.onCheckForUpdatesClicked(requireContext(), sharedViewModel)
                 }
+            ),
+            SettingsItem.Setting(
+                R.drawable.ic_report_issue_round,
+                getString(R.string.item_report_issue_title),
+                getString(R.string.item_report_issue_content),
+                tapAction = { DiagnosticsDialogs.openIssueChooser(requireContext()) }
+            ),
+            SettingsItem.Setting(
+                R.drawable.ic_diagnostics_round,
+                getString(R.string.item_diagnostics_title),
+                getString(R.string.item_diagnostics_content),
+                tapAction = { (activity as? AppCompatActivity)?.let { DiagnosticsDialogs.showReport(it) } }
             ),
             SettingsItem.AboutSetting(
                 R.drawable.ic_about_round,

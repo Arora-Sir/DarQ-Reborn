@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: Debug builds only. Lets the device suite crash DarQ on purpose to test the crash report flow. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<application>
+		<receiver
+			android:name="com.kieronquinn.app.darq.debug.TestCrashReceiver"
+			android:exported="true"
+			android:permission="android.permission.DUMP">
+			<intent-filter>
+				<action android:name="com.mohitarora.darqreborn.debug.TEST_CRASH" />
+			</intent-filter>
+		</receiver>
+	</application>
+
+</manifest>
