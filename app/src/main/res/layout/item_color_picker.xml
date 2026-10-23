@@ -1,38 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:clipToPadding="false">
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/padding_8"
+    android:paddingBottom="@dimen/padding_8">
 
-    <View
-        android:id="@+id/item_color_picker_background"
+    <FrameLayout
         android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/monet_color_picker_circle_background"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        tools:backgroundTint="@color/material_on_primary_disabled" />
+        android:layout_height="48dp">
 
-    <!-- NOTE: The outline keeps very dark or very light swatches visible on any sheet color. -->
-    <View
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
+        <View
+            android:id="@+id/item_color_picker_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/monet_color_picker_circle_background"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            tools:backgroundTint="@color/material_on_primary_disabled" />
+
+        <!-- NOTE: The outline keeps very dark or very light swatches visible on any sheet color. -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:background="@drawable/color_swatch_outline" />
+
+        <ImageView
+            android:id="@+id/item_color_picker_check"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:src="@drawable/ic_check"
+            android:importantForAccessibility="no"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/item_color_picker_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:importantForAccessibility="no"
-        android:background="@drawable/color_swatch_outline" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="12sp"
+        tools:text="Teal" />
 
-    <ImageView
-        android:id="@+id/item_color_picker_check"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:padding="12dp"
-        android:src="@drawable/ic_check"
-        android:importantForAccessibility="no"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-</FrameLayout>
+</LinearLayout>

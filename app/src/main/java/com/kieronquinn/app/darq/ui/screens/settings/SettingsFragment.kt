@@ -101,13 +101,7 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 R.drawable.ic_report_issue_round,
                 getString(R.string.item_report_issue_title),
                 getString(R.string.item_report_issue_content),
-                tapAction = { DiagnosticsDialogs.openIssueChooser(requireContext()) }
-            ),
-            SettingsItem.Setting(
-                R.drawable.ic_diagnostics_round,
-                getString(R.string.item_diagnostics_title),
-                getString(R.string.item_diagnostics_content),
-                tapAction = { (activity as? AppCompatActivity)?.let { DiagnosticsDialogs.showReport(it) } }
+                tapAction = { (activity as? AppCompatActivity)?.let { DiagnosticsDialogs.showReportIssue(it) } }
             ),
             SettingsItem.AboutSetting(
                 R.drawable.ic_about_round,

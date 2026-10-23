@@ -15,6 +15,7 @@ object DiagnosticsText {
 
     //Coordinates come from the sunrise and sunset schedule. Any decimal with four or more fraction digits is treated as one.
     private val COORDINATE = Regex("""(?<![\w.])-?\d{1,3}\.\d{4,}(?![\w.])""")
+    private val CONTROL = Regex("[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]")
     private val EMAIL = Regex("""[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}""")
 
     /**
@@ -28,6 +29,8 @@ object DiagnosticsText {
             val pattern = Regex("""(?<![\w.])${Regex.escape(pkg)}(?![\w])""")
             result = pattern.replace(result, hashPackage(pkg))
         }
+        //Raw log output can carry NUL and other control characters, which break XML tools and GitHub text fields
+        result = CONTROL.replace(result, "")
         result = COORDINATE.replace(result, "[coordinate]")
         result = EMAIL.replace(result, "[email]")
         return result
@@ -38,10 +41,13 @@ object DiagnosticsText {
         return "app#" + digest.take(4).joinToString("") { "%02x".format(it) }
     }
 
+    private const val FEATURE_TEMPLATE = "feature_request.yml"
+    private const val SUMMARY_CHARS = 1500
+
     /**
-     *  The prefilled bug form. Only short fields go in the URL, the log goes to the clipboard because URLs have a length limit.
+     *  The prefilled bug form. Short fields and a log summary go in the URL. The full log goes to the clipboard because URLs have a length limit.
      */
-    fun bugReportUrl(appVersion: String, android: String, device: String, mode: String): String {
+    fun bugReportUrl(appVersion: String, android: String, device: String, mode: String, logSummary: String? = null): String {
         val params = linkedMapOf(
             "template" to BUG_TEMPLATE,
             "app-version" to appVersion,
@@ -49,10 +55,23 @@ object DiagnosticsText {
             "device" to device,
             "mode" to mode
         )
-        return NEW_BUG_URL + "?" + params.entries.joinToString("&") { (key, value) ->
-            "$key=" + URLEncoder.encode(value, "UTF-8").replace("+", "%20")
-        }
+        if (logSummary != null) params["logs"] = logSummary
+        return NEW_BUG_URL + "?" + params.entries.joinToString("&") { (key, value) -> "$key=" + encode(value) }
     }
+
+    fun featureRequestUrl(mode: String): String =
+        "$NEW_BUG_URL?template=$FEATURE_TEMPLATE&mode=" + encode(mode)
+
+    /**
+     *  The start of a report (header and last crash) for the form's log field, ending with a note that the full log is on the clipboard.
+     */
+    fun logSummary(report: String, note: String, maxChars: Int = SUMMARY_CHARS): String {
+        val head = report.substringBefore("## Last abnormal exit").trim()
+        val cut = if (head.length > maxChars) head.take(maxChars).substringBeforeLast('\n') + "\n..." else head
+        return "$cut\n\n$note"
+    }
+
+    private fun encode(value: String) = URLEncoder.encode(value, "UTF-8").replace("+", "%20")
 
     /**
      *  Keeps a report within the GitHub issue body limit (65536 characters) with room for the rest of the form.

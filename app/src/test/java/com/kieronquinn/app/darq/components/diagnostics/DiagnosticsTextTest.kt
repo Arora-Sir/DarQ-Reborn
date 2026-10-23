@@ -62,6 +62,28 @@ class DiagnosticsTextTest {
     }
 
     @Test
+    fun summaryKeepsHeaderAndCrashAndEndsWithTheNote() {
+        val report = "# Header\nApp: 3.2.0\n\n## Last crash\nboom\n\n## Last abnormal exit\nnone\n\n## Log\nline"
+        val summary = DiagnosticsText.logSummary(report, "Full log on the clipboard")
+        assertEquals("# Header\nApp: 3.2.0\n\n## Last crash\nboom\n\nFull log on the clipboard", summary)
+        val long = DiagnosticsText.logSummary("x\n".repeat(2000), "note", maxChars = 100)
+        assertTrue(long.length < 120)
+        assertTrue(long.endsWith("...\n\nnote"))
+    }
+
+    @Test
+    fun bugUrlCarriesTheSummaryAndFeatureUrlUsesItsTemplate() {
+        val url = DiagnosticsText.bugReportUrl("v", "a", "d", "m", "line one\nline two")
+        assertTrue(url.endsWith("&logs=line%20one%0Aline%20two"))
+        assertEquals("https://github.com/Arora-Sir/DarQ-Reborn/issues/new?template=feature_request.yml&mode=Root", DiagnosticsText.featureRequestUrl("Root"))
+    }
+
+    @Test
+    fun controlCharactersAreRemovedButLinesAndTabsStay() {
+        assertEquals("a\tb\nc", DiagnosticsText.redact("a\tb\u0000\nc\u0007", emptyList()))
+    }
+
+    @Test
     fun oversizedSingleEntryIsCutNotDropped() {
         val log = DiagnosticsText.appendTrimmed("", "y".repeat(100), maxChars = 40)
         assertEquals(40, log.length)

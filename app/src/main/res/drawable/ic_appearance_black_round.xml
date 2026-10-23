@@ -13,5 +13,5 @@
         android:height="24dp"
         android:start="6dp"
         android:top="6dp"
-        android:drawable="@drawable/ic_night" />
+        android:drawable="@drawable/ic_contrast" />
 </layer-list>

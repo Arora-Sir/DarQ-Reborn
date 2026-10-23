@@ -13,6 +13,7 @@ import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetColorPickerBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
 import com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.ColorPickerAdapter.AccentOption
+import com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.ColorPickerAdapter.Row
 import org.koin.android.ext.android.inject
 
 class ColorPickerBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetColorPickerBinding>(FragmentBottomSheetColorPickerBinding::inflate) {
@@ -31,12 +32,14 @@ class ColorPickerBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
             view.updatePadding(left = navigationInsets.left, right = navigationInsets.right, bottom = navigationInsets.bottom + extraPadding)
             insets
         }
-        val options = buildOptions()
+        val rows = buildRows()
         with(binding){
             root.backgroundTintList = ColorStateList.valueOf(themeColors.getSheetColor(requireContext()))
-            colorPickerList.layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
-            colorPickerList.adapter = ColorPickerAdapter(requireContext(), options, ::isSelected, ::onPicked)
-            colorPickerSelected.text = options.firstOrNull(::isSelected)?.label
+            val adapter = ColorPickerAdapter(requireContext(), rows, ::isSelected, ::onPicked)
+            colorPickerList.layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT).apply {
+                spanSizeLookup = adapter.spanSizeLookup(SPAN_COUNT)
+            }
+            colorPickerList.adapter = adapter
             colorPickerOk.setOnClickListener {
                 dialog?.dismiss()
             }
@@ -44,24 +47,30 @@ class ColorPickerBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         }
     }
 
-    private fun buildOptions(): List<AccentOption> {
+    // NOTE: Three labeled sections: the automatic wallpaper accent, the presets, and single wallpaper colors (Android 12 and later only).
+    private fun buildRows(): List<Row> {
         val context = requireContext()
-        val wallpaper = AccentOption(
+        val rows = ArrayList<Row>()
+        rows += Row.Header(getString(R.string.appearance_accent_section_wallpaper))
+        rows += Row.Swatch(AccentOption(
             ThemeManager.ACCENT_WALLPAPER,
             ThemeManager.wallpaperPrimaryColor(context) ?: themeColors.getAccentColor(context),
-            getString(R.string.appearance_accent_wallpaper)
-        )
+            getString(R.string.appearance_accent_auto)
+        ))
+        rows += Row.Header(getString(R.string.appearance_accent_section_presets))
         val presetLabels = resources.getStringArray(R.array.appearance_accent_presets)
-        val presets = ThemeManager.Preset.values().mapIndexed { index, preset ->
-            AccentOption(preset.key, preset.seed, presetLabels.getOrElse(index) { preset.key })
+        ThemeManager.Preset.values().forEachIndexed { index, preset ->
+            rows += Row.Swatch(AccentOption(preset.key, preset.seed, presetLabels.getOrElse(index) { preset.key }))
         }
         //Custom accents are built by the dynamic color engine, so they are offered only where it exists (Android 12 and later)
-        val custom = if(ThemeManager.isDynamicAvailable){
-            ThemeManager.wallpaperColors(context).mapIndexed { index, color ->
-                AccentOption(ThemeManager.ACCENT_CUSTOM, color, getString(R.string.appearance_accent_custom, index + 1), color)
+        val custom = if(ThemeManager.isDynamicAvailable) ThemeManager.wallpaperColors(context) else emptyList()
+        if(custom.isNotEmpty()){
+            rows += Row.Header(getString(R.string.appearance_accent_section_custom))
+            custom.forEachIndexed { index, color ->
+                rows += Row.Swatch(AccentOption(ThemeManager.ACCENT_CUSTOM, color, getString(R.string.appearance_accent_custom, index + 1), color))
             }
-        } else emptyList()
-        return listOf(wallpaper) + presets + custom
+        }
+        return rows
     }
 
     private fun isSelected(option: AccentOption): Boolean {

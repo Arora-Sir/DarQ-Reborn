@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.databinding.DialogReportIssueBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +35,7 @@ object DiagnosticsDialogs : KoinComponent {
 
     private const val SHARE_DIRECTORY = "diagnostics-share"
     private const val SHARE_FILE = "darq-reborn-log.txt"
+    private const val PREVIEW_CHARS = 12_000
 
     private val header by inject<DiagnosticsHeader>()
 
@@ -64,8 +66,12 @@ object DiagnosticsDialogs : KoinComponent {
             if (clearPendingAfter) CrashReporter.clearPending(activity)
             if (activity.isFinishing) return@launch
             val padding = activity.resources.getDimensionPixelSize(R.dimen.padding_24)
+            //A full log is around 100 KB, which is slow to lay out in one view on older phones, so the preview shows the start and says how much more is sent
+            val preview = if(report.length > PREVIEW_CHARS){
+                report.take(PREVIEW_CHARS) + "\n\n" + activity.getString(R.string.diagnostics_preview_trimmed, report.length - PREVIEW_CHARS)
+            } else report
             val text = TextView(activity).apply {
-                this.text = report
+                this.text = preview
                 typeface = Typeface.MONOSPACE
                 textSize = 11f
                 setTextIsSelectable(true)
@@ -77,7 +83,8 @@ object DiagnosticsDialogs : KoinComponent {
             MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.diagnostics_report_title)
                 .setView(scroll)
-                .setPositiveButton(R.string.diagnostics_report_send) { _, _ -> showSendOptions(activity, report) }
+                .setPositiveButton(R.string.diagnostics_report_github) { _, _ -> openBugReport(activity, report) }
+                .setNeutralButton(R.string.diagnostics_report_more) { _, _ -> showSendOptions(activity, report) }
                 .setNegativeButton(R.string.diagnostics_report_close, null)
                 .show()
         }
@@ -102,16 +109,38 @@ object DiagnosticsDialogs : KoinComponent {
             .show()
     }
 
+    // NOTE: A link cannot attach a file, so the form gets a short summary in its log field and the full log goes to the clipboard to paste under it.
     private fun openBugReport(activity: AppCompatActivity, report: String) {
         copy(activity, DiagnosticsText.fitForIssue(report), R.string.diagnostics_copied_form)
-        openInBrowser(activity, DiagnosticsText.bugReportUrl(header.appVersion, header.android, header.device, header.mode))
+        val summary = DiagnosticsText.logSummary(report, activity.getString(R.string.diagnostics_summary_note))
+        openInBrowser(activity, DiagnosticsText.bugReportUrl(header.appVersion, header.android, header.device, header.mode, summary))
     }
 
     /**
-     *  Opens the issue chooser for anything that is not a crash, such as a feature request.
+     *  The single Report an issue entry: a bug or a feature request, with the diagnostic log included by default for bugs.
      */
-    fun openIssueChooser(context: Context) {
-        openInBrowser(context, "${DiagnosticsText.ISSUES_URL}/new/choose")
+    fun showReportIssue(activity: AppCompatActivity) {
+        val binding = DialogReportIssueBinding.inflate(activity.layoutInflater)
+        val updateLogOption = {
+            val isBug = binding.reportIssueType.checkedRadioButtonId == R.id.report_issue_bug
+            binding.reportIssueIncludeLog.isEnabled = isBug
+            binding.reportIssueLogHint.isEnabled = isBug
+        }
+        binding.reportIssueType.setOnCheckedChangeListener { _, _ -> updateLogOption() }
+        updateLogOption()
+        MaterialAlertDialogBuilder(activity)
+            .setTitle(R.string.item_report_issue_title)
+            .setView(binding.root)
+            .setPositiveButton(R.string.report_issue_continue) { _, _ ->
+                when {
+                    binding.reportIssueType.checkedRadioButtonId == R.id.report_issue_feature ->
+                        openInBrowser(activity, DiagnosticsText.featureRequestUrl(header.mode))
+                    binding.reportIssueIncludeLog.isChecked -> showReport(activity)
+                    else -> openInBrowser(activity, DiagnosticsText.bugReportUrl(header.appVersion, header.android, header.device, header.mode))
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     // NOTE: The GitHub app cannot show issue forms and drops the prefilled fields, so the default browser is targeted directly.

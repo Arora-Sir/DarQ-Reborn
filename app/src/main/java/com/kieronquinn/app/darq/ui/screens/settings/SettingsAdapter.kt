@@ -1,6 +1,7 @@
 package com.kieronquinn.app.darq.ui.screens.settings
 
 import com.kieronquinn.app.darq.components.theme.ThemeColors
+import com.kieronquinn.app.darq.components.theme.SettingsIcons
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -17,7 +18,6 @@ import com.kieronquinn.app.darq.model.settings.SettingsItemType
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import android.content.res.ColorStateList
-import android.graphics.drawable.LayerDrawable
 import android.view.View
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -85,7 +85,6 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         }
         if(holder !is ViewHolder.Header && holder !is ViewHolder.SnackbarPadding){
             applyGroupShape(holder.binding.root, visible, holder.adapterPosition)
-            tintIcon(holder)
         }
     }
 
@@ -117,22 +116,6 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         }
     }
 
-    // NOTE: Round icons are a colored circle layer and a glyph layer. Tinted icons recolor both from the accent, plain glyphs stay as they are.
-    private fun tintIcon(holder: ViewHolder) {
-        if(!settings.themeTintedIcons) return
-        val icon = when(holder){
-            is ViewHolder.SettingsSetting -> holder.binding.itemSettingIcon
-            is ViewHolder.SettingsSwitchSetting -> holder.binding.itemSettingSwitchIcon
-            is ViewHolder.SettingsAboutSetting -> holder.binding.itemSettingIcon
-            else -> return
-        }
-        val layers = icon.drawable?.mutate() as? LayerDrawable ?: return
-        if(layers.numberOfLayers < 2) return
-        layers.getDrawable(0).setTint(ThemeColors.getIconContainerColor(icon.context))
-        layers.getDrawable(1).setTint(ThemeColors.getOnIconContainerColor(icon.context))
-        icon.setImageDrawable(layers)
-    }
-
     private fun setupHeader(binding: ItemHeaderBinding, item: SettingsItem.Header) = with(binding) {
         itemHeadingTitle.text = item.title
         itemHeadingTitle.setTextColor(themeColors.getAccentColor(itemHeadingTitle.context))
@@ -147,7 +130,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
             itemSettingContent.text = item.content
         }
         if(item.icon != 0) {
-            itemSettingIcon.setImageResource(item.icon)
+            itemSettingIcon.setImageDrawable(SettingsIcons.load(itemSettingIcon.context, item.icon, settings.themeTintedIcons))
         }else{
             itemSettingIcon.setImageDrawable(ColorDrawable(Color.TRANSPARENT))
         }
@@ -179,7 +162,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
             itemSettingContent.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         }
         if(item.icon != 0) {
-            itemSettingIcon.setImageResource(item.icon)
+            itemSettingIcon.setImageDrawable(SettingsIcons.load(itemSettingIcon.context, item.icon, settings.themeTintedIcons))
         }else{
             itemSettingIcon.setImageDrawable(ColorDrawable(Color.TRANSPARENT))
         }
@@ -225,7 +208,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
             itemSettingSwitchContent.text = item.content
         }
         if(item.icon != 0) {
-            itemSettingSwitchIcon.setImageResource(item.icon)
+            itemSettingSwitchIcon.setImageDrawable(SettingsIcons.load(itemSettingSwitchIcon.context, item.icon, settings.themeTintedIcons))
         }else{
             itemSettingSwitchIcon.setImageDrawable(ColorDrawable(Color.TRANSPARENT))
         }

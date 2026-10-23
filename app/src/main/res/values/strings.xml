@@ -200,7 +200,11 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
     <string name="appearance_accent_title">Accent color</string>
     <string name="appearance_accent_wallpaper">Wallpaper</string>
-    <string name="appearance_accent_custom">Wallpaper color %1$d</string>
+    <string name="appearance_accent_custom">Color %1$d</string>
+    <string name="appearance_accent_auto">Automatic</string>
+    <string name="appearance_accent_section_wallpaper">Match your wallpaper</string>
+    <string name="appearance_accent_section_presets">Presets</string>
+    <string name="appearance_accent_section_custom">Single wallpaper color</string>
     <string name="appearance_accent_custom_summary">Wallpaper color</string>
     <string name="appearance_accent_fallback">Android 10 and 11 use the preset closest to this color</string>
     <string-array name="appearance_accent_presets">
@@ -217,15 +221,21 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
 
     <!-- Diagnostics -->
     <string name="item_report_issue_title">Report an issue</string>
-    <string name="item_report_issue_content">Report a bug or suggest a feature on GitHub</string>
-    <string name="item_diagnostics_title">Diagnostic log</string>
-    <string name="item_diagnostics_content">Review a log with your apps and location removed, then send it with a bug report</string>
+    <string name="item_report_issue_content">Report a bug with a diagnostic log, or suggest a feature on GitHub</string>
+    <string name="report_issue_bug">Something is not working (bug report)</string>
+    <string name="report_issue_feature">Suggest a feature</string>
+    <string name="report_issue_include_log">Include diagnostic log</string>
+    <string name="report_issue_include_log_hint">You review it first. Your apps and location are removed.</string>
+    <string name="report_issue_continue">Continue</string>
     <string name="diagnostics_crash_title">DarQ closed unexpectedly</string>
     <string name="diagnostics_crash_content">A crash report was saved on this device. Nothing is sent unless you choose to send it.</string>
     <string name="diagnostics_crash_review">Review report</string>
     <string name="diagnostics_crash_not_now">Not now</string>
     <string name="diagnostics_report_title">DarQ diagnostic log</string>
-    <string name="diagnostics_report_send">Send</string>
+    <string name="diagnostics_preview_trimmed">[%1$d more characters of log lines, redacted the same way, are included when you continue]</string>
+    <string name="diagnostics_report_github">Continue to GitHub</string>
+    <string name="diagnostics_report_more">More options</string>
+    <string name="diagnostics_summary_note">The full log was copied by DarQ. Paste it below this line.</string>
     <string name="diagnostics_report_close">Close</string>
     <string name="diagnostics_send_title">Send the log</string>
     <string-array name="diagnostics_send_options">
@@ -235,7 +245,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
         <item>Share</item>
         <item>Copy to clipboard</item>
     </string-array>
-    <string name="diagnostics_copied_form">Log copied. Paste it into Relevant log output on the form.</string>
+    <string name="diagnostics_copied_form">Full log copied. Paste it at the end of Relevant log output.</string>
     <string name="diagnostics_copied_comment">Log copied. Open the issue and paste it into a comment.</string>
     <string name="diagnostics_copied">Log copied to the clipboard</string>
     <string name="diagnostics_saved">Log saved to Downloads</string>

@@ -281,6 +281,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     private var snackbarAnimation: Animation? = null
 
     private fun setSnackbarVisibility(visible: Boolean){
+        //A rebuilt screen starts with the snackbar gone, and sliding it out from there flashes it on screen for a moment
+        if(!visible && !binding.snackbarContainer.isVisible && snackbarAnimation == null) return
         snackbarAnimation?.cancel()
         snackbarAnimation = if(visible) binding.snackbarContainer.slideIn {  }
         else binding.snackbarContainer.slideOut {  }

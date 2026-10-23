@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/padding_24"
+    android:paddingEnd="@dimen/padding_24"
+    android:paddingTop="@dimen/padding_8">
+
+    <RadioGroup
+        android:id="@+id/report_issue_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/report_issue_bug">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/report_issue_bug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/report_issue_bug" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/report_issue_feature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/report_issue_feature" />
+
+    </RadioGroup>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/report_issue_include_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:checked="true"
+        android:text="@string/report_issue_include_log" />
+
+    <TextView
+        android:id="@+id/report_issue_log_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="32dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary"
+        android:text="@string/report_issue_include_log_hint" />
+
+</LinearLayout>
