@@ -92,3 +92,10 @@ __pycache__/
 
 # Personal roadmap notes, kept local
 FUTURE_WORK.md
+
+# Local working notes and drafts, never public
+HANDOFF.md
+release_notes_temp.md
+.claude/
+*.local.md
+scratch/
