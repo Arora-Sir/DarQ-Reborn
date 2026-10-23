@@ -187,6 +187,28 @@ Repairing the title bar after the fact is not possible either: once a window has
 
 No. There is no customisation with force dark, so you cannot change the colours.
 
+## Appearance, Reports and Support
+
+### How do I change the theme, pure black or the accent color?
+
+Open **Appearance** on the main screen. Pick light, dark or follow system, turn on **Pure black** for true black backgrounds in dark mode, and choose an accent. The **Custom** swatch opens a picker with a palette, saturation and hue sliders and a hex field. On Android 10 and 11 a custom or wallpaper accent is matched to the closest preset, since the full color engine needs Android 12.
+
+### What does Report an issue send?
+
+Nothing, until you tap a send option. The preview shows exactly what would be sent. Your installed apps are replaced by short codes, and coordinates and email addresses are removed. **Continue to GitHub** opens a prefilled form in your default browser and copies the full log so you can paste it under the form.
+
+### Why are some new texts only in English?
+
+Ukrainian and Simplified Chinese translations for the newest screens are machine translated, so wording may not be perfect. Corrections are welcome as pull requests.
+
+### How can I support DarQ Reborn?
+
+Open the **Support development** chip at the bottom of the main screen. It offers UPI, PayPal and GitHub Sponsors. Supporting is always optional.
+
+### How do I get updates automatically?
+
+DarQ checks GitHub for new releases when it starts. You can also tap **Track with Obtainium** in the main screen to add DarQ to Obtainium, which then notifies you about each new release.
+
 ## Troubleshooting & Bug Reporting
 
 ### The app is crashing on launch or force-closing. How can I capture logs to report the issue?

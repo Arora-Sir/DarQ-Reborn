@@ -97,6 +97,34 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
 
 
+## Appearance
+
+Open **Appearance** in DarQ to change how the app looks.
+
+* **Theme:** light, dark or follow the system.
+* **Pure black:** true black backgrounds in dark mode, which saves power on AMOLED screens.
+* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (One UI Blue, Teal, Emerald Green, Cyber Violet, Dual Orange, Rose, Monochrome), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
+* **Tinted icons:** colors the settings icons with the accent instead of the classic multicolor set.
+
+| Light | Dark | Pure black |
+| --- | --- | --- |
+| ![Light](assets/screenshots/main_light.png) | ![Dark](assets/screenshots/main_dark.png) | ![Pure black](assets/screenshots/main_black.png) |
+
+## Report an issue
+
+**Settings > Report an issue** opens one form for a bug or a feature idea. For bugs you can type what happened and the steps, and the diagnostic log is included by default.
+
+* The preview shows a summary, the last crash and handled errors first, and keeps the full log behind **Show full log**.
+* Every app you have installed is replaced by a short code, and coordinates and email addresses are removed. You see exactly what would be sent.
+* Nothing leaves your device until you tap **Continue to GitHub** or one of the other send options. GitHub opens in your default browser with the form prefilled, and the full log is copied for you to paste.
+* If DarQ closes unexpectedly, the next launch offers the crash report once.
+
+## Support, credits and updates
+
+* **Support development:** an optional card with UPI, PayPal and GitHub Sponsors. There are no popups or nag screens.
+* **Credits:** DarQ Reborn continues the original [DarQ](https://github.com/KieronQuinn/DarQ) by Kieron Quinn and builds on Shizuku, LSPosed, libsu and other open source projects.
+* **Updates:** DarQ checks GitHub for new releases, and **Track with Obtainium** adds it to [Obtainium](https://github.com/ImranR98/Obtainium) in one tap.
+
 ## Known Behaviour
 
 **Samsung Pop-up View title bar.** If you summon a Pop-up View window within the first few seconds of launching an app you have selected in DarQ, that pop-up's title bar can appear white. Opening a pop-up at any other time is unaffected, and the app itself is always correctly darkened.
