@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.ColorMath
@@ -106,7 +107,7 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
                 ThemeManager.applyNightMode(settings)
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .showBlurred(requireActivity())
     }
 
     private fun onAccentClicked() {

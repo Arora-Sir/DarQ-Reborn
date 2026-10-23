@@ -9,7 +9,8 @@
     <include layout="@layout/include_switch_main"
         android:id="@+id/switch_main"/>
 
-    <!-- NOTE: The status card answers "is DarQ working" in two seconds, with the mode on line one and the details on line two. -->
+    <!-- NOTE: The status line is plain text under the main switch, so it reads as information and not as a button. -->
+    <!-- NOTE: Only the problem state gets a tinted pill and a ripple, because only that state can be tapped (it opens the FAQ). -->
     <LinearLayout
         android:id="@+id/status_card"
         android:layout_width="match_parent"
@@ -17,43 +18,29 @@
         android:layout_marginStart="@dimen/padding_16"
         android:layout_marginEnd="@dimen/padding_16"
         android:layout_marginBottom="@dimen/padding_8"
-        android:background="@drawable/button_background_backup_restore"
         android:gravity="center_vertical"
-        android:minHeight="72dp"
+        android:minHeight="40dp"
         android:orientation="horizontal"
-        android:padding="@dimen/padding_16">
+        android:paddingStart="@dimen/padding_24"
+        android:paddingTop="@dimen/padding_8"
+        android:paddingEnd="@dimen/padding_16"
+        android:paddingBottom="@dimen/padding_8">
 
         <ImageView
             android:id="@+id/status_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="@dimen/padding_16"
-            android:background="@drawable/monet_color_picker_circle_background"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="@dimen/padding_8"
             android:importantForAccessibility="no"
-            android:padding="@dimen/padding_8"
             android:src="@drawable/ic_check" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/status_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/status_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
-                android:textColor="?android:textColorPrimary" />
-
-            <TextView
-                android:id="@+id/status_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
-                android:textColor="?android:textColorSecondary" />
-
-        </LinearLayout>
+            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+            android:textColor="?android:textColorSecondary" />
 
     </LinearLayout>
 

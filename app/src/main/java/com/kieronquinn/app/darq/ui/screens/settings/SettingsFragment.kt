@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.*
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -179,37 +183,57 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         super.onPause()
     }
 
-    // NOTE: The card is rebuilt on every resume, so coming back from the app picker shows the new count.
+    // NOTE: The line is rebuilt on every resume, so coming back from the app picker shows the new count.
+    // NOTE: A working service is plain text. A missing service gets a tinted, tappable pill that opens the FAQ.
     private fun updateStatusCard(connecting: Boolean) = with(binding) {
         val context = requireContext()
         val type = connection.connectedServiceType
         val connected = type != DarqServiceConnectionProvider.ServiceType.UNKNOWN
         val count = settings.enabledApps.size
         val apps = if (count == 0) getString(R.string.status_content_none_selected) else resources.getQuantityString(R.plurals.status_content_apps, count, count)
-        statusTitle.setText(when {
+        val title = getString(when {
             type == DarqServiceConnectionProvider.ServiceType.SHIZUKU -> R.string.status_title_shizuku
             type == DarqServiceConnectionProvider.ServiceType.ROOT -> R.string.status_title_root
             connecting -> R.string.status_title_connecting
             else -> R.string.status_title_none
         })
-        val details = if (XposedState.isActive) getString(R.string.status_content_xposed, apps) else apps
-        statusContent.text = when {
-            connected -> details
-            connecting -> apps
-            else -> getString(R.string.status_content_not_connected, apps)
+        val details = if (connected && XposedState.isActive) getString(R.string.status_content_xposed, apps) else apps
+        val problem = !connected && !connecting
+        val onSurface = themeColors.getOnSurfaceColor(context)
+        val onError = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnErrorContainer, Color.WHITE)
+        val accent = themeColors.getAccentColor(context)
+        statusTitle.text = if (problem) {
+            SpannableStringBuilder().apply {
+                append(title, StyleSpan(Typeface.BOLD), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                append(". ")
+                append(getString(R.string.status_content_not_connected))
+            }
+        } else {
+            SpannableStringBuilder().apply {
+                append(title, ForegroundColorSpan(onSurface), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                append("  •  ")
+                append(details)
+            }
         }
-        //A connected service uses the accent container, a missing one uses the error container so it reads as a problem at a glance
-        val healthy = connected || connecting
-        val container = if (healthy) com.google.android.material.R.attr.colorPrimaryContainer else com.google.android.material.R.attr.colorErrorContainer
-        val onContainer = if (healthy) com.google.android.material.R.attr.colorOnPrimaryContainer else com.google.android.material.R.attr.colorOnErrorContainer
-        statusIcon.backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(context, container, Color.DKGRAY))
-        statusIcon.imageTintList = ColorStateList.valueOf(MaterialColors.getColor(context, onContainer, Color.WHITE))
+        statusTitle.setTextColor(if (problem) onError else onSurface and 0x00FFFFFF or (0xB3 shl 24))
         statusIcon.setImageResource(when {
             connected -> R.drawable.ic_check
             connecting -> R.drawable.ic_update
             else -> R.drawable.ic_close
         })
-        statusCard.backgroundTintList = ColorStateList.valueOf(themeColors.getBackgroundColorSecondary(context))
+        statusIcon.imageTintList = ColorStateList.valueOf(if (problem) onError else accent)
+        if (problem) {
+            val container = MaterialColors.getColor(context, com.google.android.material.R.attr.colorErrorContainer, Color.DKGRAY)
+            statusCard.background = ContextCompat.getDrawable(context, R.drawable.button_background_backup_restore)?.mutate()?.also { DrawableCompat.setTint(it, container) }
+            statusCard.foreground = ContextCompat.getDrawable(context, R.drawable.rounded_ripple_36)
+            statusCard.isClickable = true
+            statusCard.setOnClickListener { viewModel.onFaqClicked() }
+        } else {
+            statusCard.background = null
+            statusCard.foreground = null
+            statusCard.isClickable = false
+            statusCard.setOnClickListener(null)
+        }
     }
 
     private fun setupMainSwitch() {

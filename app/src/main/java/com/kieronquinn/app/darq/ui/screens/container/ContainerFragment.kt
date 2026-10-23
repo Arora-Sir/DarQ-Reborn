@@ -77,7 +77,25 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         binding.appBar.setBackgroundColor(android.graphics.Color.TRANSPARENT)
     }
 
+    // NOTE: The app bar is sized with the status bar height from the very first layout, so the title never jumps down when the insets arrive.
+    private fun applyInitialAppBarSize(){
+        val statusBarHeight = resources.getIdentifier("status_bar_height", "dimen", "android").let {
+            if(it > 0) resources.getDimensionPixelSize(it) else 0
+        }
+        val appBarHeight = resources.getDimension(R.dimen.app_bar_height)
+        binding.collapsingToolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
+            height = (appBarHeight + statusBarHeight).roundToInt()
+        }
+        getToolbarHeight()?.let { toolbarHeight ->
+            binding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
+                height = toolbarHeight + statusBarHeight
+            }
+            binding.toolbar.updatePadding(top = statusBarHeight)
+        }
+    }
+
     private fun setupInsets(){
+        applyInitialAppBarSize()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(left = navigationInsets.left, right = navigationInsets.right)
@@ -114,7 +132,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     private fun setupToolbar(){
         with(binding){
             collapsingToolbar.title = getString(R.string.app_name)
-            appBar.setExpanded(!requireContext().isLandscape && getTopFragment() is AutoExpandOnRotate)
+            //Always start expanded and without animation, the top fragment then restores its own saved state, so the large title is there from the first frame
+            appBar.setExpanded(!requireContext().isLandscape, false)
             appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
                 val currentDestClass = (navController.currentDestination as? androidx.navigation.fragment.FragmentNavigator.Destination)?.className
                 if (currentDestClass != null) {

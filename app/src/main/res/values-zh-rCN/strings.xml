@@ -158,13 +158,13 @@
     <string name="item_obtainium_title">使用 Obtainium 跟踪</string>
     <string name="item_obtainium_content">一键将 DarQ 添加到 Obtainium，并获取新版本通知</string>
     <string name="bottom_sheet_update_obtainium">使用 Obtainium 跟踪</string>
-    <string name="status_title_shizuku">通过 Shizuku 运行</string>
-    <string name="status_title_root">通过 root 运行</string>
+    <string name="status_title_shizuku">Shizuku 已连接</string>
+    <string name="status_title_root">root 已连接</string>
     <string name="status_title_connecting">正在连接服务</string>
     <string name="status_title_none">服务未连接</string>
     <string name="status_content_none_selected">尚未选择应用</string>
     <string name="status_content_xposed">%1$s，Xposed 模块已启用</string>
-    <string name="status_content_not_connected">请打开 Shizuku 或授予 root，然后重新打开 DarQ。%1$s</string>
+    <string name="status_content_not_connected">请打开 Shizuku 或授予 root，然后重新打开 DarQ。点按获取帮助。</string>
     <string name="item_appearance_title">外观</string>
     <string name="item_appearance_content">主题、强调色、纯黑和图标</string>
     <string name="appearance_theme_title">主题</string>

@@ -1,6 +1,7 @@
 package com.kieronquinn.app.darq.components.diagnostics
 
 import android.content.ClipData
+import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.utils.LinkOpener
 import com.kieronquinn.app.darq.utils.Toasts
 import android.content.ClipboardManager
@@ -49,7 +50,7 @@ object DiagnosticsDialogs : KoinComponent {
                 .setPositiveButton(R.string.diagnostics_crash_review) { _, _ -> ReportBottomSheetFragment.show(activity, clearPending = true) }
                 .setNegativeButton(R.string.diagnostics_crash_not_now) { _, _ -> CrashReporter.clearPending(activity) }
                 .setOnCancelListener { CrashReporter.clearPending(activity) }
-                .show()
+                .showBlurred(activity)
         }
     }
 
@@ -69,7 +70,7 @@ object DiagnosticsDialogs : KoinComponent {
                     else -> copy(activity, report, R.string.diagnostics_copied)
                 }
             }
-            .show()
+            .showBlurred(activity)
     }
 
     // NOTE: A link cannot attach a file, so the form gets a short summary in its log field and the full log goes to the clipboard to paste under it.
@@ -95,7 +96,7 @@ object DiagnosticsDialogs : KoinComponent {
         }
         binding.reportIssueType.setOnCheckedChangeListener { _, _ -> update() }
         update()
-        val dialog = MaterialAlertDialogBuilder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.item_report_issue_title)
             .setView(binding.root)
             .setPositiveButton(R.string.report_issue_continue) { _, _ ->
@@ -111,10 +112,8 @@ object DiagnosticsDialogs : KoinComponent {
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .create()
-        //The dialog shrinks and scrolls above the keyboard, so the second field and the buttons stay reachable
-        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog.show()
+            //The dialog shrinks and scrolls above the keyboard, so the second field and the buttons stay reachable
+            .showBlurred(activity) { it.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE) }
     }
 
     fun openInBrowser(context: Context, url: String) {

@@ -99,3 +99,4 @@ release_notes_temp.md
 .claude/
 *.local.md
 scratch/
+CI_CD_PLAN.md

@@ -224,8 +224,8 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="bottom_sheet_update_obtainium">Track with Obtainium</string>
 
     <!-- Status card -->
-    <string name="status_title_shizuku">Running through Shizuku</string>
-    <string name="status_title_root">Running through root</string>
+    <string name="status_title_shizuku">Shizuku connected</string>
+    <string name="status_title_root">Root connected</string>
     <string name="status_title_connecting">Connecting to the service</string>
     <string name="status_title_none">Service not connected</string>
     <string name="status_content_none_selected">No apps selected yet</string>
@@ -234,7 +234,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
         <item quantity="other">%d apps darkened</item>
     </plurals>
     <string name="status_content_xposed">%1$s, Xposed module active</string>
-    <string name="status_content_not_connected">Open Shizuku or grant root, then reopen DarQ. %1$s</string>
+    <string name="status_content_not_connected">Open Shizuku or grant root, then reopen DarQ. Tap for help.</string>
 
     <!-- Appearance -->
     <string name="item_appearance_title">Appearance</string>

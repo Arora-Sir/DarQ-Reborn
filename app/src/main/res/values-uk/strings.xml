@@ -212,13 +212,13 @@
     <string name="item_obtainium_title">Стежити через Obtainium</string>
     <string name="item_obtainium_content">Додайте DarQ до Obtainium одним дотиком і отримуйте сповіщення про нові випуски</string>
     <string name="bottom_sheet_update_obtainium">Стежити через Obtainium</string>
-    <string name="status_title_shizuku">Працює через Shizuku</string>
-    <string name="status_title_root">Працює через root</string>
+    <string name="status_title_shizuku">Shizuku підключено</string>
+    <string name="status_title_root">Root підключено</string>
     <string name="status_title_connecting">Підключення до сервісу</string>
     <string name="status_title_none">Сервіс не підключено</string>
     <string name="status_content_none_selected">Додатки ще не вибрано</string>
     <string name="status_content_xposed">%1$s, модуль Xposed активний</string>
-    <string name="status_content_not_connected">Відкрийте Shizuku або надайте root, потім знову відкрийте DarQ. %1$s</string>
+    <string name="status_content_not_connected">Відкрийте Shizuku або надайте root, потім знову відкрийте DarQ. Торкніться, щоб отримати допомогу.</string>
     <string name="item_appearance_title">Вигляд</string>
     <string name="item_appearance_content">Тема, колір акценту, чорний фон і піктограми</string>
     <string name="appearance_theme_title">Тема</string>

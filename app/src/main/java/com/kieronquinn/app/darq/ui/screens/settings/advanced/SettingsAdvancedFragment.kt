@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.databinding.FragmentSettingsAdvancedBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.service.background.DarqPersistentService
@@ -148,7 +149,7 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
             .setMessage(R.string.dialog_disable_persistent_service_message)
             .setPositiveButton(R.string.dialog_disable_persistent_service_confirm) { _, _ -> onConfirmed() }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .showBlurred(requireActivity())
     }
 
 }

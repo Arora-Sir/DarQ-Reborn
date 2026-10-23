@@ -6,9 +6,9 @@
     <dimen name="padding_24">24dp</dimen>
     <dimen name="padding_32">32dp</dimen>
 
-    <dimen name="app_bar_height">200dp</dimen>
+    <dimen name="app_bar_height">128dp</dimen>
     <dimen name="toolbar_expanded_height">226dp</dimen>
-    <dimen name="toolbar_scrim_visible_height">174dp</dimen>
+    <dimen name="toolbar_scrim_visible_height">104dp</dimen>
     <dimen name="toolbar_expanded_title_margin">16dp</dimen>
 
     <dimen name="shared_axis_x_slide_distance">96dp</dimen>
