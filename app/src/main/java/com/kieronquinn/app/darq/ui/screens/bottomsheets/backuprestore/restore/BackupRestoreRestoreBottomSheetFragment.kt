@@ -1,8 +1,8 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.backuprestore.restore
 
 import android.os.Bundle
+import com.kieronquinn.app.darq.utils.Toasts
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -51,11 +51,11 @@ class BackupRestoreRestoreBottomSheetFragment: BaseBottomSheetFragment<FragmentB
     private fun handleComplete(result: BackupRestoreRestoreViewModel.Result){
         when(result){
             BackupRestoreRestoreViewModel.Result.SUCCESS -> {
-                Toast.makeText(requireContext(), R.string.item_backup_restore_restore_success, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_backup_restore_restore_success, long = true)
                 sharedViewModel.onRestoreSuccess()
             }
             BackupRestoreRestoreViewModel.Result.FAILED -> {
-                Toast.makeText(requireContext(), R.string.item_backup_restore_restore_failed, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_backup_restore_restore_failed, long = true)
             }
         }
     }

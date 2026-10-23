@@ -1,9 +1,9 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.update
 
 import android.content.DialogInterface
+import com.kieronquinn.app.darq.utils.Toasts
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -86,7 +86,7 @@ class UpdateDownloadBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomS
                     is UpdateDownloadBottomSheetViewModel.State.Failed -> {
                         val message = state.errorMsg?.let { "Download failed: $it" } ?: getString(R.string.bs_update_download_failed)
                         Log.e("DarQUpdate", "UpdateDownloadBottomSheetFragment: Download Failed, showing Toast: $message")
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                        Toasts.show(requireContext(), message, long = true)
                         dismiss()
                     }
                     UpdateDownloadBottomSheetViewModel.State.Idle -> {

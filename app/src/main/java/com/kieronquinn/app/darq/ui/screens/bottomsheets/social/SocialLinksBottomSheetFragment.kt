@@ -9,6 +9,7 @@ import androidx.core.view.updatePadding
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetSocialLinksBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
+import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.utils.openLink
 
 class SocialLinksBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetSocialLinksBinding>(FragmentBottomSheetSocialLinksBinding::inflate) {
@@ -20,27 +21,27 @@ class SocialLinksBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
                 dismiss()
             }
             socialWebsite.setOnClickListener {
-                requireContext().openLink("https://mohitarora.me/")
+                requireContext().openLink(Links.LINK_WEBSITE)
                 dismiss()
             }
             socialGithubProfile.setOnClickListener {
-                requireContext().openLink("https://github.com/Arora-Sir")
+                requireContext().openLink(Links.LINK_GITHUB_PROFILE)
                 dismiss()
             }
             socialLinkedinProfile.setOnClickListener {
-                requireContext().openLink("https://www.linkedin.com/in/arora-sir/")
+                requireContext().openLink(Links.LINK_LINKEDIN)
                 dismiss()
             }
             socialTwitter.setOnClickListener {
-                requireContext().openLink("https://x.com/arorasir")
+                requireContext().openLink(Links.LINK_TWITTER)
                 dismiss()
             }
             socialInstagram.setOnClickListener {
-                requireContext().openLink("https://www.instagram.com/arora.sir/?hl=en")
+                requireContext().openLink(Links.LINK_INSTAGRAM)
                 dismiss()
             }
             socialReddit.setOnClickListener {
-                requireContext().openLink("https://www.reddit.com/user/AroraSir/")
+                requireContext().openLink(Links.LINK_REDDIT)
                 dismiss()
             }
 

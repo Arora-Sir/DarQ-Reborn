@@ -1,10 +1,10 @@
 package com.kieronquinn.app.darq.ui.screens.settings.developer
 
 import android.os.Bundle
+import com.kieronquinn.app.darq.utils.Toasts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentSettingsDeveloperOptionsBinding
@@ -72,9 +72,9 @@ class SettingsDeveloperOptionsFragment: BaseSettingsFragment<FragmentSettingsDev
     private fun onKillOtherInstancesClicked() {
         lifecycleScope.launchWhenResumed {
             if(sharedViewModel.killOtherInstances()){
-                Toast.makeText(requireContext(), R.string.item_developer_options_kill_service_toast_success, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_developer_options_kill_service_toast_success, long = true)
             }else{
-                Toast.makeText(requireContext(), R.string.item_developer_options_kill_service_toast_failed, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_developer_options_kill_service_toast_failed, long = true)
             }
         }
     }

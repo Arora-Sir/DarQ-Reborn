@@ -21,11 +21,16 @@
 	<uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
 	<!-- NOTE: Lets DarQ find the default browser, so GitHub issue forms open there instead of in the GitHub app. -->
+	<!-- NOTE: Lets DarQ see which UPI apps are installed (Android 11 and later), so the support button can offer a chooser or copy the UPI ID. -->
 	<queries>
 		<intent>
 			<action android:name="android.intent.action.VIEW" />
 			<category android:name="android.intent.category.BROWSABLE" />
 			<data android:scheme="https" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="upi" />
 		</intent>
 	</queries>
 

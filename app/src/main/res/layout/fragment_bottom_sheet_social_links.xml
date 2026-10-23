@@ -13,11 +13,22 @@
         android:layout_marginTop="@dimen/padding_16"
         android:paddingTop="@dimen/padding_8"
         android:paddingBottom="@dimen/padding_8"
-        android:text="@string/social_links_dialog_title"
+        android:text="@string/social_developer_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/social_links_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/social_developer_role"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/social_links_title" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/social_links_scroll"
@@ -26,7 +37,7 @@
         android:layout_marginTop="@dimen/padding_16"
         app:layout_constrainedHeight="true"
         app:layout_constraintHeight_max="360dp"
-        app:layout_constraintTop_toBottomOf="@id/social_links_title"
+        app:layout_constraintTop_toBottomOf="@id/social_links_role"
         app:layout_constraintBottom_toTopOf="@id/social_links_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

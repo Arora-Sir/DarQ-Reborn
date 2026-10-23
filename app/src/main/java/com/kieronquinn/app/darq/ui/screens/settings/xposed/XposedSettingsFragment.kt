@@ -1,10 +1,10 @@
 package com.kieronquinn.app.darq.ui.screens.settings.xposed
 
 import android.os.Bundle
+import com.kieronquinn.app.darq.utils.Toasts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.databinding.FragmentSettingsXposedBinding
@@ -56,7 +56,7 @@ class XposedSettingsFragment: BaseSettingsFragment<FragmentSettingsXposedBinding
                 XposedBridge.ScopeResult.AlreadyInScope -> getString(R.string.xposed_scope_already)
                 XposedBridge.ScopeResult.Unavailable -> getString(R.string.xposed_scope_unavailable)
             }
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            Toasts.show(context, message, long = true)
         }
     }
 

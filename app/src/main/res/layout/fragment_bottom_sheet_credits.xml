@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:layout_gravity="bottom">
+
+    <TextView
+        android:id="@+id/credits_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:paddingTop="@dimen/padding_8"
+        android:paddingBottom="@dimen/padding_8"
+        android:text="@string/credits_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/credits_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scrollIndicators="top|bottom"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/credits_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="520dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/credits_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingEnd="@dimen/padding_16">
+
+            <TextView
+                android:id="@+id/credits_intro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_8"
+                android:paddingEnd="@dimen/padding_8"
+                android:text="@string/credits_intro"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:id="@+id/credits_upstream"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_16"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_upstream"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_github" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_upstream_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_upstream_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_author"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_about" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_author_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_author_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_shizuku"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_shizuku"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_github" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_shizuku_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_shizuku_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_xposed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_xposed"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_xposed" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_xposed_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_xposed_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_libsu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_libsu"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_github" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_libsu_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_libsu_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_contributors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_contributors"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_socials" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_contributors_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_contributors_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/credits_licences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_8"
+                android:background="@drawable/button_background_backup_restore"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_36"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/credits_ic_licences"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="@dimen/padding_16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_about" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_licences_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                        android:textColor="?android:textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/credits_licences_summary"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/credits_cancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:layout_marginEnd="@dimen/padding_16"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:text="@android:string/cancel"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/credits_scroll" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetDonationBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
 import com.kieronquinn.app.darq.utils.Links
+import com.kieronquinn.app.darq.utils.SupportHelper
 import com.kieronquinn.app.darq.utils.openLink
 
 class DonationBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetDonationBinding>(FragmentBottomSheetDonationBinding::inflate) {
@@ -21,22 +22,33 @@ class DonationBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetD
                 dismiss()
             }
             donationUpi.setOnClickListener {
-                requireContext().openLink(Links.LINK_UPI)
+                SupportHelper.handleUpiPayment(requireContext())
+                dismiss()
+            }
+            donationCopyUpi.setOnClickListener {
+                SupportHelper.copyUpiId(requireContext())
                 dismiss()
             }
             donationPaypal.setOnClickListener {
                 requireContext().openLink(Links.LINK_DONATE)
                 dismiss()
             }
+            donationSponsors.setOnClickListener {
+                requireContext().openLink(Links.LINK_SPONSORS)
+                dismiss()
+            }
 
             val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             donationIcUpi.imageTintList = accent
+            donationIcCopyUpi.imageTintList = accent
             donationIcPaypal.imageTintList = accent
+            donationIcSponsors.imageTintList = accent
             donationCancel.setTextColor(accent)
 
             val cardBg = themeColors.getBackgroundColorSecondary(requireContext())
-            donationUpi.backgroundTintList = ColorStateList.valueOf(cardBg)
-            donationPaypal.backgroundTintList = ColorStateList.valueOf(cardBg)
+            listOf(donationUpi, donationCopyUpi, donationPaypal, donationSponsors).forEach {
+                it.backgroundTintList = ColorStateList.valueOf(cardBg)
+            }
 
             ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
                 val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom

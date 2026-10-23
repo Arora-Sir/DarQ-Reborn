@@ -1,11 +1,11 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.errors
 
 import android.content.ClipData
+import com.kieronquinn.app.darq.utils.Toasts
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
@@ -69,11 +69,7 @@ class ServiceTimeoutBottomSheetFragment: BaseBottomSheetDialogFragment() {
         clipboard.setPrimaryClip(ClipData.newPlainText("DarQ Diagnostics", buildDiagnostics()))
         //Android 13+ shows its own clipboard confirmation, so ours would be a duplicate
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
-            Toast.makeText(
-                requireContext(),
-                R.string.bottom_sheet_service_timeout_copied,
-                Toast.LENGTH_SHORT
-            ).show()
+            Toasts.show(requireContext(), R.string.bottom_sheet_service_timeout_copied)
         }
     }
 

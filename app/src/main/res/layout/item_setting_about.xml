@@ -48,16 +48,16 @@
             tools:text="Setting Content"
             tools:visibility="visible" />
 
-        <LinearLayout
+        <com.google.android.material.chip.ChipGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:chipSpacingHorizontal="@dimen/padding_8"
+            app:chipSpacingVertical="0dp">
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_donate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/padding_16"
                 android:text="@string/chip_donate"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium"
                 app:chipBackgroundColor="@color/icon_circle_7"
@@ -76,7 +76,18 @@
                 app:chipIconTint="@color/icon_inside_6"
                 app:chipStartPadding="8dp" />
 
-        </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_credits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chip_credits"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium"
+                app:chipBackgroundColor="@color/icon_circle_6"
+                app:chipIcon="@drawable/ic_about"
+                app:chipIconTint="@color/icon_inside_6"
+                app:chipStartPadding="8dp" />
+
+        </com.google.android.material.chip.ChipGroup>
 
     </LinearLayout>
 

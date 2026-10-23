@@ -1,7 +1,7 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
 import android.content.res.ColorStateList
-import android.widget.Toast
+import com.kieronquinn.app.darq.utils.Toasts
 import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import android.os.Bundle
 import android.text.Editable
@@ -167,8 +167,8 @@ class SettingsAppPickerFragment :
             XposedBridge.requestScope(listOf(appPickerItem.packageName)) { result ->
                 val context = context ?: return@requestScope
                 when(result){
-                    is XposedBridge.ScopeResult.Approved -> Toast.makeText(context, getString(R.string.xposed_scope_approved, appPickerItem.label), Toast.LENGTH_SHORT).show()
-                    is XposedBridge.ScopeResult.Failed -> Toast.makeText(context, getString(R.string.xposed_scope_failed, result.message), Toast.LENGTH_LONG).show()
+                    is XposedBridge.ScopeResult.Approved -> Toasts.show(context, getString(R.string.xposed_scope_approved, appPickerItem.label))
+                    is XposedBridge.ScopeResult.Failed -> Toasts.show(context, getString(R.string.xposed_scope_failed, result.message), long = true)
                     else -> {}
                 }
             }

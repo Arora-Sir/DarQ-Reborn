@@ -212,6 +212,16 @@
         android:id="@+id/action_global_socialLinksBottomSheetFragment"
         app:destination="@id/socialLinksBottomSheetFragment" />
 
+    <dialog
+        android:id="@+id/creditsBottomSheetFragment"
+        android:name="com.kieronquinn.app.darq.ui.screens.bottomsheets.credits.CreditsBottomSheetFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_bottom_sheet_credits" />
+
+    <action
+        android:id="@+id/action_global_creditsBottomSheetFragment"
+        app:destination="@id/creditsBottomSheetFragment" />
+
     <action
         android:id="@+id/action_global_settingsAdvancedFragment"
         app:destination="@id/settingsAdvancedFragment" />

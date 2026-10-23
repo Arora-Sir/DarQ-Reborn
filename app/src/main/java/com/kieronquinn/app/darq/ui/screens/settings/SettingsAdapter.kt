@@ -27,6 +27,7 @@ import org.koin.core.component.inject
 import android.content.DialogInterface
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.ui.utils.MultiTapDetector
+import com.kieronquinn.app.darq.utils.LinkSpans
 import com.kieronquinn.app.darq.utils.openLink
 
 class SettingsAdapter(context: Context, private var items: List<SettingsItem>): RecyclerView.Adapter<SettingsAdapter.ViewHolder>(), KoinComponent {
@@ -152,13 +153,16 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         val secondaryBackground = themeColors.getBackgroundColorSecondary(root.context)
         val backgroundTint = android.content.res.ColorStateList.valueOf(secondaryBackground)
         chipSocials.chipBackgroundColor = backgroundTint
+        chipDonate.chipBackgroundColor = backgroundTint
+        chipCredits.chipBackgroundColor = backgroundTint
 
         itemSettingTitle.text = item.title
         if(item.content.isNullOrEmpty()){
             itemSettingContent.isVisible = false
         }else{
             itemSettingContent.isVisible = true
-            itemSettingContent.text = android.text.Html.fromHtml(item.content.toString(), android.text.Html.FROM_HTML_MODE_LEGACY)
+            //A URLSpan starts the link without a catch, so each one is swapped for a span that opens through the safe link helper
+            itemSettingContent.text = LinkSpans.safe(root.context, android.text.Html.fromHtml(item.content.toString(), android.text.Html.FROM_HTML_MODE_LEGACY))
             itemSettingContent.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         }
         if(item.icon != 0) {
@@ -183,6 +187,17 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
                     chip.findNavController().navigate(R.id.action_global_donationBottomSheetFragment)
                 } catch (e: Exception) {
                     android.util.Log.e("SettingsAdapter", "Navigation to donation bottom sheet failed", e)
+                }
+            }, 150)
+        }
+        binding.chipCredits.setOnClickListener { chip ->
+            chip.isPressed = false
+            chip.clearFocus()
+            chip.postDelayed({
+                try {
+                    chip.findNavController().navigate(R.id.action_global_creditsBottomSheetFragment)
+                } catch (e: Exception) {
+                    android.util.Log.e("SettingsAdapter", "Navigation to credits bottom sheet failed", e)
                 }
             }, 150)
         }
