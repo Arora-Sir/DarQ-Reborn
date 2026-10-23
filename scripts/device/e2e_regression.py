@@ -136,9 +136,9 @@ def set_probe_selected(dev: Device, selected: bool) -> bool:
     title = None
     for attempt in range(2):
         dev.tap(*search.center)
-        if attempt:
-            # A keyboard that was not ready can drop the first input, so the field is cleared and typed again.
-            dev.sh("input keyevent KEYCODE_MOVE_END; input keyevent --longpress KEYCODE_DEL", check=False)
+        # A keyboard still opening can drop or double the first letter, so the field is emptied and typing waits for it.
+        time.sleep(1.5)
+        dev.sh("input keyevent KEYCODE_MOVE_END; " + "; ".join(["input keyevent KEYCODE_DEL"] * 12), check=False)
         dev.type_text("DarQ")
         try:
             title = dev.wait_for_text(PROBE_LABEL, timeout=30)

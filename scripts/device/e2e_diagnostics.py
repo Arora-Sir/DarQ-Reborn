@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from adbx import Device  # noqa: E402
+from adbx import UI_DUMP_PATH, Device  # noqa: E402
 from e2e_regression import ACTIVITY, MAIN_LIST_TEXT, PKG, Report, open_main  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -94,8 +94,7 @@ def main() -> int:
     # D4: the GitHub option opens the prefilled bug form in a browser
     opened = False
     if preview:
-        dev.tap_text("Send")
-        dev.tap_text("Open a bug report on GitHub")
+        dev.tap_text("Continue to GitHub")
         time.sleep(4)
         log = dev.sh("logcat -d -s ActivityTaskManager:I", check=False)
         # NOTE: Android 12 and later hide the URL path in this log line, so the host and the VIEW action are the reliable parts.
@@ -111,13 +110,22 @@ def main() -> int:
     again = CRASH_TITLE if CRASH_TITLE in [node.text for node in dev.dump_ui()] else again
     report.add("D5", "A crash is offered only once", again == MAIN_LIST_TEXT, f"saw {again!r}")
 
-    # D6: the settings list has both entries
+    # D6: Report an issue offers a bug report with the log ticked by default, and continuing shows the preview
     for _ in range(4):
         dev.sh("input swipe 540 1800 540 600 300", check=False)
         time.sleep(1)
-    entries = [node.text for node in dev.dump_ui()]
-    report.add("D6", "Settings list Report an issue and Diagnostic log", "Report an issue" in entries and "Diagnostic log" in entries,
-               ", ".join(text for text in ("Report an issue", "Diagnostic log") if text in entries) or "missing")
+    detail = "entry missing"
+    passed = False
+    if any(node.text == "Report an issue" for node in dev.dump_ui()):
+        dev.tap_text("Report an issue")
+        dev.wait_for_text("Include diagnostic log", timeout=20)
+        ticked = 'checked="true"' in dev.sh(f"cat {UI_DUMP_PATH}", check=False).split('text="Include diagnostic log"', 1)[-1].split("/>", 1)[0]
+        dev.tap_text("Continue")
+        preview_shown = wait_for_any(dev, ("DarQ diagnostic log",), timeout=60) is not None
+        passed = ticked and preview_shown
+        detail = f"log ticked={ticked}, preview={preview_shown}"
+        dev.back()
+    report.add("D6", "Report an issue includes the log by default", passed, detail)
 
     path = report.write(f"DarQ diagnostics suite on {dev.serial}")
     print(f"Report: {path}")
