@@ -62,23 +62,36 @@ class ColorPickerBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         ThemeManager.Preset.values().forEachIndexed { index, preset ->
             rows += Row.Swatch(AccentOption(preset.key, preset.seed, presetLabels.getOrElse(index) { preset.key }))
         }
-        //Custom accents are built by the dynamic color engine, so they are offered only where it exists (Android 12 and later)
-        val custom = if(ThemeManager.isDynamicAvailable) ThemeManager.wallpaperColors(context) else emptyList()
-        if(custom.isNotEmpty()){
-            rows += Row.Header(getString(R.string.appearance_accent_section_custom))
-            custom.forEachIndexed { index, color ->
-                rows += Row.Swatch(AccentOption(ThemeManager.ACCENT_CUSTOM, color, getString(R.string.appearance_accent_custom, index + 1), color))
-            }
+        //Single wallpaper colors come from the dynamic color engine, so they exist on Android 12 and later only
+        rows += Row.Header(getString(R.string.appearance_accent_section_custom))
+        val wallpaperColors = if (ThemeManager.isDynamicAvailable) ThemeManager.wallpaperColors(context) else emptyList()
+        wallpaperColors.forEachIndexed { index, color ->
+            rows += Row.Swatch(AccentOption(ThemeManager.ACCENT_CUSTOM, color, getString(R.string.appearance_accent_custom, index + 1), color))
         }
+        //A color made in the custom picker stays selectable here, so it can be switched back to after trying a preset
+        val stored = settings.monetColor
+        if (stored != Integer.MAX_VALUE && stored !in wallpaperColors) {
+            rows += Row.Swatch(AccentOption(ThemeManager.ACCENT_CUSTOM, stored, getString(R.string.appearance_accent_yours), stored))
+        }
+        rows += Row.Swatch(AccentOption(
+            ThemeManager.ACCENT_CUSTOM, stored.takeIf { it != Integer.MAX_VALUE } ?: themeColors.getAccentColor(context),
+            getString(R.string.appearance_accent_custom_pick), isPicker = true
+        ))
         return rows
     }
 
     private fun isSelected(option: AccentOption): Boolean {
+        if(option.isPicker) return false
         if(option.accent != settings.themeAccent) return false
         return option.customColor == null || option.customColor == settings.monetColor
     }
 
     private fun onPicked(option: AccentOption) {
+        if(option.isPicker) {
+            dialog?.dismiss()
+            CustomColorBottomSheetFragment().show(parentFragmentManager, "custom_color")
+            return
+        }
         if(isSelected(option)) return
         settings.themeAccent = option.accent
         option.customColor?.let { settings.monetColor = it }

@@ -47,12 +47,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:gravity="center"
-        android:maxLines="1"
+        android:maxLines="2"
         android:ellipsize="end"
         android:importantForAccessibility="no"
         android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
         android:textColor="?android:textColorSecondary"
-        android:textSize="12sp"
         tools:text="Teal" />
 
 </LinearLayout>

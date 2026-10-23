@@ -7,6 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.theme.ThemeManager
+import com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.ColorMath
 import com.kieronquinn.app.darq.databinding.FragmentSettingsDeveloperOptionsBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
@@ -78,12 +79,20 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
         val accent = settings.themeAccent
         val presetLabels = resources.getStringArray(R.array.appearance_accent_presets)
         val label = ThemeManager.Preset.fromKey(accent)?.let { presetLabels.getOrElse(it.ordinal) { accent } }
-            ?: if(accent == ThemeManager.ACCENT_CUSTOM) getString(R.string.appearance_accent_custom_summary)
+            ?: if(accent == ThemeManager.ACCENT_CUSTOM) customSummary()
             else getString(R.string.appearance_accent_wallpaper)
         val isPreset = ThemeManager.Preset.fromKey(accent) != null
         return if(!isPreset && !ThemeManager.isDynamicAvailable){
             "$label. ${getString(R.string.appearance_accent_fallback)}"
         }else label
+    }
+
+    //A color picked from the wallpaper keeps its old label, one made in the custom picker shows its hex value
+    private fun customSummary(): String {
+        val color = settings.monetColor
+        val fromWallpaper = ThemeManager.isDynamicAvailable && color in ThemeManager.wallpaperColors(requireContext())
+        return if(fromWallpaper || color == Integer.MAX_VALUE) getString(R.string.appearance_accent_custom_summary)
+        else getString(R.string.appearance_accent_custom_value, ColorMath.toHex(color))
     }
 
     private fun onThemeClicked() {

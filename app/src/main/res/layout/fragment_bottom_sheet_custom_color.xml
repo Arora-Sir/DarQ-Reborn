@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:layout_gravity="bottom">
+
+    <TextView
+        android:id="@+id/custom_color_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:paddingTop="@dimen/padding_8"
+        android:paddingBottom="@dimen/padding_8"
+        android:text="@string/appearance_accent_custom_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/custom_color_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scrollIndicators="top|bottom"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/custom_color_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="560dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/custom_color_title">
+
+        <!-- NOTE: The column is the only child of the scroll view and is capped in code so the picker stays a sensible size on tablets. -->
+        <LinearLayout
+            android:id="@+id/custom_color_column"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingTop="@dimen/padding_8"
+            android:paddingEnd="@dimen/padding_16"
+            android:paddingBottom="@dimen/padding_8">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/custom_color_preview_surface"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/padding_8"
+                        android:layout_weight="1"
+                        android:padding="@dimen/padding_16">
+
+                        <TextView
+                            android:id="@+id/custom_color_sample_surface"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_background_backup_restore"
+                            android:minHeight="40dp"
+                            android:gravity="center"
+                            android:paddingStart="@dimen/padding_16"
+                            android:paddingEnd="@dimen/padding_16"
+                            android:text="@string/appearance_accent_preview_surface"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/custom_color_preview_black"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="@dimen/padding_16">
+
+                        <TextView
+                            android:id="@+id/custom_color_sample_black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_background_backup_restore"
+                            android:minHeight="40dp"
+                            android:gravity="center"
+                            android:paddingStart="@dimen/padding_16"
+                            android:paddingEnd="@dimen/padding_16"
+                            android:text="@string/appearance_accent_preview_black"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Darq.PickerSection"
+                    android:text="@string/appearance_accent_palette" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/custom_color_palette"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    tools:itemCount="24"
+                    tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    tools:spanCount="6" />
+
+                <TextView
+                    style="@style/Darq.PickerSection"
+                    android:text="@string/appearance_accent_mix" />
+
+                <com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.SaturationBrightnessView
+                    android:id="@+id/custom_color_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/appearance_accent_area_description" />
+
+                <com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.HueStripView
+                    android:id="@+id/custom_color_hue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_8"
+                    android:contentDescription="@string/appearance_accent_hue_description" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/custom_color_hex_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_16"
+                    android:hint="@string/appearance_accent_hex"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/custom_color_hex"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="#0123456789abcdefABCDEF"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters|textNoSuggestions"
+                        android:maxLength="7"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/custom_color_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/custom_color_buttons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/padding_16"
+        android:paddingTop="@dimen/padding_8"
+        android:paddingEnd="@dimen/padding_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/custom_color_scroll">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/custom_color_cancel"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/google_sans_text_medium"
+            android:minHeight="48dp"
+            android:text="@android:string/cancel"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/custom_color_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_8"
+            android:fontFamily="@font/google_sans_text_medium"
+            android:minHeight="48dp"
+            android:text="@string/appearance_accent_apply"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.ItemColorPickerBinding
 import com.kieronquinn.app.darq.databinding.ItemColorPickerHeaderBinding
 
@@ -23,7 +24,7 @@ class ColorPickerAdapter(
     private val onPicked: (AccentOption) -> Unit
 ): RecyclerView.Adapter<ColorPickerAdapter.ViewHolder>() {
 
-    data class AccentOption(val accent: String, val color: Int, val label: String, val customColor: Int? = null)
+    data class AccentOption(val accent: String, val color: Int, val label: String, val customColor: Int? = null, val isPicker: Boolean = false)
 
     sealed class Row {
         data class Header(val title: String) : Row()
@@ -57,7 +58,9 @@ class ColorPickerAdapter(
         itemColorPickerBackground.backgroundTintList = ColorStateList.valueOf(option.color)
         itemColorPickerBackground.contentDescription = option.label
         itemColorPickerLabel.text = option.label
-        itemColorPickerCheck.isVisible = isSelected(option)
+        //The picker swatch opens the full custom picker and shows a color dropper instead of a check
+        itemColorPickerCheck.setImageResource(if (option.isPicker) R.drawable.ic_colorize else R.drawable.ic_check)
+        itemColorPickerCheck.isVisible = option.isPicker || isSelected(option)
         //The check mark stays readable on both light and dark swatches
         val checkColor = if (ColorUtils.calculateLuminance(option.color) > 0.5) Color.BLACK else Color.WHITE
         itemColorPickerCheck.imageTintList = ColorStateList.valueOf(checkColor)
