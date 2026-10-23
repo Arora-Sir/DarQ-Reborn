@@ -1,13 +1,11 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kieronquinn.app.darq.BuildConfig
+import com.kieronquinn.app.darq.components.apps.InstalledAppsRepository
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.model.settings.AppPickerItem
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import java.util.Locale
 
@@ -31,91 +29,12 @@ abstract class SettingsAppPickerViewModel : ViewModel() {
 }
 
 class SettingsAppPickerViewModelImpl(
-    context: Context,
+    private val repository: InstalledAppsRepository,
     private val settings: DarqSharedPreferences
 ) : SettingsAppPickerViewModel() {
 
-    private val packageManager by lazy {
-        context.packageManager
-    }
-
-    private val _loadingProgress = MutableStateFlow<Pair<Int, Int>?>(null)
-    override val loadingProgress = _loadingProgress.asStateFlow()
-
-    private val allApps = MutableSharedFlow<List<InstalledApp>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-
-    private val launchableApps = MutableSharedFlow<List<InstalledApp>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-
-    private val allAppsLoading = java.util.concurrent.atomic.AtomicBoolean(false)
-    private fun loadAllAppsAsync() {
-        if (allAppsLoading.compareAndSet(false, true)) {
-            viewModelScope.launch(Dispatchers.IO) {
-                // Wait for fragment transition to complete (300ms) before making intensive Binder calls
-                delay(300)
-                val rawApps = packageManager.getInstalledApplications(0).filter {
-                    it.packageName != BuildConfig.APPLICATION_ID
-                }
-                val total = rawApps.size
-                val loadedApps = mutableListOf<InstalledApp>()
-                var count = 0
-                _loadingProgress.emit(Pair(0, total))
-                
-                rawApps.chunked(25).forEach { batch ->
-                    val deferred = batch.map { app ->
-                        async {
-                            InstalledApp(app.packageName, app.loadLabel(packageManager))
-                        }
-                    }
-                    loadedApps.addAll(deferred.awaitAll())
-                    count += batch.size
-                    _loadingProgress.emit(Pair(count, total))
-                }
-                allApps.emit(loadedApps)
-                _loadingProgress.emit(null)
-            }
-        }
-    }
-
-    private val launchableAppsLoading = java.util.concurrent.atomic.AtomicBoolean(false)
-    private fun loadLaunchableAppsAsync() {
-        if (launchableAppsLoading.compareAndSet(false, true)) {
-            viewModelScope.launch(Dispatchers.IO) {
-                // Wait for fragment transition to complete (300ms) before making intensive Binder calls
-                delay(300)
-                val intent = android.content.Intent(android.content.Intent.ACTION_MAIN).apply {
-                    addCategory(android.content.Intent.CATEGORY_LAUNCHER)
-                }
-                val resolveInfos = packageManager.queryIntentActivities(intent, 0)
-                val rawInfos = resolveInfos.filter {
-                    it.activityInfo.packageName != BuildConfig.APPLICATION_ID
-                }
-                val total = rawInfos.size
-                val loadedApps = mutableListOf<InstalledApp>()
-                var count = 0
-                _loadingProgress.emit(Pair(0, total))
-                
-                rawInfos.chunked(25).forEach { batch ->
-                    val deferred = batch.map { resolveInfo ->
-                        async {
-                            val packageName = resolveInfo.activityInfo.packageName
-                            InstalledApp(packageName, resolveInfo.loadLabel(packageManager))
-                        }
-                    }
-                    loadedApps.addAll(deferred.awaitAll())
-                    count += batch.size
-                    _loadingProgress.emit(Pair(count, total))
-                }
-                launchableApps.emit(loadedApps.distinctBy { it.packageName })
-                _loadingProgress.emit(null)
-            }
-        }
-    }
+    //Progress only shows on the very first scan, later opens use the cached list
+    override val loadingProgress = repository.scanProgress
 
     private val selectedApps = MutableStateFlow<MutableList<String>?>(null).apply {
         viewModelScope.launch(Dispatchers.IO) {
@@ -133,41 +52,30 @@ class SettingsAppPickerViewModelImpl(
     private val showAllApps = MutableStateFlow(false)
 
     init {
+        repository.refresh()
         viewModelScope.launch {
-            showAllApps.collect {
+            //Reloads when the filter changes and when a background refresh brings a newer list
+            combine(showAllApps, repository.apps.filterNotNull()) { _, _ -> }.collect {
                 loadApps()
             }
         }
     }
 
     private suspend fun loadApps() {
-        _loadState.emit(LoadState.Loading)
+        //Only the first scan without a cache shows the loading state, searches and toggles update the list in place
+        if (repository.apps.value == null) _loadState.emit(LoadState.Loading)
         val selected = selectedApps.filterNotNull().first()
         val search = searchTerm.value
-        val rawList = if (showAllApps.value) {
-            loadAllAppsAsync()
-            allApps.first()
-        } else {
-            loadLaunchableAppsAsync()
-            launchableApps.first()
-        }
-
-        val apps = withContext(Dispatchers.IO) {
-            rawList.map {
-                AppPickerItem.App(
-                    it.packageName,
-                    it.label,
-                    selected.contains(it.packageName)
-                )
-            }
-        }.sortedBy { it.label.toString().lowercase(Locale.getDefault()) }.run {
-            if (search.isNotEmpty()) filter {
-                it.label.toString().lowercase(Locale.getDefault()).contains(
-                    search.lowercase(
-                        Locale.getDefault()
-                    )
-                )
-            }else this
+        val cached = repository.apps.filterNotNull().first()
+        val showAll = showAllApps.value
+        val query = search.lowercase(Locale.getDefault())
+        //The repository keeps the list sorted, so a search only filters
+        val apps = withContext(Dispatchers.Default) {
+            cached.asSequence()
+                .filter { showAll || it.launchable }
+                .filter { query.isEmpty() || it.label.lowercase(Locale.getDefault()).contains(query) }
+                .map { AppPickerItem.App(it.packageName, it.label, selected.contains(it.packageName)) }
+                .toList()
         }
 
         val activeApps = apps.filter { it.enabled }
@@ -223,7 +131,5 @@ class SettingsAppPickerViewModelImpl(
     override fun getShowAllApps(): Boolean {
         return showAllApps.value
     }
-
-    private data class InstalledApp(val packageName: String, val label: CharSequence)
 
 }

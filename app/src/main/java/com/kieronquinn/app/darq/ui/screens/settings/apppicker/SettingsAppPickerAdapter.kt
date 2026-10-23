@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.ItemAppBinding
 import com.kieronquinn.app.darq.databinding.ItemHeaderBinding
 import com.kieronquinn.app.darq.databinding.ItemSnackbarPaddingBinding
@@ -66,7 +67,8 @@ class SettingsAppPickerAdapter(
         with(binding){
             title.text = item.label
             val uri = Uri.parse("${AppIconRequestHandler.SCHEME_PNAME}:${item.packageName}")
-            picasso.load(uri).into(icon)
+            //Decoded at row size, so the memory cache holds many more icons than at full launcher density
+            picasso.load(uri).resizeDimen(R.dimen.item_app_height, R.dimen.item_app_height).centerInside().into(icon)
             appSwitch.setOnCheckedChangeListener(null)
             appSwitch.isChecked = item.enabled
             appSwitch.setOnCheckedChangeListener { _, isChecked ->

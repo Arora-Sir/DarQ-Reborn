@@ -42,6 +42,7 @@ import com.kieronquinn.app.darq.utils.AppIconRequestHandler
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.components.diagnostics.CrashReporter
 import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsHeader
+import com.kieronquinn.app.darq.components.apps.InstalledAppsRepository
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -72,6 +73,7 @@ class DarqApplication : Application() {
         single<Navigation> { NavigationImpl() }
         single { UpdateChecker(get()) }
         single { DiagnosticsHeader(get(), get()) }
+        single { InstalledAppsRepository(get()) }
     }
 
     private val viewModelsModule = module {

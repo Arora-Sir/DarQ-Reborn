@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- NOTE: Crash reports stay on the device that produced them, everything else keeps the default backup behavior. -->
+<!-- NOTE: Crash reports and the cached app list stay on the device that produced them, everything else keeps the default backup behavior. -->
 <full-backup-content>
     <exclude domain="file" path="diagnostics/" />
+    <exclude domain="file" path="app_list_cache.json" />
     <exclude domain="sharedpref" path="darq_diagnostics.xml" />
 </full-backup-content>
