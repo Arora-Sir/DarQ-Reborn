@@ -89,4 +89,31 @@ class DiagnosticsTextTest {
         assertEquals(40, log.length)
     }
 
+
+    @Test
+    fun bugUrlCarriesTypedFieldsAndStaysWithinTheLimit() {
+        val long = "word ".repeat(2000)
+        val url = DiagnosticsText.bugReportUrl("3.2.0", "Android 16", "Pixel", "Shizuku", "x".repeat(1500), long, long)
+        assertTrue(url.length <= DiagnosticsText.MAX_URL_CHARS)
+        assertTrue(url.contains("&description="))
+        assertTrue(url.contains("&steps="))
+        assertTrue(url.contains("&app-version=3.2.0"))
+    }
+
+    @Test
+    fun shortTypedFieldsAreEncodedWithoutTrimming() {
+        val url = DiagnosticsText.bugReportUrl("3.2.0", "A", "D", "Root", description = "It crashes & burns", steps = "1. open")
+        assertTrue(url.contains("description=It%20crashes%20%26%20burns"))
+        assertTrue(url.contains("steps=1.%20open"))
+    }
+
+    @Test
+    fun featureUrlCarriesProblemAndSolution() {
+        val url = DiagnosticsText.featureRequestUrl("Root", "need X", "do Y")
+        assertEquals(
+            "https://github.com/Arora-Sir/DarQ-Reborn/issues/new?template=feature_request.yml&mode=Root&problem=need%20X&solution=do%20Y",
+            url
+        )
+    }
+
 }

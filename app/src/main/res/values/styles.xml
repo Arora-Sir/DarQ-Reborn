@@ -118,4 +118,38 @@
         <item name="android:fontFamily">@font/google_sans_text</item>
     </style>
 
+    <!-- Report preview cards -->
+    <style name="Darq.ReportCard" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/padding_8</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/padding_16</item>
+        <item name="android:background">@drawable/button_background_backup_restore</item>
+    </style>
+
+    <style name="Darq.ReportCardTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/padding_8</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium.Darq</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Darq.PickerSection" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/padding_16</item>
+        <item name="android:paddingBottom">@dimen/padding_8</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small.Darq.Medium</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Darq.ReportCardBody" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small.Darq</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
 </resources>

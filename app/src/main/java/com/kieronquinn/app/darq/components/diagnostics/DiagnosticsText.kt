@@ -43,11 +43,21 @@ object DiagnosticsText {
 
     private const val FEATURE_TEMPLATE = "feature_request.yml"
     private const val SUMMARY_CHARS = 1500
+    const val MAX_URL_CHARS = 8000
+    const val MAX_FIELD_CHARS = 1500
 
     /**
      *  The prefilled bug form. Short fields and a log summary go in the URL. The full log goes to the clipboard because URLs have a length limit.
      */
-    fun bugReportUrl(appVersion: String, android: String, device: String, mode: String, logSummary: String? = null): String {
+    fun bugReportUrl(
+        appVersion: String,
+        android: String,
+        device: String,
+        mode: String,
+        logSummary: String? = null,
+        description: String? = null,
+        steps: String? = null
+    ): String {
         val params = linkedMapOf(
             "template" to BUG_TEMPLATE,
             "app-version" to appVersion,
@@ -55,12 +65,31 @@ object DiagnosticsText {
             "device" to device,
             "mode" to mode
         )
+        description?.trim()?.takeIf { it.isNotEmpty() }?.let { params["description"] = it }
+        steps?.trim()?.takeIf { it.isNotEmpty() }?.let { params["steps"] = it }
         if (logSummary != null) params["logs"] = logSummary
-        return NEW_BUG_URL + "?" + params.entries.joinToString("&") { (key, value) -> "$key=" + encode(value) }
+        return buildUrl(params, shrinkOrder = listOf("logs", "steps", "description"))
     }
 
-    fun featureRequestUrl(mode: String): String =
-        "$NEW_BUG_URL?template=$FEATURE_TEMPLATE&mode=" + encode(mode)
+    fun featureRequestUrl(mode: String, problem: String? = null, solution: String? = null): String {
+        val params = linkedMapOf("template" to FEATURE_TEMPLATE, "mode" to mode)
+        problem?.trim()?.takeIf { it.isNotEmpty() }?.let { params["problem"] = it }
+        solution?.trim()?.takeIf { it.isNotEmpty() }?.let { params["solution"] = it }
+        return buildUrl(params, shrinkOrder = listOf("solution", "problem"))
+    }
+
+    // NOTE: Browsers and GitHub accept URLs of roughly 8 KB, so the free text fields are halved until the encoded link fits.
+    private fun buildUrl(params: LinkedHashMap<String, String>, shrinkOrder: List<String>): String {
+        fun build() = NEW_BUG_URL + "?" + params.entries.joinToString("&") { (key, value) -> "$key=" + encode(value) }
+        var url = build()
+        while (url.length > MAX_URL_CHARS) {
+            val key = shrinkOrder.filter { (params[it]?.length ?: 0) > 0 }.maxByOrNull { params[it]!!.length } ?: break
+            val value = params.getValue(key)
+            if (value.length <= 40) params.remove(key) else params[key] = value.take(value.length / 2).trimEnd() + "..."
+            url = build()
+        }
+        return url
+    }
 
     /**
      *  The start of a report (header and last crash) for the form's log field, ending with a note that the full log is on the clipboard.

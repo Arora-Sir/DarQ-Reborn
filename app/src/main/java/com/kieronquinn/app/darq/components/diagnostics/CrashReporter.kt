@@ -29,6 +29,7 @@ object CrashReporter {
     private const val MAX_HANDLED_CHARS = 32 * 1024
     private const val MAX_TRACE_CHARS = 64 * 1024
     private const val LOGCAT_LINES = 800
+    private const val LOGCAT_READ_LINES = 6000
 
     //Kept readable in reports: DarQ itself, the frameworks it talks to, and the platform
     private val READABLE_PACKAGES = setOf(
@@ -174,11 +175,12 @@ object CrashReporter {
         emptySet()
     }
 
-    //An app can read the log lines of its own UID without any permission
+    // NOTE: An app can read the log lines of its own UID without any permission.
+    // NOTE: Framework debug chatter fills most of the buffer, so a larger window is read and then filtered down to the useful lines.
     private fun readOwnLog(): String = try {
-        val process = ProcessBuilder("logcat", "-d", "-v", "threadtime", "-t", LOGCAT_LINES.toString(), "--uid=${Process.myUid()}")
+        val process = ProcessBuilder("logcat", "-d", "-v", "threadtime", "-t", LOGCAT_READ_LINES.toString(), "--uid=${Process.myUid()}")
             .redirectErrorStream(true).start()
-        process.inputStream.bufferedReader().use { it.readText() }
+        DiagnosticsLog.filter(process.inputStream.bufferedReader().use { it.readText() }, LOGCAT_LINES)
     } catch (e: Exception) {
         "Log unavailable: ${e.message}"
     }

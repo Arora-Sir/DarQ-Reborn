@@ -82,10 +82,18 @@ def main() -> int:
     preview = ""
     if seen == CRASH_TITLE:
         dev.tap_text("Review report")
-        dev.wait_for_text("DarQ diagnostic log", timeout=60)
+        dev.wait_for_text("Summary", timeout=60)
         preview = "\n".join(node.text for node in dev.dump_ui())
         dev.screenshot(out_dir / "d3-preview.png")
-    has_header = "# DarQ Reborn diagnostic report" in preview
+        # NOTE: A crash trace makes the Last crash card tall, so the sheet is scrolled until the collapsed log toggle shows.
+        for _ in range(5):
+            if "Show full log" in [node.text for node in dev.dump_ui()]:
+                break
+            dev.sh("input swipe 540 1500 540 800 400", check=False)
+            time.sleep(1)
+        preview += "\n" + "\n".join(node.text for node in dev.dump_ui())
+    # NOTE: The preview is structured, so the header facts sit in the Summary card and the log stays collapsed behind Show full log.
+    has_header = "Mode:" in preview and "Android:" in preview and "Show full log" in preview
     has_crash = "diagnostics test crash while darkening" in preview
     leaked = PROBE_PKG in preview
     report.add("D3", "Preview shows the crash with the app name hashed", has_header and has_crash and not leaked and "app#" in preview,
@@ -120,8 +128,12 @@ def main() -> int:
         dev.tap_text("Report an issue")
         dev.wait_for_text("Include diagnostic log", timeout=20)
         ticked = 'checked="true"' in dev.sh(f"cat {UI_DUMP_PATH}", check=False).split('text="Include diagnostic log"', 1)[-1].split("/>", 1)[0]
+        # NOTE: Typing into the first field proves the dialog resizes for the keyboard and keeps its buttons reachable.
+        dev.tap_text("What happened?")
+        dev.sh("input text 'screen%sdoes%snot%sload'", check=False)
+        dev.back()
         dev.tap_text("Continue")
-        preview_shown = wait_for_any(dev, ("DarQ diagnostic log",), timeout=60) is not None
+        preview_shown = wait_for_any(dev, ("Summary",), timeout=60) is not None
         passed = ticked and preview_shown
         detail = f"log ticked={ticked}, preview={preview_shown}"
         dev.back()

@@ -141,10 +141,11 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="dialog_location_permission_text">Allow <b>DarQ</b> to use your location to get sunrise &amp; sunset times?</string>
     <string name="dialog_location_permission_use_location">Use Location</string>
     <string name="dialog_location_permission_use_timezone">Use Time Zone\n<small>(less accurate)</small></string>
-    <string name="chip_donate">Buy me a coffee</string>
+    <string name="chip_donate">Support development</string>
     <string name="chip_twitter">X</string>
     <string name="chip_github">GitHub</string>
-    <string name="chip_socials">Socials</string>
+    <string name="chip_socials">Developer</string>
+    <string name="chip_credits">Credits</string>
     <string name="chip_xda">XDA Thread</string>
     <string name="menu_open_source_libraries">Open source libraries</string>
     <string name="bottom_sheet_update_available_title">Update Available</string>
@@ -167,27 +168,59 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="item_boot_wait_shizuku_content">Waits for Shizuku to start up on boot before attempting connection, avoiding start-up failure notifications.</string>
     <string name="item_check_for_prereleases_title">Check for pre-releases</string>
     <string name="item_check_for_prereleases_content">Include beta and pre-release versions when checking for updates.</string>
-    <string name="donation_dialog_title">Buy me a coffee</string>
+    <string name="donation_dialog_title">Support development</string>
     <string name="donation_dialog_upi_title">Pay via UPI</string>
     <string name="donation_dialog_upi_summary">Pay using Google Pay, PhonePe, Paytm, BHIM, etc. (India)</string>
     <string name="donation_dialog_global_title">PayPal</string>
     <string name="donation_dialog_global_summary">Pay using global credit/debit cards or PayPal</string>
 
-    <string name="social_links_dialog_title">Developer Profiles</string>
+    <string name="social_links_dialog_title">Developer</string>
+    <string name="social_developer_name">Mohit Arora</string>
+    <string name="social_developer_role">System Architect &amp; Mobile Engineer</string>
     <string name="social_website_title">Personal Website</string>
     <string name="social_website_summary">mohitarora.me</string>
     <string name="social_github_profile_title">GitHub Profile</string>
-    <string name="social_github_profile_summary">github.com/Arora-Sir</string>
+    <string name="social_github_profile_summary">@Arora-Sir</string>
     <string name="social_linkedin_profile_title">LinkedIn Profile</string>
-    <string name="social_linkedin_profile_summary">linkedin.com/in/arora-sir</string>
+    <string name="social_linkedin_profile_summary">in/arora-sir</string>
     <string name="social_github_repo_title">GitHub Repository</string>
     <string name="social_github_repo_summary">Arora-Sir/DarQ-Reborn</string>
-    <string name="social_twitter_title">X (Twitter)</string>
-    <string name="social_twitter_summary">x.com/arorasir</string>
+    <string name="social_twitter_title">X</string>
+    <string name="social_twitter_summary">@MohitAr0rA</string>
     <string name="social_instagram_title">Instagram</string>
-    <string name="social_instagram_summary">instagram.com/arora.sir</string>
+    <string name="social_instagram_summary">@arora.sir</string>
     <string name="social_reddit_title">Reddit</string>
-    <string name="social_reddit_summary">reddit.com/user/AroraSir</string>
+    <string name="social_reddit_summary">u/AroraSir</string>
+
+    <!-- Support, credits and updates -->
+    <string name="link_no_browser">No browser found to open this link</string>
+    <string name="support_intro">DarQ Reborn is free and open source. Supporting it is optional and always your choice.</string>
+    <string name="support_upi_chooser">Support via UPI</string>
+    <string name="support_upi_none">No UPI app found. UPI ID copied to the clipboard.</string>
+    <string name="support_upi_copied">UPI ID copied: %1$s</string>
+    <string name="support_copy_upi_title">Copy UPI ID</string>
+    <string name="support_copy_upi_summary">mohit1998arora@yescred</string>
+    <string name="support_sponsors_title">GitHub Sponsors</string>
+    <string name="support_sponsors_summary">Support monthly or once through GitHub</string>
+    <string name="credits_title">Credits</string>
+    <string name="credits_intro">DarQ Reborn continues the original DarQ and stands on the work of these open source projects.</string>
+    <string name="credits_upstream_title">DarQ by Kieron Quinn</string>
+    <string name="credits_upstream_summary">The original project this app is forked from</string>
+    <string name="credits_author_title">Kieron Quinn</string>
+    <string name="credits_author_summary">Original author of DarQ</string>
+    <string name="credits_shizuku_title">Shizuku</string>
+    <string name="credits_shizuku_summary">Rikka Apps, runs DarQ with system access without root</string>
+    <string name="credits_xposed_title">LSPosed and LibXposed</string>
+    <string name="credits_xposed_summary">The Xposed frameworks DarQ hooks through</string>
+    <string name="credits_libsu_title">libsu</string>
+    <string name="credits_libsu_summary">topjohnwu, runs the root service</string>
+    <string name="credits_contributors_title">Contributors</string>
+    <string name="credits_contributors_summary">Everyone who sent a fix or an idea on GitHub</string>
+    <string name="credits_licences_title">Open source licences</string>
+    <string name="credits_licences_summary">Libraries bundled in this app</string>
+    <string name="item_obtainium_title">Track with Obtainium</string>
+    <string name="item_obtainium_content">Add DarQ to Obtainium in one tap and get notified about new releases</string>
+    <string name="bottom_sheet_update_obtainium">Track with Obtainium</string>
 
     <!-- Appearance -->
     <string name="item_appearance_title">Appearance</string>
@@ -204,15 +237,29 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_accent_auto">Automatic</string>
     <string name="appearance_accent_section_wallpaper">Match your wallpaper</string>
     <string name="appearance_accent_section_presets">Presets</string>
-    <string name="appearance_accent_section_custom">Single wallpaper color</string>
+    <string name="appearance_accent_section_custom">Custom</string>
+    <string name="appearance_accent_custom_value">Custom color %1$s</string>
     <string name="appearance_accent_custom_summary">Wallpaper color</string>
+    <string name="appearance_accent_custom_title">Custom color</string>
+    <string name="appearance_accent_custom_pick">Custom</string>
+    <string name="appearance_accent_yours">Your color</string>
+    <string name="appearance_accent_palette">Palette</string>
+    <string name="appearance_accent_mix">Mix your own</string>
+    <string name="appearance_accent_hex">Hex color</string>
+    <string name="appearance_accent_hex_error">Use six hex digits, like #0072DE</string>
+    <string name="appearance_accent_apply">Apply</string>
+    <string name="appearance_accent_preview_surface">On surface</string>
+    <string name="appearance_accent_preview_black">On black</string>
+    <string name="appearance_accent_area_description">Saturation and brightness</string>
+    <string name="appearance_accent_hue_description">Hue</string>
+    <string name="appearance_accent_note_dynamic">Android builds the full color scheme from this color.</string>
     <string name="appearance_accent_fallback">Android 10 and 11 use the preset closest to this color</string>
     <string-array name="appearance_accent_presets">
-        <item>Blue</item>
+        <item>One UI Blue</item>
         <item>Teal</item>
-        <item>Green</item>
-        <item>Purple</item>
-        <item>Orange</item>
+        <item>Emerald Green</item>
+        <item>Cyber Violet</item>
+        <item>Dual Orange</item>
         <item>Rose</item>
         <item>Monochrome</item>
     </string-array>
@@ -237,6 +284,17 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="diagnostics_report_more">More options</string>
     <string name="diagnostics_summary_note">The full log was copied by DarQ. Paste it below this line.</string>
     <string name="diagnostics_report_close">Close</string>
+    <string name="diagnostics_report_summary">Summary</string>
+    <string name="diagnostics_report_last_crash">Last crash</string>
+    <string name="diagnostics_report_handled">Handled errors</string>
+    <string name="diagnostics_report_none">None</string>
+    <string name="diagnostics_report_log_hint">The full redacted log is included when you continue. Your apps are replaced by short codes and your location is removed.</string>
+    <string name="diagnostics_report_show_log">Show full log</string>
+    <string name="diagnostics_report_hide_log">Hide full log</string>
+    <string name="report_issue_what_happened">What happened?</string>
+    <string name="report_issue_steps">Steps to reproduce</string>
+    <string name="report_issue_problem">What would you like DarQ to do?</string>
+    <string name="report_issue_solution">How should it work? (optional)</string>
     <string name="diagnostics_send_title">Send the log</string>
     <string-array name="diagnostics_send_options">
         <item>Open a bug report on GitHub</item>
