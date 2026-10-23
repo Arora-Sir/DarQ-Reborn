@@ -11,7 +11,33 @@
         <item name="textAppearanceLargePopupMenu">@style/AppTheme.TextAppearance.Popup</item>
         <item name="actionOverflowMenuStyle">@style/DarqOverflowMenu</item>
         <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Darq.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Darq.MaterialAlertDialog</item>
+        <item name="android:alertDialogTheme">@style/Theme.Darq.FrameworkAlertDialog</item>
     </style>
+
+    <!-- NOTE: Every dialog gets its look from these styles through the app theme, never per dialog. -->
+    <!-- NOTE: Material 3 supplies the 28dp surfaceContainerHigh window, and these add the title font and sentence case primary buttons. -->
+    <!-- NOTE: Nothing here points a framework attribute at an app attribute, which would fail to resolve inside the dialog title. -->
+    <style name="ThemeOverlay.Darq.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Darq.Title.Text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Darq.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Darq.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Darq.DialogButton</item>
+    </style>
+
+    <style name="MaterialAlertDialog.Darq.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:fontFamily">@font/google_sans_text_medium</item>
+    </style>
+
+    <style name="Widget.Darq.DialogButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:fontFamily">@font/google_sans_text_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <!-- NOTE: The framework alert dialog theme is for any android.app.AlertDialog, so no dialog keeps the platform look. -->
+    <style name="Theme.Darq.FrameworkAlertDialog" parent="Theme.Material3.DayNight.Dialog.Alert" />
 
     <!-- NOTE: Pure black for AMOLED screens, applied on top of the accent only while the app is dark. -->
     <!-- NOTE: Containers keep small steps above black so cards and sheets stay distinguishable. -->

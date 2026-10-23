@@ -88,10 +88,27 @@ class SettingsAppPickerViewModelImpl(
         }
         if (inactiveApps.isNotEmpty()) {
             listWithHeaders.add(AppPickerItem.Header(com.kieronquinn.app.darq.R.string.app_picker_header_all))
-            listWithHeaders.addAll(inactiveApps)
+            //Letter headers help scanning a long list, and are left out while searching since the results are short
+            if (query.isEmpty()) listWithHeaders.addAll(withLetterHeaders(inactiveApps)) else listWithHeaders.addAll(inactiveApps)
         }
 
         _loadState.emit(LoadState.Loaded(listWithHeaders))
+    }
+
+    private fun withLetterHeaders(apps: List<AppPickerItem.App>): List<AppPickerItem> {
+        val result = ArrayList<AppPickerItem>(apps.size + 27)
+        var last: String? = null
+        //Names that start with a digit or a symbol are grouped under one "#" header, which sorts first
+        val sorted = apps.sortedWith(compareBy<AppPickerItem.App> { letterOf(it.label) != "#" }.thenBy { it.label.toString().lowercase(Locale.getDefault()) })
+        for (app in sorted) {
+            val letter = letterOf(app.label)
+            if (letter != last) {
+                result.add(AppPickerItem.Letter(letter))
+                last = letter
+            }
+            result.add(app)
+        }
+        return result
     }
 
     override fun onPackageEnabledChanged(app: AppPickerItem.App) {
@@ -130,6 +147,13 @@ class SettingsAppPickerViewModelImpl(
 
     override fun getShowAllApps(): Boolean {
         return showAllApps.value
+    }
+
+    companion object {
+        fun letterOf(label: CharSequence): String {
+            val first = label.firstOrNull()?.uppercaseChar() ?: return "#"
+            return if (first.isLetter()) first.toString() else "#"
+        }
     }
 
 }

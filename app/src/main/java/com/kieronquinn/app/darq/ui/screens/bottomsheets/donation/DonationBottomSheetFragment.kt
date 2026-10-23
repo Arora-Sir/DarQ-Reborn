@@ -9,6 +9,7 @@ import androidx.core.view.updatePadding
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetDonationBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.utils.SupportHelper
 import com.kieronquinn.app.darq.utils.openLink
@@ -38,6 +39,7 @@ class DonationBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetD
                 dismiss()
             }
 
+            listOf(donationUpi, donationCopyUpi, donationPaypal, donationSponsors).forEach { it.applyPressFeedback() }
             val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             donationIcUpi.imageTintList = accent
             donationIcCopyUpi.imageTintList = accent

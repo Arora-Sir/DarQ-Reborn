@@ -9,6 +9,7 @@ import androidx.core.view.updatePadding
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetSocialLinksBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.utils.openLink
 
@@ -45,6 +46,7 @@ class SocialLinksBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
                 dismiss()
             }
 
+            listOf(socialWebsite, socialGithubProfile, socialLinkedinProfile, socialTwitter, socialInstagram, socialReddit).forEach { it.applyPressFeedback() }
             val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             socialIcWebsite.imageTintList = accent
             socialIcGithubProfile.imageTintList = accent

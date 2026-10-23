@@ -11,6 +11,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetCreditsBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.utils.Toasts
 import com.kieronquinn.app.darq.utils.openLink
@@ -30,6 +31,7 @@ class CreditsBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetCr
         with(binding) {
             val context = requireContext()
             val accent = ColorStateList.valueOf(themeColors.getAccentColor(context))
+            listOf(creditsUpstream, creditsAuthor, creditsShizuku, creditsXposed, creditsLibsu, creditsContributors, creditsLicences).forEach { it.applyPressFeedback() }
             val cardTint = ColorStateList.valueOf(themeColors.getBackgroundColorSecondary(context))
             listOf(creditsIcUpstream, creditsIcAuthor, creditsIcShizuku, creditsIcXposed, creditsIcLibsu, creditsIcContributors, creditsIcLicences)
                 .forEach { it.imageTintList = accent }

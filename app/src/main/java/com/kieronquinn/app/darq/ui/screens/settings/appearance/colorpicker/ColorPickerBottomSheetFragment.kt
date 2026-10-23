@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.utils.SafeRun
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetColorPickerBinding
@@ -86,13 +87,13 @@ class ColorPickerBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         return option.customColor == null || option.customColor == settings.monetColor
     }
 
-    private fun onPicked(option: AccentOption) {
+    private fun onPicked(option: AccentOption) = SafeRun.run(requireContext(), "accent pick") {
         if(option.isPicker) {
             dialog?.dismiss()
             CustomColorBottomSheetFragment().show(parentFragmentManager, "custom_color")
-            return
+            return@run
         }
-        if(isSelected(option)) return
+        if(isSelected(option)) return@run
         settings.themeAccent = option.accent
         option.customColor?.let { settings.monetColor = it }
         dialog?.dismiss()

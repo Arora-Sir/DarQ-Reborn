@@ -22,6 +22,7 @@ import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetCustomColorBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import org.koin.android.ext.android.inject
 
 // NOTE: The picked color is kept in the saved state, so a rotation or recreate() does not lose it.
@@ -211,6 +212,7 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
             holder.check.isVisible = isSelected
             holder.check.imageTintList = ColorStateList.valueOf(ColorMath.onColor(swatch))
             holder.circle.setOnClickListener { onPicked(swatch) }
+            holder.circle.applyPressFeedback()
         }
 
     }

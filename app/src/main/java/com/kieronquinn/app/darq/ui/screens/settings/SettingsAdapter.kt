@@ -28,6 +28,8 @@ import android.content.DialogInterface
 import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.ui.utils.MultiTapDetector
 import com.kieronquinn.app.darq.utils.LinkSpans
+import com.kieronquinn.app.darq.utils.SafeRun
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.utils.openLink
 
 class SettingsAdapter(context: Context, private var items: List<SettingsItem>): RecyclerView.Adapter<SettingsAdapter.ViewHolder>(), KoinComponent {
@@ -67,9 +69,9 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when(SettingsItemType.values()[viewType]){
             SettingsItemType.HEADER -> ViewHolder.Header(ItemHeaderBinding.inflate(layoutInflater, parent, false))
-            SettingsItemType.SETTING -> ViewHolder.SettingsSetting(ItemSettingBinding.inflate(layoutInflater, parent, false))
+            SettingsItemType.SETTING -> ViewHolder.SettingsSetting(ItemSettingBinding.inflate(layoutInflater, parent, false).also { it.root.applyPressFeedback() })
             SettingsItemType.ABOUT_SETTING -> ViewHolder.SettingsAboutSetting(ItemSettingAboutBinding.inflate(layoutInflater, parent, false))
-            SettingsItemType.SWITCH_SETTING -> ViewHolder.SettingsSwitchSetting(ItemSettingSwitchBinding.inflate(layoutInflater, parent, false))
+            SettingsItemType.SWITCH_SETTING -> ViewHolder.SettingsSwitchSetting(ItemSettingSwitchBinding.inflate(layoutInflater, parent, false).also { it.root.applyPressFeedback() })
             SettingsItemType.SNACKBAR_PADDING -> ViewHolder.SnackbarPadding(ItemSnackbarPaddingBinding.inflate(layoutInflater, parent, false))
         }
     }
@@ -140,7 +142,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
                 root.isPressed = false
                 root.clearFocus()
                 root.postDelayed({
-                    action.invoke()
+                    SafeRun.run(root.context, "settings tap: ${item.title}") { action.invoke() }
                 }, 150)
             }
         }

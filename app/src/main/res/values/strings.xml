@@ -163,6 +163,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="install">Install</string>
     <string name="close">Close</string>
     <string name="app_picker_header_active">Active</string>
+    <string name="app_picker_clear_search">Clear search</string>
     <string name="app_picker_header_all">Other Applications</string>
     <string name="item_boot_wait_shizuku_title">Wait for Shizuku on boot</string>
     <string name="item_boot_wait_shizuku_content">Waits for Shizuku to start up on boot before attempting connection, avoiding start-up failure notifications.</string>
@@ -174,7 +175,6 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="donation_dialog_global_title">PayPal</string>
     <string name="donation_dialog_global_summary">Pay using global credit/debit cards or PayPal</string>
 
-    <string name="social_links_dialog_title">Developer</string>
     <string name="social_developer_name">Mohit Arora</string>
     <string name="social_developer_role">System Architect &amp; Mobile Engineer</string>
     <string name="social_website_title">Personal Website</string>
@@ -193,6 +193,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="social_reddit_summary">u/AroraSir</string>
 
     <!-- Support, credits and updates -->
+    <string name="safe_run_failed">Something went wrong. The error was saved for the next report.</string>
     <string name="link_no_browser">No browser found to open this link</string>
     <string name="support_intro">DarQ Reborn is free and open source. Supporting it is optional and always your choice.</string>
     <string name="support_upi_chooser">Support via UPI</string>
@@ -221,6 +222,19 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="item_obtainium_title">Track with Obtainium</string>
     <string name="item_obtainium_content">Add DarQ to Obtainium in one tap and get notified about new releases</string>
     <string name="bottom_sheet_update_obtainium">Track with Obtainium</string>
+
+    <!-- Status card -->
+    <string name="status_title_shizuku">Running through Shizuku</string>
+    <string name="status_title_root">Running through root</string>
+    <string name="status_title_connecting">Connecting to the service</string>
+    <string name="status_title_none">Service not connected</string>
+    <string name="status_content_none_selected">No apps selected yet</string>
+    <plurals name="status_content_apps">
+        <item quantity="one">%d app darkened</item>
+        <item quantity="other">%d apps darkened</item>
+    </plurals>
+    <string name="status_content_xposed">%1$s, Xposed module active</string>
+    <string name="status_content_not_connected">Open Shizuku or grant root, then reopen DarQ. %1$s</string>
 
     <!-- Appearance -->
     <string name="item_appearance_title">Appearance</string>
@@ -308,6 +322,5 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="diagnostics_copied">Log copied to the clipboard</string>
     <string name="diagnostics_saved">Log saved to Downloads</string>
     <string name="diagnostics_save_failed">Could not save the log to Downloads</string>
-    <string name="diagnostics_no_browser">No browser found to open GitHub</string>
 
 </resources>

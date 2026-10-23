@@ -9,6 +9,54 @@
     <include layout="@layout/include_switch_main"
         android:id="@+id/switch_main"/>
 
+    <!-- NOTE: The status card answers "is DarQ working" in two seconds, with the mode on line one and the details on line two. -->
+    <LinearLayout
+        android:id="@+id/status_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_16"
+        android:layout_marginEnd="@dimen/padding_16"
+        android:layout_marginBottom="@dimen/padding_8"
+        android:background="@drawable/button_background_backup_restore"
+        android:gravity="center_vertical"
+        android:minHeight="72dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_16">
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="@dimen/padding_16"
+            android:background="@drawable/monet_color_picker_circle_background"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/padding_8"
+            android:src="@drawable/ic_check" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/status_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/status_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorSecondary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"

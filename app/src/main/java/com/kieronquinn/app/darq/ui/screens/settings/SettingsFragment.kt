@@ -1,5 +1,7 @@
 package com.kieronquinn.app.darq.ui.screens.settings
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
@@ -16,7 +18,10 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.color.MaterialColors
 import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsDialogs
+import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
+import org.koin.android.ext.android.inject
 import com.kieronquinn.app.darq.databinding.FragmentSettingsBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.components.xposed.XposedBridge
@@ -25,13 +30,20 @@ import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
 import com.kieronquinn.app.darq.utils.ObtainiumLink
 import com.kieronquinn.app.darq.utils.openLink
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
+private const val STATUS_POLL_MS = 600L
+private const val STATUS_CONNECT_WAIT_MS = 9_000L
 
 class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentSettingsBinding::inflate), AutoExpandOnRotate, ProvidesOverflow {
 
     private val viewModel by viewModel<SettingsViewModel>()
+    private val connection by inject<DarqServiceConnectionProvider>()
     override val settingsItems by lazy {
         listOf(
             SettingsItem.Setting(
@@ -142,6 +154,62 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         setupDeveloperOptions()
         setupXposedState()
         setupRestoreListener()
+    }
+
+    private var statusJob: Job? = null
+
+    // NOTE: The service binds a moment after the list appears, so the card shows a connecting state and polls before it reports a problem.
+    override fun onResume() {
+        super.onResume()
+        statusJob?.cancel()
+        statusJob = viewLifecycleOwner.lifecycleScope.launch {
+            var waited = 0L
+            while (isActive) {
+                val connected = connection.connectedServiceType != DarqServiceConnectionProvider.ServiceType.UNKNOWN
+                updateStatusCard(connecting = !connected && waited < STATUS_CONNECT_WAIT_MS)
+                if (connected) break
+                delay(STATUS_POLL_MS)
+                waited += STATUS_POLL_MS
+            }
+        }
+    }
+
+    override fun onPause() {
+        statusJob?.cancel()
+        super.onPause()
+    }
+
+    // NOTE: The card is rebuilt on every resume, so coming back from the app picker shows the new count.
+    private fun updateStatusCard(connecting: Boolean) = with(binding) {
+        val context = requireContext()
+        val type = connection.connectedServiceType
+        val connected = type != DarqServiceConnectionProvider.ServiceType.UNKNOWN
+        val count = settings.enabledApps.size
+        val apps = if (count == 0) getString(R.string.status_content_none_selected) else resources.getQuantityString(R.plurals.status_content_apps, count, count)
+        statusTitle.setText(when {
+            type == DarqServiceConnectionProvider.ServiceType.SHIZUKU -> R.string.status_title_shizuku
+            type == DarqServiceConnectionProvider.ServiceType.ROOT -> R.string.status_title_root
+            connecting -> R.string.status_title_connecting
+            else -> R.string.status_title_none
+        })
+        val details = if (XposedState.isActive) getString(R.string.status_content_xposed, apps) else apps
+        statusContent.text = when {
+            connected -> details
+            connecting -> apps
+            else -> getString(R.string.status_content_not_connected, apps)
+        }
+        //A connected service uses the accent container, a missing one uses the error container so it reads as a problem at a glance
+        val healthy = connected || connecting
+        val container = if (healthy) com.google.android.material.R.attr.colorPrimaryContainer else com.google.android.material.R.attr.colorErrorContainer
+        val onContainer = if (healthy) com.google.android.material.R.attr.colorOnPrimaryContainer else com.google.android.material.R.attr.colorOnErrorContainer
+        statusIcon.backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(context, container, Color.DKGRAY))
+        statusIcon.imageTintList = ColorStateList.valueOf(MaterialColors.getColor(context, onContainer, Color.WHITE))
+        statusIcon.setImageResource(when {
+            connected -> R.drawable.ic_check
+            connecting -> R.drawable.ic_update
+            else -> R.drawable.ic_close
+        })
+        statusCard.backgroundTintList = ColorStateList.valueOf(themeColors.getBackgroundColorSecondary(context))
     }
 
     private fun setupMainSwitch() {

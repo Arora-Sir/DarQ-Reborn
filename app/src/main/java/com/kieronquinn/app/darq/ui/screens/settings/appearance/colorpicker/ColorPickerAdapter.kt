@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.databinding.ItemColorPickerBinding
 import com.kieronquinn.app.darq.databinding.ItemColorPickerHeaderBinding
 
@@ -65,6 +66,7 @@ class ColorPickerAdapter(
         val checkColor = if (ColorUtils.calculateLuminance(option.color) > 0.5) Color.BLACK else Color.WHITE
         itemColorPickerCheck.imageTintList = ColorStateList.valueOf(checkColor)
         itemColorPickerBackground.setOnClickListener { onPicked(option) }
+        itemColorPickerBackground.applyPressFeedback()
     }
 
     sealed class ViewHolder(binding: ViewBinding): RecyclerView.ViewHolder(binding.root) {

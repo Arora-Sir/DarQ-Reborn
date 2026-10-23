@@ -116,6 +116,8 @@ class SettingsAppPickerFragment :
         )
         if (loadState is SettingsAppPickerViewModel.LoadState.Loaded) {
             adapter.setItems(loadState.apps)
+            //An empty result with a search term offers a way back to the full list
+            binding.appPickerEmptyClear.isVisible = loadState.apps.isEmpty() && viewModel.getSearchTerm().isNotEmpty()
         }
     }
 
@@ -146,6 +148,9 @@ class SettingsAppPickerFragment :
             searchClear.setOnClickListener {
                 searchBox.text.clear()
             }
+        }
+        binding.appPickerEmptyClear.setOnClickListener {
+            binding.appPickerSearch.searchBox.text.clear()
         }
     }
 
