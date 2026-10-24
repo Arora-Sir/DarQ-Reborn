@@ -83,7 +83,15 @@ def expected_probe_dark(prefs: dict[str, object], selected: bool, night: bool) -
 
 
 def darq_alarm_count(dev: Device) -> int:
-    return sum(1 for line in dev.sh("dumpsys alarm", check=False).splitlines() if "Alarm{" in line and PKG in line)
+    # NOTE: Below Android 12 WorkManager keeps a far future ACTION_FORCE_STOP_RESCHEDULE alarm of its own, which is not one of DarQ's schedules, so it is not counted.
+    lines = dev.sh("dumpsys alarm", check=False).splitlines()
+    count = 0
+    for index, line in enumerate(lines):
+        if "Alarm{" in line and PKG in line:
+            following = "\n".join(lines[index + 1:index + 4])
+            if "ACTION_FORCE_STOP_RESCHEDULE" not in following:
+                count += 1
+    return count
 
 
 def with_int_pref(xml_text: str, name: str, value: int) -> str:
