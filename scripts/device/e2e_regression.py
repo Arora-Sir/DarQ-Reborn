@@ -107,6 +107,11 @@ def open_main(dev: Device, attempts: int = 3) -> None:
             texts = [node.text for node in dev.dump_ui()]
             if MAIN_LIST_TEXT in texts:
                 return
+            # NOTE: A crash report left behind by an earlier or interrupted run makes DarQ offer it on launch, and that prompt would cover the list for good.
+            if "DarQ closed unexpectedly" in texts:
+                dev.tap_text("Not now")
+                time.sleep(1)
+                continue
             if "Service Timeout" in texts:
                 SERVICE_TIMEOUTS.append(f"{dev.serial} attempt {attempt}")
                 print(f"[WARN] DarQ service timeout on {dev.serial}, attempt {attempt}", flush=True)
