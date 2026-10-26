@@ -11,6 +11,9 @@ import kotlin.math.roundToInt
  */
 object ColorMath {
 
+    //The seed the custom picker starts from and returns to on Reset, the same in every Mohit Arora app
+    val DEFAULT_CUSTOM: Int = 0xFF00BCD4.toInt()
+
     private val HEX = Regex("^#?([0-9a-fA-F]{6})$")
     private val HEX_SHORT = Regex("^#?([0-9a-fA-F]{3})$")
 

@@ -45,12 +45,17 @@ class AccentContrastTest {
         }
     }
 
+    // NOTE: The seeds match the blueprint accent-presets.json, so the same preset looks the same in every Mohit Arora app.
     @Test
-    fun signatureSeedsAreTheBlueprintColors() {
-        assertEquals(0xFF0072DE.toInt(), ThemeManager.Preset.BLUE.seed)
-        assertEquals(0xFFFF6D00.toInt(), ThemeManager.Preset.ORANGE.seed)
-        assertEquals(0xFF00C853.toInt(), ThemeManager.Preset.GREEN.seed)
-        assertEquals(0xFF7C4DFF.toInt(), ThemeManager.Preset.PURPLE.seed)
+    fun seedsAreTheCanonicalFamily() {
+        assertEquals(0xFF2196F3.toInt(), ThemeManager.Preset.BLUE.seed)
+        assertEquals(0xFF00897B.toInt(), ThemeManager.Preset.TEAL.seed)
+        assertEquals(0xFF388E3C.toInt(), ThemeManager.Preset.GREEN.seed)
+        assertEquals(0xFF7E57C2.toInt(), ThemeManager.Preset.PURPLE.seed)
+        assertEquals(0xFFEF6C00.toInt(), ThemeManager.Preset.ORANGE.seed)
+        assertEquals(0xFFD81B60.toInt(), ThemeManager.Preset.ROSE.seed)
+        assertEquals(0xFF808080.toInt(), ThemeManager.Preset.MONO.seed)
+        assertEquals(0xFF00BCD4.toInt(), ColorMath.DEFAULT_CUSTOM)
     }
 
     @Test

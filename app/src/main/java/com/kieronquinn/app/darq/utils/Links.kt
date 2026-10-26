@@ -46,7 +46,6 @@ object LinkOpener {
 }
 
 object Links {
-    const val LINK_XDA = "https://kieronquinn.co.uk/redirect/DarQ/xda"
     const val LINK_TWITTER = "https://x.com/MohitAr0rA"
     const val LINK_DONATE = "https://paypal.me/arorasir"
     const val LINK_SPONSORS = "https://github.com/sponsors/Arora-Sir"

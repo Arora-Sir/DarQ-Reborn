@@ -146,7 +146,6 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="chip_github">GitHub</string>
     <string name="chip_socials">Developer</string>
     <string name="chip_credits">Credits</string>
-    <string name="chip_xda">XDA Thread</string>
     <string name="menu_open_source_libraries">Open source libraries</string>
     <string name="bottom_sheet_update_available_title">Update Available</string>
     <string name="bottom_sheet_update_available_positive">Download</string>
@@ -195,6 +194,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <!-- Support, credits and updates -->
     <string name="safe_run_failed">Something went wrong. The error was saved for the next report.</string>
     <string name="link_no_browser">No browser found to open this link</string>
+    <string name="item_support_content">Optional, always your choice</string>
     <string name="support_intro">DarQ Reborn is free and open source. Supporting it is optional and always your choice.</string>
     <string name="support_upi_chooser">Support via UPI</string>
     <string name="support_upi_none">No UPI app found. UPI ID copied to the clipboard.</string>
@@ -246,6 +246,10 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_pure_black_title">Pure black</string>
     <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
     <string name="appearance_accent_title">Accent color</string>
+    <string name="appearance_accent_title_chosen">Accent color: %1$s</string>
+    <string name="appearance_accent_contrast">Contrast %1$.1f:1 on black, %2$.1f:1 on cards.</string>
+    <string name="appearance_accent_low_contrast">This color is hard to see on dark surfaces.</string>
+    <string name="appearance_accent_reset">Reset</string>
     <string name="appearance_accent_wallpaper">Wallpaper</string>
     <string name="appearance_accent_custom">Color %1$d</string>
     <string name="appearance_accent_auto">Automatic</string>
@@ -269,13 +273,13 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_accent_note_dynamic">Android builds the full color scheme from this color.</string>
     <string name="appearance_accent_fallback">Android 10 and 11 use the preset closest to this color</string>
     <string-array name="appearance_accent_presets">
-        <item>One UI Blue</item>
+        <item>Blue</item>
         <item>Teal</item>
-        <item>Emerald Green</item>
-        <item>Cyber Violet</item>
-        <item>Dual Orange</item>
+        <item>Green</item>
+        <item>Purple</item>
+        <item>Orange</item>
         <item>Rose</item>
-        <item>Monochrome</item>
+        <item>Mono</item>
     </string-array>
     <string name="appearance_tinted_icons_title">Tinted icons</string>
     <string name="appearance_tinted_icons_content">Colors the settings icons with the accent color instead of the classic multicolor set</string>

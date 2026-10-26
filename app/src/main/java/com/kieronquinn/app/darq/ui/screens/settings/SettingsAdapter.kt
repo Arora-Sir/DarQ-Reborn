@@ -155,7 +155,6 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         val secondaryBackground = themeColors.getBackgroundColorSecondary(root.context)
         val backgroundTint = android.content.res.ColorStateList.valueOf(secondaryBackground)
         chipSocials.chipBackgroundColor = backgroundTint
-        chipDonate.chipBackgroundColor = backgroundTint
         chipCredits.chipBackgroundColor = backgroundTint
 
         itemSettingTitle.text = item.title
@@ -180,17 +179,6 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
                     }
                 }
             }
-        }
-        binding.chipDonate.setOnClickListener { chip ->
-            chip.isPressed = false
-            chip.clearFocus()
-            chip.postDelayed({
-                try {
-                    chip.findNavController().navigate(R.id.action_global_donationBottomSheetFragment)
-                } catch (e: Exception) {
-                    android.util.Log.e("SettingsAdapter", "Navigation to donation bottom sheet failed", e)
-                }
-            }, 150)
         }
         binding.chipCredits.setOnClickListener { chip ->
             chip.isPressed = false

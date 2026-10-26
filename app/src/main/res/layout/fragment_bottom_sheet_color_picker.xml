@@ -19,6 +19,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/color_picker_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:background="@drawable/button_background_backup_restore"
+        android:gravity="center"
+        android:minHeight="40dp"
+        android:paddingStart="@dimen/padding_24"
+        android:paddingEnd="@dimen/padding_24"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/color_picker_title"
+        tools:text="Teal" />
+
+    <TextView
+        android:id="@+id/color_picker_contrast"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_8"
+        android:layout_marginEnd="@dimen/padding_24"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/color_picker_preview"
+        tools:text="Contrast 4.6:1 on black, 3.9:1 on cards" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/color_picker_list"
         android:layout_width="match_parent"
@@ -30,24 +61,39 @@
         android:overScrollMode="never"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/color_picker_title"
+        app:layout_constraintTop_toBottomOf="@id/color_picker_contrast"
         tools:itemCount="10"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:spanCount="5"
         tools:listitem="@layout/item_color_picker" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/color_picker_ok"
-        style="@style/Widget.Material3.Button.TextButton"
+        android:id="@+id/color_picker_apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_8"
         android:layout_marginEnd="@dimen/padding_16"
-        android:text="@android:string/ok"
         android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:text="@string/appearance_accent_apply"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/color_picker_list" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/color_picker_cancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:layout_marginEnd="@dimen/padding_8"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:text="@android:string/cancel"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/color_picker_apply"
+        app:layout_constraintEnd_toStartOf="@id/color_picker_apply"
+        app:layout_constraintTop_toTopOf="@id/color_picker_apply" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

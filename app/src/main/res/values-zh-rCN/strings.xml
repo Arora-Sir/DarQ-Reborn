@@ -95,7 +95,6 @@
     <string name="dialog_location_permission_use_timezone">使用时区 \n<small>（精准度低）</small></string>
     <string name="chip_twitter">在 Twitter 上关注作者</string>
     <string name="chip_github">GitHub</string>
-    <string name="chip_xda">XDA 上的帖子</string>
     <string name="menu_open_source_libraries">开源库</string>
     <string name="bottom_sheet_update_available_title">更新可用</string>
     <string name="bottom_sheet_update_available_positive">下载</string>
@@ -130,6 +129,7 @@
     <string name="social_developer_role">系统架构师与移动工程师</string>
     <string name="safe_run_failed">出了点问题。错误已保存，将包含在下一份报告中。</string>
     <string name="link_no_browser">找不到可打开此链接的浏览器</string>
+    <string name="item_support_content">自愿支持，选择权始终在你</string>
     <string name="support_intro">DarQ Reborn 免费且开源。支持是自愿的，选择权始终在你。</string>
     <string name="support_upi_chooser">通过 UPI 支持</string>
     <string name="support_upi_none">未找到 UPI 应用。UPI ID 已复制到剪贴板。</string>
@@ -174,6 +174,10 @@
     <string name="appearance_pure_black_title">纯黑</string>
     <string name="appearance_pure_black_content">在深色模式下使用真正的黑色背景，可在 AMOLED 屏幕上省电</string>
     <string name="appearance_accent_title">强调色</string>
+    <string name="appearance_accent_title_chosen">强调色：%1$s</string>
+    <string name="appearance_accent_contrast">在黑色上的对比度为 %1$.1f:1，在卡片上为 %2$.1f:1。</string>
+    <string name="appearance_accent_low_contrast">此颜色在深色表面上不易看清。</string>
+    <string name="appearance_accent_reset">重置</string>
     <string name="appearance_accent_wallpaper">壁纸</string>
     <string name="appearance_accent_custom">颜色 %1$d</string>
     <string name="appearance_accent_auto">自动</string>
@@ -233,11 +237,11 @@
     <string name="diagnostics_saved">日志已保存到“下载”</string>
     <string name="diagnostics_save_failed">无法将日志保存到“下载”</string>
     <string-array name="appearance_accent_presets">
-        <item>One UI 蓝</item>
+        <item>蓝色</item>
         <item>青色</item>
-        <item>祖母绿</item>
-        <item>赛博紫</item>
-        <item>Dual 橙</item>
+        <item>绿色</item>
+        <item>紫色</item>
+        <item>橙色</item>
         <item>玫红</item>
         <item>单色</item>
     </string-array>

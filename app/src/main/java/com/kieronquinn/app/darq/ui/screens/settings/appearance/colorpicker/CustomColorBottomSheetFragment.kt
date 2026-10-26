@@ -33,6 +33,7 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         private const val STATE_COLOR = "color"
         private const val PALETTE_SPAN = 6
         private const val MAX_COLUMN_DP = 400
+        private const val LOW_CONTRAST = 3.0
         private const val CHROME_DP = 200
         private const val MIN_SCROLL_DP = 120
         private const val UNSET_COLOR = Integer.MAX_VALUE
@@ -108,6 +109,8 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
 
             customColorNote.setText(if (ThemeManager.isDynamicAvailable) R.string.appearance_accent_note_dynamic else R.string.appearance_accent_fallback)
             customColorCancel.setTextColor(themeColors.getAccentColor(context))
+            customColorReset.setTextColor(themeColors.getAccentColor(context))
+            customColorReset.setOnClickListener { setColor(ColorMath.DEFAULT_CUSTOM, force = true) }
             customColorCancel.setOnClickListener { dismiss() }
             customColorApply.setOnClickListener { apply() }
         }
@@ -169,6 +172,11 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
             customColorApply.setTextColor(ColorMath.onColor(color))
             customColorApply.isEnabled = true
             paletteAdapter?.selected = color
+            val onBlack = ColorMath.contrast(color, Color.BLACK)
+            val onCard = ColorMath.contrast(color, themeColors.getBackgroundColorSecondary(requireContext()))
+            val low = onBlack < LOW_CONTRAST || onCard < LOW_CONTRAST
+            customColorContrast.text = getString(R.string.appearance_accent_contrast, onBlack, onCard) +
+                if (low) " " + getString(R.string.appearance_accent_low_contrast) else ""
         }
         updating = false
     }

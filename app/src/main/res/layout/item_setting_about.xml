@@ -55,17 +55,6 @@
             app:chipSpacingVertical="0dp">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_donate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_donate"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium"
-                app:chipBackgroundColor="@color/icon_circle_7"
-                app:chipIcon="@drawable/ic_donate"
-                app:chipIconTint="@color/icon_inside_7"
-                app:chipStartPadding="8dp" />
-
-            <com.google.android.material.chip.Chip
                 android:id="@+id/chip_socials"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

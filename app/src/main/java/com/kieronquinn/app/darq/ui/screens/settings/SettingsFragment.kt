@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.kieronquinn.app.darq.BuildConfig
 import com.kieronquinn.app.darq.R
@@ -126,6 +127,12 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 getString(R.string.item_report_issue_title),
                 getString(R.string.item_report_issue_content),
                 tapAction = { (activity as? AppCompatActivity)?.let { DiagnosticsDialogs.showReportIssue(it) } }
+            ),
+            SettingsItem.Setting(
+                R.drawable.ic_support_heart,
+                getString(R.string.chip_donate),
+                getString(R.string.item_support_content),
+                tapAction = { findNavController().navigate(R.id.action_global_donationBottomSheetFragment) }
             ),
             SettingsItem.AboutSetting(
                 R.drawable.ic_about_round,

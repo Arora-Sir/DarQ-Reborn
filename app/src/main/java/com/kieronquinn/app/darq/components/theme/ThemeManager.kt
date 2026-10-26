@@ -30,13 +30,13 @@ object ThemeManager {
     private const val UNSET_COLOR = Integer.MAX_VALUE
 
     // NOTE: The keys are stored in user settings, so they stay the same when a preset gets a new color or name.
-    // NOTE: Blue, orange, green and purple are the signature accents (One UI Blue, Dual Orange, Emerald Green, Cyber Violet).
+    // NOTE: The seeds are the canonical family shared by every Mohit Arora app (blueprint accent-presets.json), so the colors match across apps.
     enum class Preset(val key: String, val seed: Int, @StyleRes val overlay: Int) {
-        BLUE("blue", 0xFF0072DE.toInt(), R.style.ThemeOverlay_Darq_Accent_Blue),
+        BLUE("blue", 0xFF2196F3.toInt(), R.style.ThemeOverlay_Darq_Accent_Blue),
         TEAL("teal", 0xFF00897B.toInt(), R.style.ThemeOverlay_Darq_Accent_Teal),
-        GREEN("green", 0xFF00C853.toInt(), R.style.ThemeOverlay_Darq_Accent_Green),
-        PURPLE("purple", 0xFF7C4DFF.toInt(), R.style.ThemeOverlay_Darq_Accent_Purple),
-        ORANGE("orange", 0xFFFF6D00.toInt(), R.style.ThemeOverlay_Darq_Accent_Orange),
+        GREEN("green", 0xFF388E3C.toInt(), R.style.ThemeOverlay_Darq_Accent_Green),
+        PURPLE("purple", 0xFF7E57C2.toInt(), R.style.ThemeOverlay_Darq_Accent_Purple),
+        ORANGE("orange", 0xFFEF6C00.toInt(), R.style.ThemeOverlay_Darq_Accent_Orange),
         ROSE("rose", 0xFFD81B60.toInt(), R.style.ThemeOverlay_Darq_Accent_Rose),
         MONO("mono", 0xFF808080.toInt(), R.style.ThemeOverlay_Darq_Accent_Mono);
 

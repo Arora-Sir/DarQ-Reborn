@@ -22,6 +22,8 @@ object SettingsIcons {
 
     fun load(context: Context, @DrawableRes icon: Int, tinted: Boolean): Drawable? {
         val drawable = ContextCompat.getDrawable(context, icon)?.mutate() ?: return null
+        //The support heart is the one colored icon in Settings, so it keeps its fixed red and has no circle
+        if (icon == R.drawable.ic_support_heart) return drawable
         val round = (drawable as? LayerDrawable)?.takeIf { it.numberOfLayers >= 2 } ?: wrap(context, icon, drawable)
         if (tinted) {
             round.getDrawable(0).setTint(ThemeColors.getIconContainerColor(context))

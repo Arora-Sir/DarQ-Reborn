@@ -146,9 +146,17 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/custom_color_contrast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+
+                <TextView
                     android:id="@+id/custom_color_note"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_8"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
                     android:textColor="?android:textColorSecondary" />
 
@@ -160,7 +168,7 @@
         android:id="@+id/custom_color_buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="end"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="@dimen/padding_16"
         android:paddingTop="@dimen/padding_8"
@@ -169,6 +177,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/custom_color_scroll">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/custom_color_reset"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/google_sans_text_medium"
+            android:minHeight="48dp"
+            android:text="@string/appearance_accent_reset"
+            android:textAllCaps="false" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/custom_color_cancel"
