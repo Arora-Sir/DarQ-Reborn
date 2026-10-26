@@ -103,7 +103,7 @@ Open **Appearance** in DarQ to change how the app looks.
 
 * **Theme:** light, dark or follow the system.
 * **Pure black:** true black backgrounds in dark mode, which saves power on AMOLED screens.
-* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (One UI Blue, Teal, Emerald Green, Cyber Violet, Dual Orange, Rose, Monochrome), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
+* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (Blue, Teal, Green, Purple, Orange, Rose, Mono), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
 * **Tinted icons:** colors the settings icons with the accent instead of the classic multicolor set.
 
 | Light | Dark | Pure black |
@@ -136,11 +136,12 @@ See the [FAQ](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/
 
 ## Troubleshooting & Bug Reporting
 
-If you encounter crashes or issues, sharing a logcat log is extremely helpful for diagnostics. Here is how to capture it on-device:
+Open **Report an issue** in DarQ settings. It takes what happened and the steps, adds a redacted diagnostic log you can review first, and opens a prefilled GitHub form in your browser with the full log copied for you to paste. If DarQ closes unexpectedly, the next launch offers the saved crash report once.
 
-1. Install an open-source log viewer like [**LogFox**](https://github.com/F0x1d/LogFox).
-2. Open LogFox and grant it Shizuku access.
-3. Start recording logs, launch DarQ Reborn to trigger the crash, and copy the captured logs from the notification pop-up.
-4. Share the copied crash log in your bug report or GitHub issue.
+If DarQ cannot start at all, capture a log on the device instead:
+
+1. Install an open-source log viewer like [**LogFox**](https://github.com/F0x1d/LogFox) and grant it Shizuku access.
+2. Start recording logs, launch DarQ Reborn to trigger the problem, and copy the captured logs from the notification pop-up.
+3. Share the log in your GitHub issue.
 
 [Download from GitHub Releases](https://github.com/Arora-Sir/DarQ-Reborn/releases)
