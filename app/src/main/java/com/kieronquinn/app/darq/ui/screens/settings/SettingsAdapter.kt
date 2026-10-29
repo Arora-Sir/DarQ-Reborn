@@ -141,7 +141,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         }
         val isHeart = item.icon == R.drawable.ic_support_heart
         itemSettingIconOverlay.isVisible = isHeart
-        itemSettingIconOverlay.setImageDrawable(if (isHeart) SettingsIcons.heartGlyph(itemSettingIcon.context) else null)
+        itemSettingIconOverlay.setImageDrawable(if (isHeart) SettingsIcons.heartGlyph(itemSettingIcon.context, settings.themeTintedIcons) else null)
         HeartBeat.attach(itemSettingIconOverlay, isHeart)
         item.tapAction?.let { action ->
             root.setOnClickListener {

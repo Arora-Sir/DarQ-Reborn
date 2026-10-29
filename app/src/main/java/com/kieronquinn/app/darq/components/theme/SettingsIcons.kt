@@ -25,7 +25,7 @@ object SettingsIcons {
     fun load(context: Context, @DrawableRes icon: Int, tinted: Boolean): Drawable? {
         val drawable = ContextCompat.getDrawable(context, icon)?.mutate() ?: return null
         //The support heart sits in the same circle as every other icon, in the error container of the theme. Its glyph is a separate overlay so it can beat from its own center
-        if (icon == R.drawable.ic_support_heart) return heartCircle(context)
+        if (icon == R.drawable.ic_support_heart) return heartCircle(context, tinted)
         val round = (drawable as? LayerDrawable)?.takeIf { it.numberOfLayers >= 2 } ?: wrap(context, icon, drawable)
         if (tinted) {
             round.getDrawable(0).setTint(ThemeColors.getIconContainerColor(context))
@@ -34,20 +34,26 @@ object SettingsIcons {
         return round
     }
 
-    private fun heartCircle(context: Context): Drawable {
+    private fun heartCircle(context: Context, tinted: Boolean): Drawable {
         val density = context.resources.displayMetrics.density
         val circleSize = (36 * density).toInt()
         return GradientDrawable().apply {
             shape = GradientDrawable.OVAL
-            setColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorErrorContainer, Color.parseColor("#93000A")))
+            //With tinted icons the circle is the same container color as every other icon, in the classic set it is the error container
+            setColor(
+                if (tinted) ThemeColors.getIconContainerColor(context)
+                else MaterialColors.getColor(context, com.google.android.material.R.attr.colorErrorContainer, Color.parseColor("#93000A"))
+            )
             setSize(circleSize, circleSize)
         }
     }
 
     /** The heart glyph of the Support row, tinted with the on-error-container role so it reads on the circle in light, dark and Pure black. */
-    fun heartGlyph(context: Context): Drawable? {
+    fun heartGlyph(context: Context, tinted: Boolean): Drawable? {
         val glyph = ContextCompat.getDrawable(context, R.drawable.ic_support_heart)?.mutate() ?: return null
-        glyph.setTint(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnErrorContainer, Color.parseColor("#FFDAD6")))
+        //The heart stays pinkish red in both sets. On the tinted circle it takes the error role, on the error container circle the on-error-container role
+        val role = if (tinted) com.google.android.material.R.attr.colorError else com.google.android.material.R.attr.colorOnErrorContainer
+        glyph.setTint(MaterialColors.getColor(context, role, Color.parseColor("#FFB4AB")))
         return glyph
     }
 
