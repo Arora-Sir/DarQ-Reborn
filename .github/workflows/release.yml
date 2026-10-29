@@ -36,6 +36,7 @@ jobs:
             exit 1
           fi
           test -f ".github/release-notes/$VERSION.md" || { echo "Missing .github/release-notes/$VERSION.md"; exit 1; }
+          test -f scripts/release/signing-lineage.bin || { echo "Missing scripts/release/signing-lineage.bin, run scripts/release/rotate_key.py first"; exit 1; }
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest --console=plain
@@ -55,16 +56,38 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: ./gradlew assembleRelease --console=plain
 
+      # NOTE: Installs signed with the old key (the former debug key) update in place because the APK carries a signing certificate lineage.
+      # NOTE: The lineage needs v3 only signing, since v1 and v2 cannot carry it. The minSdk is 29, so every supported device reads v3.
+      - name: Sign with the new key and the lineage
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" sign \
+            --v1-signing-enabled false --v2-signing-enabled false --rotation-min-sdk-version 28 \
+            --ks "$RUNNER_TEMP/release.keystore" --ks-key-alias "$SIGNING_KEY_ALIAS" \
+            --ks-pass env:SIGNING_KEYSTORE_PASSWORD --key-pass env:SIGNING_KEY_PASSWORD \
+            --lineage scripts/release/signing-lineage.bin \
+            --out "$RUNNER_TEMP/signed.apk" app/build/outputs/apk/release/app-release.apk
+
       - name: Verify the APK
         env:
           EXPECTED_CERT_SHA256: ${{ vars.EXPECTED_CERT_SHA256 }}
+          OLD_CERT_SHA256: e0ffb2dc934eed434e3a51c2f6ebd7c25d5670d506532a3607ebae83a0f6b3af
         run: |
           test -n "$EXPECTED_CERT_SHA256" || { echo "EXPECTED_CERT_SHA256 variable is not set"; exit 1; }
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          APK=app/build/outputs/apk/release/app-release.apk
-          CERT=$("$BT/apksigner" verify --print-certs "$APK" | grep -i "certificate SHA-256 digest" | head -1 | awk '{print $NF}' | tr 'A-F' 'a-f')
+          APK="$RUNNER_TEMP/signed.apk"
+          "$BT/apksigner" verify "$APK" || { echo "The APK signature does not verify"; exit 1; }
+          lower() { tr 'A-F' 'a-f'; }
+          CERT=$("$BT/apksigner" verify --print-certs "$APK" | grep -i "certificate SHA-256 digest" | head -1 | awk '{print $NF}' | lower)
           echo "Signer SHA-256: $CERT"
-          [ "$CERT" = "$(echo "$EXPECTED_CERT_SHA256" | tr 'A-F' 'a-f')" ] || { echo "The signing certificate is not the expected one"; exit 1; }
+          [ "$CERT" = "$(echo "$EXPECTED_CERT_SHA256" | lower)" ] || { echo "The signing certificate is not the expected one"; exit 1; }
+          LINEAGE=$("$BT/apksigner" lineage --in scripts/release/signing-lineage.bin --print-certs | grep "SHA-256 digest" | awk '{print $NF}' | lower)
+          echo "$LINEAGE" | head -1 | grep -qx "$OLD_CERT_SHA256" || { echo "The lineage does not start at the old certificate"; exit 1; }
+          echo "$LINEAGE" | tail -1 | grep -qx "$(echo "$EXPECTED_CERT_SHA256" | lower)" || { echo "The lineage does not end at the new certificate"; exit 1; }
           BADGING=$("$BT/aapt2" dump badging "$APK")
           echo "$BADGING" | grep -q "package: name='$PACKAGE' versionCode='$VERSION_CODE' versionName='$VERSION'" || { echo "Unexpected package or version"; exit 1; }
           cp "$APK" "DarQ-Reborn.$VERSION.apk"
