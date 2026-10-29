@@ -8,8 +8,10 @@ device testing playbook: never act on a device that is streaming, in a call, loc
 from __future__ import annotations
 
 import io
+import os
 import re
 import subprocess
+import sys
 import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -63,14 +65,61 @@ class Device:
         match = re.search(r"lastUserActivityTime=(\d+)", self.sh("dumpsys power"))
         return uptime - int(match.group(1)) / 1000 if match else float("inf")
 
+    @staticmethod
+    def _is_pid_alive(pid: int) -> bool:
+        if pid <= 0:
+            return False
+        if sys.platform == "win32":
+            import ctypes
+            handle = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
+            if not handle:
+                return False
+            try:
+                exit_code = ctypes.c_ulong()
+                if ctypes.windll.kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+                    return exit_code.value == 259
+                return False
+            finally:
+                ctypes.windll.kernel32.CloseHandle(handle)
+        try:
+            os.kill(pid, 0)
+            return True
+        except (OSError, ProcessLookupError):
+            return False
+
+    def is_locked(self) -> bool:
+        """Keyguard showing, or the CURRENT user locked. Other users such as Samsung Secure Folder keep their own lock and always read locked."""
+        if "isKeyguardShowing=true" in self.sh("dumpsys window | grep isKeyguardShowing", check=False):
+            return True
+        current = [line for line in self.sh("dumpsys trust", check=False).splitlines() if "(current)" in line]
+        return any("deviceLocked=1" in line for line in current)
+
     def preflight(self, min_idle_seconds: int = 60) -> None:
+        if self.serial.startswith("emulator-"):
+            lease = self.sh("getprop debug.fleet.lease", check=False).strip()
+            if lease and ":" in lease:
+                proj, pid_str = lease.split(":", 1)
+                try:
+                    holder_pid = int(pid_str)
+                    curr_pid = os.getpid()
+                    parent_pid = os.getppid() if hasattr(os, "getppid") else 0
+                    if holder_pid not in (curr_pid, parent_pid) and self._is_pid_alive(holder_pid):
+                        raise PreflightError(f"Emulator {self.serial} is currently leased by project '{proj}' (PID {holder_pid})")
+                except ValueError:
+                    pass
         focus = self.focus()
         if any(marker in focus for marker in STREAM_FOCUS_MARKERS):
             raise PreflightError(f"Device is streaming, refusing input ({focus})")
         if "mCallState=0" not in self.sh("dumpsys telephony.registry | grep -m1 mCallState", check=False):
             raise PreflightError("Device is in a call")
-        if "isKeyguardShowing=true" in self.sh("dumpsys window | grep isKeyguardShowing", check=False):
-            raise PreflightError("Device is locked")
+        if self.is_locked():
+            if self.serial.startswith("emulator-"):
+                self.sh("input keyevent KEYCODE_WAKEUP; wm dismiss-keyguard; sleep 1; input swipe 540 1900 540 600 200; sleep 1; input text 1234; input keyevent 66", check=False)
+                time.sleep(2)
+                if self.is_locked():
+                    raise PreflightError("Emulator is locked and standard PIN 1234 failed")
+            else:
+                raise PreflightError("Device is locked")
         if "mWakefulness=Awake" not in self.sh("dumpsys power | grep mWakefulness=", check=False):
             raise PreflightError("Screen is off")
         idle = self.idle_seconds()
@@ -78,13 +127,25 @@ class Device:
             raise PreflightError(f"Device was used {idle:.0f}s ago, waiting for {min_idle_seconds}s of idle")
 
     def assert_not_streaming(self) -> None:
+        if self.serial.startswith("emulator-"):
+            lease = self.sh("getprop debug.fleet.lease", check=False).strip()
+            if lease and ":" in lease:
+                proj, pid_str = lease.split(":", 1)
+                try:
+                    holder_pid = int(pid_str)
+                    curr_pid = os.getpid()
+                    parent_pid = os.getppid() if hasattr(os, "getppid") else 0
+                    if holder_pid not in (curr_pid, parent_pid) and self._is_pid_alive(holder_pid):
+                        raise PreflightError(f"Emulator {self.serial} is currently leased by project '{proj}' (PID {holder_pid})")
+                except ValueError:
+                    pass
         focus = self.focus()
         if any(marker in focus for marker in STREAM_FOCUS_MARKERS):
             raise PreflightError(f"Stream window took focus mid-test ({focus})")
 
     # UI
 
-    def dump_ui(self, retries: int = 8) -> list[Node]:
+    def dump_ui(self, retries: int = 16) -> list[Node]:
         for _ in range(retries):
             # A failed dump leaves the previous file behind, so it is deleted first to never read a stale screen.
             self.sh(f"rm -f {UI_DUMP_PATH}", check=False)
@@ -93,6 +154,13 @@ class Device:
             if raw.lstrip().startswith("<?xml"):
                 nodes = self._parse_nodes(raw)
                 # A loaded emulator can raise a system "isn't responding" dialog over everything. Waiting it out is safe.
+                # A crash dialog of ANOTHER app (left by a different project's run on a shared emulator) covers the screen too, Close app dismisses it.
+                if any(node.text.endswith("keeps stopping") for node in nodes):
+                    close = next((node for node in nodes if node.text == "Close app"), None)
+                    if close is not None:
+                        self.sh(f"input tap {close.center[0]} {close.center[1]}")
+                        time.sleep(2)
+                        continue
                 if any(node.text.endswith("isn't responding") for node in nodes):
                     wait = next((node for node in nodes if node.text == "Wait"), None)
                     if wait is not None:
@@ -163,10 +231,16 @@ class Device:
         self.assert_not_streaming()
         self.sh(f"am start -W -n {component}")
 
-    def install(self, apk: Path) -> None:
-        self.adb("install", "-r", str(apk), timeout=300)
+    def install(self, apk: Path, user: int = 0) -> None:
+        """Installs APK strictly into specified user profile (defaults to User 0 primary)."""
+        self.adb("install", "--user", str(user), "-r", str(apk), timeout=300)
+
+    def uninstall_user(self, package: str, user: int) -> None:
+        """Uninstalls package from a specific secondary profile without affecting other users."""
+        self.sh(f"pm uninstall --user {user} {package}", check=False)
 
     def uninstall(self, package: str) -> None:
+        """Completely purges package from device across all profiles."""
         self.adb("uninstall", package, check=False)
 
     def run_as(self, package: str, command: str, check: bool = True) -> str:

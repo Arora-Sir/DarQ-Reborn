@@ -175,8 +175,11 @@
     <string name="item_appearance_content">主题、强调色、纯黑和图标</string>
     <string name="appearance_theme_title">主题</string>
     <string name="appearance_theme_system">跟随系统</string>
+    <string name="appearance_theme_system_summary">与系统深色模式设置保持一致</string>
     <string name="appearance_theme_light">浅色</string>
+    <string name="appearance_theme_light_summary">始终使用浅色主题</string>
     <string name="appearance_theme_dark">深色</string>
+    <string name="appearance_theme_dark_summary">始终使用深色主题</string>
     <string name="appearance_pure_black_title">纯黑</string>
     <string name="appearance_pure_black_content">在深色模式下使用真正的黑色背景，可在 AMOLED 屏幕上省电</string>
     <string name="appearance_pure_black_lift_title">表面层次</string>
@@ -214,7 +217,7 @@
     <string name="appearance_tinted_icons_content">使用强调色为设置图标着色，而不是经典的多彩图标</string>
     <string name="item_report_issue_title">报告问题</string>
     <string name="item_report_issue_content">附带诊断日志报告错误，或在 GitHub 上提出功能建议</string>
-    <string name="report_issue_bug">某些功能无法使用（错误报告）</string>
+    <string name="report_issue_bug">报告问题</string>
     <string name="report_issue_feature">建议新功能</string>
     <string name="report_issue_include_log">包含诊断日志</string>
     <string name="report_issue_include_log_hint">发送前你可以先查看。你的应用和位置信息已被移除。</string>
@@ -263,6 +266,11 @@
         <item>分享</item>
         <item>复制到剪贴板</item>
     </string-array>
+    <string name="diagnostics_send_github_summary">在浏览器中预填新的 GitHub 问题报告</string>
+    <string name="diagnostics_send_comment_summary">复制格式化评论并打开问题列表</string>
+    <string name="diagnostics_send_save_summary">将诊断日志保存到本地存储</string>
+    <string name="diagnostics_send_share_summary">通过系统分享面板发送</string>
+    <string name="diagnostics_send_copy_summary">复制完整诊断文本到剪贴板</string>
     <plurals name="status_content_apps">
         <item quantity="other">已将 %d 个应用设为深色</item>
     </plurals>

@@ -229,8 +229,11 @@
     <string name="item_appearance_content">Тема, колір акценту, чорний фон і піктограми</string>
     <string name="appearance_theme_title">Тема</string>
     <string name="appearance_theme_system">Як у системі</string>
+    <string name="appearance_theme_system_summary">Відповідає налаштуванням системи</string>
     <string name="appearance_theme_light">Світла</string>
+    <string name="appearance_theme_light_summary">Завжди використовувати світлу тему</string>
     <string name="appearance_theme_dark">Темна</string>
+    <string name="appearance_theme_dark_summary">Завжди використовувати темну тему</string>
     <string name="appearance_pure_black_title">Чистий чорний</string>
     <string name="appearance_pure_black_content">Використовує справжній чорний фон у темному режимі, що заощаджує заряд на екранах AMOLED</string>
     <string name="appearance_pure_black_lift_title">Підйом поверхонь</string>
@@ -268,7 +271,7 @@
     <string name="appearance_tinted_icons_content">Фарбує піктограми налаштувань у колір акценту замість класичного різнокольорового набору</string>
     <string name="item_report_issue_title">Повідомити про проблему</string>
     <string name="item_report_issue_content">Повідомте про помилку з діагностичним журналом або запропонуйте функцію на GitHub</string>
-    <string name="report_issue_bug">Щось не працює (звіт про помилку)</string>
+    <string name="report_issue_bug">Повідомити про помилку</string>
     <string name="report_issue_feature">Запропонувати функцію</string>
     <string name="report_issue_include_log">Додати діагностичний журнал</string>
     <string name="report_issue_include_log_hint">Ви перегляньте його перед надсиланням. Ваші додатки та місцезнаходження видалено.</string>
@@ -317,6 +320,11 @@
         <item>Поділитися</item>
         <item>Копіювати в буфер обміну</item>
     </string-array>
+    <string name="diagnostics_send_github_summary">Заповнює новий звіт про помилку на GitHub у браузері</string>
+    <string name="diagnostics_send_comment_summary">Копіює коментар та відкриває список проблем</string>
+    <string name="diagnostics_send_save_summary">Зберігає журнал діагностики у локальне сховище</string>
+    <string name="diagnostics_send_share_summary">Надіслати через системне меню поширення</string>
+    <string name="diagnostics_send_copy_summary">Копіює повний текст діагностики в буфер обміну</string>
     <plurals name="status_content_apps">
         <item quantity="one">%d додаток затемнено</item>
         <item quantity="few">%d додатки затемнено</item>

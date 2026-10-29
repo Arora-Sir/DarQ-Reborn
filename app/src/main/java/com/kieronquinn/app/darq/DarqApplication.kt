@@ -121,6 +121,7 @@ class DarqApplication : Application() {
         ShizukuProvider.enableMultiProcessSupport(true)
         restoreSettingsSnapshot()
         ThemeManager.applyNightMode(get())
+        get<InstalledAppsRepository>().refresh()
         
         val settings = get<DarqSharedPreferences>()
         if (settings.persistentService) {

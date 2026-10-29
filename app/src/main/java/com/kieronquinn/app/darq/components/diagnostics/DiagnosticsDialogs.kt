@@ -9,14 +9,14 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.provider.MediaStore
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
-import com.kieronquinn.app.darq.databinding.DialogReportIssueBinding
 import com.kieronquinn.app.darq.ui.screens.bottomsheets.report.ReportBottomSheetFragment
+import com.kieronquinn.app.darq.ui.screens.bottomsheets.report.ReportIntakeBottomSheetFragment
+import com.kieronquinn.app.darq.ui.screens.bottomsheets.report.ReportSendOptionsBottomSheetFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,22 +55,7 @@ object DiagnosticsDialogs : KoinComponent {
     }
 
     fun showSendOptions(activity: AppCompatActivity, report: String) {
-        val options = activity.resources.getStringArray(R.array.diagnostics_send_options)
-        MaterialAlertDialogBuilder(activity)
-            .setTitle(R.string.diagnostics_send_title)
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> openBugReport(activity, report)
-                    1 -> {
-                        copy(activity, DiagnosticsText.fitForIssue(report), R.string.diagnostics_copied_comment)
-                        openInBrowser(activity, DiagnosticsText.ISSUES_URL)
-                    }
-                    2 -> saveToDownloads(activity, report)
-                    3 -> share(activity, report)
-                    else -> copy(activity, report, R.string.diagnostics_copied)
-                }
-            }
-            .showBlurred(activity)
+        ReportSendOptionsBottomSheetFragment.show(activity, report)
     }
 
     // NOTE: A link cannot attach a file, so the form gets a short summary in its log field and the full log goes to the clipboard to paste under it.
@@ -82,45 +67,17 @@ object DiagnosticsDialogs : KoinComponent {
 
     /**
      *  The single Report an issue entry: a bug or a feature request with the GitHub form fields typed in the app.
-     *  For bugs the diagnostic log is included by default.
+     *  Opens the intake bottom sheet.
      */
     fun showReportIssue(activity: AppCompatActivity) {
-        val binding = DialogReportIssueBinding.inflate(activity.layoutInflater)
-        val isBug = { binding.reportIssueType.checkedRadioButtonId == R.id.report_issue_bug }
-        val update = {
-            val bug = isBug()
-            binding.reportIssueFirstLayout.hint = activity.getString(if (bug) R.string.report_issue_what_happened else R.string.report_issue_problem)
-            binding.reportIssueSecondLayout.hint = activity.getString(if (bug) R.string.report_issue_steps else R.string.report_issue_solution)
-            binding.reportIssueIncludeLog.isEnabled = bug
-            binding.reportIssueLogHint.isEnabled = bug
-        }
-        binding.reportIssueType.setOnCheckedChangeListener { _, _ -> update() }
-        update()
-        MaterialAlertDialogBuilder(activity)
-            .setTitle(R.string.item_report_issue_title)
-            .setView(binding.root)
-            .setPositiveButton(R.string.report_issue_continue) { _, _ ->
-                val first = binding.reportIssueFirst.text?.toString()
-                val second = binding.reportIssueSecond.text?.toString()
-                when {
-                    !isBug() -> openInBrowser(activity, DiagnosticsText.featureRequestUrl(header.mode, first, second))
-                    binding.reportIssueIncludeLog.isChecked -> ReportBottomSheetFragment.show(activity, description = first, steps = second)
-                    else -> openInBrowser(
-                        activity,
-                        DiagnosticsText.bugReportUrl(header.appVersion, header.android, header.device, header.mode, description = first, steps = second)
-                    )
-                }
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            //The dialog shrinks and scrolls above the keyboard, so the second field and the buttons stay reachable
-            .showBlurred(activity) { it.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE) }
+        ReportIntakeBottomSheetFragment.show(activity)
     }
 
     fun openInBrowser(context: Context, url: String) {
         LinkOpener.open(context, url)
     }
 
-    private fun copy(context: Context, text: String, toast: Int) {
+    internal fun copy(context: Context, text: String, toast: Int) {
         val clipboard = context.getSystemService(ClipboardManager::class.java)
         clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.diagnostics_report_title), text))
         Toasts.show(context, toast, long = true)
@@ -129,7 +86,7 @@ object DiagnosticsDialogs : KoinComponent {
     private fun fileName() = "darq-reborn-log-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date()) + ".txt"
 
     //MediaStore Downloads needs no storage permission on Android 10 and later, which is DarQ's minimum
-    private fun saveToDownloads(activity: AppCompatActivity, report: String) {
+    internal fun saveToDownloads(activity: AppCompatActivity, report: String) {
         activity.lifecycleScope.launch {
             val saved = withContext(Dispatchers.IO) {
                 try {
@@ -148,7 +105,7 @@ object DiagnosticsDialogs : KoinComponent {
         }
     }
 
-    private fun share(activity: AppCompatActivity, report: String) {
+    internal fun share(activity: AppCompatActivity, report: String) {
         activity.lifecycleScope.launch {
             val uri = withContext(Dispatchers.IO) {
                 val directory = File(activity.cacheDir, SHARE_DIRECTORY).apply { mkdirs() }

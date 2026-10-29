@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_20"
+    android:paddingTop="@dimen/padding_12"
+    android:paddingEnd="@dimen/padding_20"
+    android:paddingBottom="@dimen/padding_20"
+    tools:layout_gravity="bottom">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:id="@+id/send_options_drag_handle"
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.4"
+        android:background="@drawable/bottom_sheet_drag_handle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title Header -->
+    <TextView
+        android:id="@+id/send_options_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:text="@string/diagnostics_send_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+        android:textColor="?android:textColorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/send_options_drag_handle" />
+
+    <LinearLayout
+        android:id="@+id/send_options_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/send_options_title">
+
+        <!-- GitHub Issue -->
+        <LinearLayout
+            android:id="@+id/send_card_github"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_16"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/send_ic_github"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_github" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/send_option_github"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/send_summary_github"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/diagnostics_send_github_summary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Existing Issue Comment -->
+        <LinearLayout
+            android:id="@+id/send_card_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_16"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/send_ic_comment"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_report_issue" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/send_option_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/send_summary_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/diagnostics_send_comment_summary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Save to Downloads -->
+        <LinearLayout
+            android:id="@+id/send_card_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_16"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/send_ic_save"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_download" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/send_option_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/send_summary_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/diagnostics_send_save_summary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Share -->
+        <LinearLayout
+            android:id="@+id/send_card_share"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_16"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/send_ic_share"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_share" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/send_option_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/send_summary_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/diagnostics_send_share_summary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Copy to clipboard -->
+        <LinearLayout
+            android:id="@+id/send_card_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_16"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/send_ic_copy"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_copy" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/send_option_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/send_summary_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/diagnostics_send_copy_summary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Full-width Symmetrical Cancel Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/send_options_cancel"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/padding_16"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:text="@android:string/cancel"
+        android:textAllCaps="false"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/send_options_list" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

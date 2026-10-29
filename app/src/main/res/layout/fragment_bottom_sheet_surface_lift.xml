@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_20"
+    android:paddingTop="@dimen/padding_12"
+    android:paddingEnd="@dimen/padding_20"
+    android:paddingBottom="@dimen/padding_20"
+    tools:layout_gravity="bottom">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:id="@+id/surface_lift_drag_handle"
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.4"
+        android:background="@drawable/bottom_sheet_drag_handle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title Header -->
+    <TextView
+        android:id="@+id/surface_lift_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:text="@string/appearance_pure_black_lift_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+        android:textColor="?android:textColorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_drag_handle" />
+
+    <TextView
+        android:id="@+id/surface_lift_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:gravity="center"
+        android:text="@string/appearance_pure_black_lift_hint"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_title" />
+
+    <LinearLayout
+        android:id="@+id/surface_lift_preview_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:background="@drawable/rounded_black_surface_preview"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_hint">
+
+        <LinearLayout
+            android:id="@+id/surface_lift_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/appearance_pure_black_lift_sample_section"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/surface_lift_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="10dp"
+                android:text="@string/appearance_pure_black_lift_sample_field"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/surface_lift_highest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="10dp"
+                android:text="@string/appearance_pure_black_lift_sample_selected"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/surface_lift_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:gravity="center"
+        android:minHeight="28dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_preview_container"
+        tools:text="Level 5 of 10, recommended" />
+
+    <com.kieronquinn.app.darq.ui.utils.LiftSlider
+        android:id="@+id/surface_lift_slider"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/padding_8"
+        android:contentDescription="@string/appearance_pure_black_lift_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_value" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/surface_lift_reset"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:text="@string/appearance_pure_black_lift_reset"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_slider" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/surface_lift_cancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_8"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:text="@android:string/cancel"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/surface_lift_apply"
+        app:layout_constraintEnd_toStartOf="@id/surface_lift_apply"
+        app:layout_constraintTop_toTopOf="@id/surface_lift_apply" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/surface_lift_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:fontFamily="@font/google_sans_text_medium"
+        android:minHeight="48dp"
+        android:paddingStart="@dimen/padding_24"
+        android:paddingEnd="@dimen/padding_24"
+        android:text="@string/appearance_accent_apply"
+        android:textAllCaps="false"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/surface_lift_slider" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

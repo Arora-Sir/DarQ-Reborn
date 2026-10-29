@@ -16,6 +16,8 @@ import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
 import com.kieronquinn.app.darq.ui.screens.settings.SettingsAdapter
+import com.kieronquinn.app.darq.utils.ObtainiumLink
+import com.kieronquinn.app.darq.utils.openLink
 
 class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBinding>(
     FragmentSettingsAdvancedBinding::inflate), AutoExpandOnRotate, BackAvailable {
@@ -92,6 +94,12 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
                 getString(R.string.item_check_for_prereleases_content),
                 settings::checkForPrereleases,
                 visible = { settings.checkForUpdates }
+            ),
+            SettingsItem.Setting(
+                R.drawable.ic_obtainium,
+                getString(R.string.item_obtainium_title),
+                getString(R.string.item_obtainium_content),
+                tapAction = { requireContext().openLink(ObtainiumLink.url()) }
             ),
             SettingsItem.Header(
                 getString(R.string.item_advanced_group_theme_title)

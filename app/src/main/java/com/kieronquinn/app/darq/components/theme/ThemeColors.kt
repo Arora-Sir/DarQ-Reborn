@@ -28,6 +28,12 @@ object ThemeColors {
     fun getOnSurfaceColor(context: Context): Int =
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, Color.WHITE)
 
+    fun getOnSurfaceVariantColor(context: Context): Int =
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.LTGRAY)
+
+    fun getSecondaryTextColor(context: Context): Int =
+        MaterialColors.getColor(context, android.R.attr.textColorSecondary, Color.LTGRAY)
+
     fun getIconContainerColor(context: Context): Int =
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.DKGRAY)
 

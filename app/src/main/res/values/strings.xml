@@ -247,8 +247,11 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="item_appearance_content">Theme, accent color, pure black and icons</string>
     <string name="appearance_theme_title">Theme</string>
     <string name="appearance_theme_system">Follow system</string>
+    <string name="appearance_theme_system_summary">Matches your device display mode</string>
     <string name="appearance_theme_light">Light</string>
+    <string name="appearance_theme_light_summary">Always keep light theme active</string>
     <string name="appearance_theme_dark">Dark</string>
+    <string name="appearance_theme_dark_summary">Always keep dark theme active</string>
     <string name="appearance_pure_black_title">Pure black</string>
     <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
     <string name="appearance_pure_black_lift_title">Surface lift</string>
@@ -298,7 +301,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <!-- Diagnostics -->
     <string name="item_report_issue_title">Report an issue</string>
     <string name="item_report_issue_content">Report a bug with a diagnostic log, or suggest a feature on GitHub</string>
-    <string name="report_issue_bug">Something is not working (bug report)</string>
+    <string name="report_issue_bug">Report a bug</string>
     <string name="report_issue_feature">Suggest a feature</string>
     <string name="report_issue_include_log">Include diagnostic log</string>
     <string name="report_issue_include_log_hint">You review it first. Your apps and location are removed.</string>
@@ -332,6 +335,11 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
         <item>Share</item>
         <item>Copy to clipboard</item>
     </string-array>
+    <string name="diagnostics_send_github_summary">Prefills a new GitHub issue in browser</string>
+    <string name="diagnostics_send_comment_summary">Copies formatted comment and opens issues list</string>
+    <string name="diagnostics_send_save_summary">Saves raw diagnostic log to local storage</string>
+    <string name="diagnostics_send_share_summary">Send via Android share sheet</string>
+    <string name="diagnostics_send_copy_summary">Copies full diagnostic text to clipboard</string>
     <string name="diagnostics_copied_form">Full log copied. Paste it at the end of Relevant log output.</string>
     <string name="diagnostics_copied_comment">Log copied. Open the issue and paste it into a comment.</string>
     <string name="diagnostics_copied">Log copied to the clipboard</string>

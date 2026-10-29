@@ -11,7 +11,7 @@ import java.util.Locale
 
 abstract class SettingsAppPickerViewModel : ViewModel() {
 
-    abstract val loadState: Flow<LoadState>
+    abstract val loadState: StateFlow<LoadState>
     abstract val showSearchClearButton: Flow<Boolean>
     abstract val loadingProgress: Flow<Pair<Int, Int>?>
 
@@ -36,13 +36,13 @@ class SettingsAppPickerViewModelImpl(
     //Progress only shows on the very first scan, later opens use the cached list
     override val loadingProgress = repository.scanProgress
 
-    private val selectedApps = MutableStateFlow<MutableList<String>?>(null).apply {
-        viewModelScope.launch(Dispatchers.IO) {
-            emit(settings.enabledApps.toMutableList())
-        }
-    }
+    private val selectedApps = MutableStateFlow(settings.enabledApps.toMutableList())
 
-    private val _loadState = MutableStateFlow<LoadState>(LoadState.Loading)
+    private val _loadState = MutableStateFlow<LoadState>(
+        repository.apps.value?.let { cached ->
+            LoadState.Loaded(buildItems(cached, selectedApps.value, "", false))
+        } ?: LoadState.Loading
+    )
     override val loadState = _loadState.asStateFlow()
 
     private val searchTerm = MutableStateFlow("")
@@ -62,21 +62,29 @@ class SettingsAppPickerViewModelImpl(
     }
 
     private suspend fun loadApps() {
-        //Only the first scan without a cache shows the loading state, searches and toggles update the list in place
         if (repository.apps.value == null) _loadState.emit(LoadState.Loading)
-        val selected = selectedApps.filterNotNull().first()
+        val selected = selectedApps.value
+        val cached = repository.apps.value ?: repository.apps.filterNotNull().first()
         val search = searchTerm.value
-        val cached = repository.apps.filterNotNull().first()
         val showAll = showAllApps.value
-        val query = search.lowercase(Locale.getDefault())
-        //The repository keeps the list sorted, so a search only filters
-        val apps = withContext(Dispatchers.Default) {
-            cached.asSequence()
-                .filter { showAll || it.launchable }
-                .filter { query.isEmpty() || it.label.lowercase(Locale.getDefault()).contains(query) }
-                .map { AppPickerItem.App(it.packageName, it.label, selected.contains(it.packageName)) }
-                .toList()
+        val items = withContext(Dispatchers.Default) {
+            buildItems(cached, selected, search, showAll)
         }
+        _loadState.emit(LoadState.Loaded(items))
+    }
+
+    private fun buildItems(
+        cached: List<InstalledAppsRepository.App>,
+        selected: List<String>,
+        search: String,
+        showAll: Boolean
+    ): List<AppPickerItem> {
+        val query = search.lowercase(Locale.getDefault())
+        val apps = cached.asSequence()
+            .filter { showAll || it.launchable }
+            .filter { query.isEmpty() || it.label.lowercase(Locale.getDefault()).contains(query) }
+            .map { AppPickerItem.App(it.packageName, it.label, selected.contains(it.packageName)) }
+            .toList()
 
         val activeApps = apps.filter { it.enabled }
         val inactiveApps = apps.filter { !it.enabled }
@@ -88,11 +96,9 @@ class SettingsAppPickerViewModelImpl(
         }
         if (inactiveApps.isNotEmpty()) {
             listWithHeaders.add(AppPickerItem.Header(com.kieronquinn.app.darq.R.string.app_picker_header_all))
-            //Letter headers help scanning a long list, and are left out while searching since the results are short
             if (query.isEmpty()) listWithHeaders.addAll(withLetterHeaders(inactiveApps)) else listWithHeaders.addAll(inactiveApps)
         }
-
-        _loadState.emit(LoadState.Loaded(listWithHeaders))
+        return listWithHeaders
     }
 
     private fun withLetterHeaders(apps: List<AppPickerItem.App>): List<AppPickerItem> {
@@ -113,7 +119,7 @@ class SettingsAppPickerViewModelImpl(
 
     override fun onPackageEnabledChanged(app: AppPickerItem.App) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentSelectedApps = selectedApps.value ?: return@launch
+            val currentSelectedApps = selectedApps.value
             if (app.enabled) {
                 if (!currentSelectedApps.contains(app.packageName)) {
                     currentSelectedApps.add(app.packageName)

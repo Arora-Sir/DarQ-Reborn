@@ -70,8 +70,8 @@ class SettingsAppPickerFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setLoadingState(loading = true, isEmpty = false)
         setupRecyclerView()
+        handleLoadState(viewModel.loadState.value)
         setupViewModel()
         setupSearch()
         setupSnackbarPadding()

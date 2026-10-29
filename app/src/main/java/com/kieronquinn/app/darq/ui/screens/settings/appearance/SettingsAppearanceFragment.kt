@@ -2,18 +2,9 @@ package com.kieronquinn.app.darq.ui.screens.settings.appearance
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.kieronquinn.app.darq.ui.utils.LiftSlider
-import com.kieronquinn.app.darq.components.theme.SettingsIcons
-import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
-import android.widget.ImageView
 import com.kieronquinn.app.darq.components.theme.PureBlackLift
 import com.kieronquinn.app.darq.R
-import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.ColorMath
@@ -116,17 +107,7 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
     }
 
     private fun onThemeClicked() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.appearance_theme_title)
-            .setSingleChoiceItems(themeLabels.toTypedArray(), settings.themeMode) { dialog, which ->
-                dialog.dismiss()
-                if(which == settings.themeMode) return@setSingleChoiceItems
-                settings.themeMode = which
-                //AppCompat rebuilds every activity whose night mode changes
-                ThemeManager.applyNightMode(settings)
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .showBlurred(requireActivity())
+        ThemeChooserBottomSheetFragment().show(parentFragmentManager, "theme_chooser")
     }
 
     private fun onAccentClicked() {
@@ -139,51 +120,8 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
         if(step * 10 == PureBlackLift.DEFAULT) getString(R.string.appearance_pure_black_lift_level_recommended, step)
         else getString(R.string.appearance_pure_black_lift_level, step)
 
-    // NOTE: The slider only moves the sample inside the dialog. Apply stores the step and rebuilds the screen, Cancel and Back change nothing.
-    // NOTE: Reset moves the slider back to the recommended step and keeps the dialog open.
     private fun onLiftClicked() {
-        val context = requireContext()
-        val content = layoutInflater.inflate(R.layout.dialog_surface_lift, null)
-        val slider = content.findViewById<LiftSlider>(R.id.surface_lift_slider)
-        val value = content.findViewById<TextView>(R.id.surface_lift_value)
-        val card = content.findViewById<View>(R.id.surface_lift_card)
-        val field = content.findViewById<View>(R.id.surface_lift_field)
-        val highest = content.findViewById<View>(R.id.surface_lift_highest)
-        content.findViewById<ImageView>(R.id.surface_lift_icon).setImageDrawable(
-            SettingsIcons.load(context, R.drawable.ic_appearance_black_round, settings.themeTintedIcons)
-        )
-        val start = PureBlackLift.stepOf(settings.themePureBlackLift)
-        val radius = 12 * resources.displayMetrics.density
-        fun tint(view: View, level: Int) {
-            view.background = GradientDrawable().apply {
-                setColor(Color.rgb(level, level, level))
-                cornerRadius = radius
-            }
-        }
-        fun show() {
-            val step = slider.value
-            val ladder = PureBlackLift.ladder(step * 10)
-            tint(card, ladder.container)
-            tint(field, ladder.high)
-            tint(highest, ladder.highest)
-            value.text = liftLabel(step)
-            slider.contentDescription = getString(R.string.appearance_pure_black_lift_title) + ", " + liftLabel(step)
-        }
-        slider.setInitial(start)
-        slider.onChange = { show() }
-        show()
-        val dialog = MaterialAlertDialogBuilder(context)
-            .setView(content)
-            .setPositiveButton(R.string.appearance_accent_apply) { _, _ ->
-                val chosen = slider.value
-                if(chosen == start) return@setPositiveButton
-                settings.themePureBlackLift = chosen * 10
-                if(requireContext().isDarkTheme) rebuild() else refreshSwitchRows()
-            }
-            .setNeutralButton(R.string.appearance_pure_black_lift_reset, null)
-            .setNegativeButton(android.R.string.cancel, null)
-            .showBlurred(requireActivity())
-        dialog.getButton(DialogInterface.BUTTON_NEUTRAL)?.setOnClickListener { slider.setStep(PureBlackLift.DEFAULT / 10) }
+        SurfaceLiftBottomSheetFragment().show(parentFragmentManager, "surface_lift")
     }
 
     private fun refreshSwitchRows() {

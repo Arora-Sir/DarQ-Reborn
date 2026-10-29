@@ -34,8 +34,6 @@ import com.kieronquinn.app.darq.components.xposed.XposedState
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
 import com.kieronquinn.app.darq.ui.screens.container.ContainerFragment
-import com.kieronquinn.app.darq.utils.ObtainiumLink
-import com.kieronquinn.app.darq.utils.openLink
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -117,12 +115,6 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 tapAction = {
                     viewModel.onCheckForUpdatesClicked(requireContext(), sharedViewModel)
                 }
-            ),
-            SettingsItem.Setting(
-                R.drawable.ic_obtainium,
-                getString(R.string.item_obtainium_title),
-                getString(R.string.item_obtainium_content),
-                tapAction = { requireContext().openLink(ObtainiumLink.url()) }
             ),
             SettingsItem.Setting(
                 R.drawable.ic_report_issue_round,
