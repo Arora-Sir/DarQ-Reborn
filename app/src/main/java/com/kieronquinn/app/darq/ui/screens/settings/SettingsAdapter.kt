@@ -206,11 +206,12 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
 
     private fun setupSettingSwitch(binding: ItemSettingSwitchBinding, item: SettingsItem.SwitchSetting) = with(binding) {
         itemSettingSwitchTitle.text = item.title
-        if(item.content.isNullOrEmpty()){
+        val switchContent = item.contentProvider?.invoke() ?: item.content
+        if(switchContent.isNullOrEmpty()){
             itemSettingSwitchContent.isVisible = false
         }else{
             itemSettingSwitchContent.isVisible = true
-            itemSettingSwitchContent.text = item.content
+            itemSettingSwitchContent.text = switchContent
         }
         if(item.icon != 0) {
             itemSettingSwitchIcon.setImageDrawable(SettingsIcons.load(itemSettingSwitchIcon.context, item.icon, settings.themeTintedIcons))
@@ -231,7 +232,9 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
             }
         }
         root.setOnClickListener {
-            itemSettingSwitchSwitch.toggle()
+            if(item.rowTapAction?.invoke() != true){
+                itemSettingSwitchSwitch.toggle()
+            }
         }
         if(!item.centerIconVertically){
             binding.root.gravity = Gravity.NO_GRAVITY

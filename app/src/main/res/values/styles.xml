@@ -41,17 +41,6 @@
 
     <!-- NOTE: Pure black for AMOLED screens, applied on top of the accent only while the app is dark. -->
     <!-- NOTE: Containers keep small steps above black so cards and sheets stay distinguishable. -->
-    <style name="ThemeOverlay.Darq.PureBlack" parent="">
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="colorSurface">@android:color/black</item>
-        <item name="colorSurfaceDim">@android:color/black</item>
-        <item name="colorSurfaceContainerLowest">@android:color/black</item>
-        <item name="colorSurfaceContainerLow">#FF0B0B0C</item>
-        <item name="colorSurfaceContainer">#FF121214</item>
-        <item name="colorSurfaceContainerHigh">#FF1A1A1D</item>
-        <item name="colorSurfaceContainerHighest">#FF232327</item>
-    </style>
-
     <style name="TextAppearance.AppCompat.Small.Darq" parent="TextAppearance.AppCompat.Small">
         <item name="android:fontFamily">@font/google_sans_text</item>
     </style>

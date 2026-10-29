@@ -84,6 +84,9 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_THEME_PURE_BLACK = "theme_pure_black"
         const val DEFAULT_THEME_PURE_BLACK = false
 
+        private const val KEY_THEME_PURE_BLACK_LIFT = "theme_pure_black_lift"
+        const val DEFAULT_THEME_PURE_BLACK_LIFT = 50
+
         private const val KEY_THEME_ACCENT = "theme_accent"
         const val DEFAULT_THEME_ACCENT = "wallpaper"
 
@@ -135,6 +138,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
     var themeMode by this.shared(KEY_THEME_MODE, DEFAULT_THEME_MODE)
     var themePureBlack by this.shared(KEY_THEME_PURE_BLACK, DEFAULT_THEME_PURE_BLACK)
+    var themePureBlackLift by this.shared(KEY_THEME_PURE_BLACK_LIFT, DEFAULT_THEME_PURE_BLACK_LIFT)
     var themeAccent by this.shared(KEY_THEME_ACCENT, DEFAULT_THEME_ACCENT)
     var themeTintedIcons by this.shared(KEY_THEME_TINTED_ICONS, DEFAULT_THEME_TINTED_ICONS)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
@@ -187,6 +191,7 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             enabledApps = this.enabledApps.toList(),
             themeMode = this.themeMode,
             themePureBlack = this.themePureBlack,
+            themePureBlackLift = this.themePureBlackLift,
             themeAccent = this.themeAccent,
             themeTintedIcons = this.themeTintedIcons
         )
@@ -219,6 +224,8 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         //Backups made before the theme system have no theme fields, so the current theme stays
         settingsBackup.themeMode?.let { themeMode = it }
         settingsBackup.themePureBlack?.let { themePureBlack = it }
+        //A backup without a lift restores at the recommended look
+        settingsBackup.themePureBlackLift?.let { themePureBlackLift = it.coerceIn(0, 100) }
         settingsBackup.themeAccent?.let { themeAccent = it }
         settingsBackup.themeTintedIcons?.let { themeTintedIcons = it }
         //Each write above mirrors its own key to the LibXposed remote preferences, this final pass covers a write that raced a rebind

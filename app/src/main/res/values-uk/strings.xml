@@ -227,6 +227,12 @@
     <string name="appearance_theme_dark">Темна</string>
     <string name="appearance_pure_black_title">Чистий чорний</string>
     <string name="appearance_pure_black_content">Використовує справжній чорний фон у темному режимі, що заощаджує заряд на екранах AMOLED</string>
+    <string name="appearance_pure_black_lift_title">Підйом поверхонь</string>
+    <string name="appearance_pure_black_lift_summary">Підйом поверхонь: %1$s. Торкніться, щоб змінити.</string>
+    <string name="appearance_pure_black_lift_hint">Картки й поля залишаються на крок світлішими за чорну сторінку. Вищі рівні роблять їх помітнішими.</string>
+    <string name="appearance_pure_black_lift_level">Рівень %1$d з 10</string>
+    <string name="appearance_pure_black_lift_level_recommended">Рівень %1$d з 10, рекомендований</string>
+    <string name="appearance_pure_black_lift_reset">Скинути</string>
     <string name="appearance_accent_title">Колір акценту</string>
     <string name="appearance_accent_title_chosen">Колір акценту: %1$s</string>
     <string name="appearance_accent_contrast">Контраст %1$.1f:1 на чорному, %2$.1f:1 на картках.</string>

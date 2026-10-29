@@ -173,6 +173,12 @@
     <string name="appearance_theme_dark">深色</string>
     <string name="appearance_pure_black_title">纯黑</string>
     <string name="appearance_pure_black_content">在深色模式下使用真正的黑色背景，可在 AMOLED 屏幕上省电</string>
+    <string name="appearance_pure_black_lift_title">表面层次</string>
+    <string name="appearance_pure_black_lift_summary">表面层次：%1$s。点按可调整。</string>
+    <string name="appearance_pure_black_lift_hint">卡片和输入框会比黑色页面亮一级。级别越高，越容易看清。</string>
+    <string name="appearance_pure_black_lift_level">第 %1$d 级，共 10 级</string>
+    <string name="appearance_pure_black_lift_level_recommended">第 %1$d 级，共 10 级，推荐</string>
+    <string name="appearance_pure_black_lift_reset">重置</string>
     <string name="appearance_accent_title">强调色</string>
     <string name="appearance_accent_title_chosen">强调色：%1$s</string>
     <string name="appearance_accent_contrast">在黑色上的对比度为 %1$.1f:1，在卡片上为 %2$.1f:1。</string>

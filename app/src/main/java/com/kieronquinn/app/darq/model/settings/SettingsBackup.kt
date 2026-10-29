@@ -24,6 +24,7 @@ data class SettingsBackup(
     //Nullable because Gson leaves a missing field null and ignores Kotlin defaults, so older backups restore without touching the theme
     val themeMode: Int? = null,
     val themePureBlack: Boolean? = null,
+    val themePureBlackLift: Int? = null,
     val themeAccent: String? = null,
     val themeTintedIcons: Boolean? = null
 )

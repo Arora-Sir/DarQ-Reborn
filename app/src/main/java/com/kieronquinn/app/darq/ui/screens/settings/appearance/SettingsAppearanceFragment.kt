@@ -1,9 +1,13 @@
 package com.kieronquinn.app.darq.ui.screens.settings.appearance
 
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
+import com.kieronquinn.app.darq.components.theme.PureBlackLift
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.components.navigation.Navigation
@@ -44,7 +48,18 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
                 setValue = {
                     settings.themePureBlack = it
                     //Pure black only exists in dark mode, so a light screen has nothing to rebuild
-                    if(requireContext().isDarkTheme) rebuild()
+                    if(requireContext().isDarkTheme) rebuild() else refreshSwitchRows()
+                },
+                //With the switch on, the subtitle shows the surface lift and a tap on the row, not on the switch, opens its dialog
+                contentProvider = {
+                    if(settings.themePureBlack) getString(R.string.appearance_pure_black_lift_summary, liftLabel(PureBlackLift.stepOf(settings.themePureBlackLift)))
+                    else getString(R.string.appearance_pure_black_content)
+                },
+                rowTapAction = {
+                    if(settings.themePureBlack){
+                        onLiftClicked()
+                        true
+                    }else false
                 }
             ),
             SettingsItem.Setting(
@@ -114,6 +129,40 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
         lifecycleScope.launch {
             navigation.navigate(SettingsAppearanceFragmentDirections.actionSettingsAppearanceFragmentToColorPickerBottomSheetFragment())
         }
+    }
+
+    private fun liftLabel(step: Int) =
+        if(step * 10 == PureBlackLift.DEFAULT) getString(R.string.appearance_pure_black_lift_level_recommended, step)
+        else getString(R.string.appearance_pure_black_lift_level, step)
+
+    // NOTE: Done applies the level and rebuilds the screen, Cancel and Back change nothing, Reset only moves the slider back to the recommended level.
+    private fun onLiftClicked() {
+        val content = layoutInflater.inflate(R.layout.dialog_surface_lift, null)
+        val slider = content.findViewById<Slider>(R.id.surface_lift_slider)
+        val value = content.findViewById<TextView>(R.id.surface_lift_value)
+        val start = PureBlackLift.stepOf(settings.themePureBlackLift)
+        slider.value = start * 10f
+        value.text = liftLabel(start)
+        slider.addOnChangeListener { changed, newValue, fromUser ->
+            value.text = liftLabel(PureBlackLift.stepOf(newValue.toInt()))
+            if(fromUser) changed.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        }
+        content.findViewById<View>(R.id.surface_lift_reset).setOnClickListener { slider.value = PureBlackLift.DEFAULT.toFloat() }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.appearance_pure_black_lift_title)
+            .setView(content)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                val chosen = PureBlackLift.stepOf(slider.value.toInt())
+                if(chosen == start) return@setPositiveButton
+                settings.themePureBlackLift = chosen * 10
+                if(requireContext().isDarkTheme) rebuild() else refreshSwitchRows()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .showBlurred(requireActivity())
+    }
+
+    private fun refreshSwitchRows() {
+        view?.post { adapter.notifySwitchSettings() }
     }
 
     private fun rebuild() {

@@ -245,6 +245,12 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_theme_dark">Dark</string>
     <string name="appearance_pure_black_title">Pure black</string>
     <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
+    <string name="appearance_pure_black_lift_title">Surface lift</string>
+    <string name="appearance_pure_black_lift_summary">Surface lift: %1$s. Tap to adjust.</string>
+    <string name="appearance_pure_black_lift_hint">Cards and fields stay a step above the black page. Higher levels make them easier to see.</string>
+    <string name="appearance_pure_black_lift_level">Level %1$d of 10</string>
+    <string name="appearance_pure_black_lift_level_recommended">Level %1$d of 10, recommended</string>
+    <string name="appearance_pure_black_lift_reset">Reset</string>
     <string name="appearance_accent_title">Accent color</string>
     <string name="appearance_accent_title_chosen">Accent color: %1$s</string>
     <string name="appearance_accent_contrast">Contrast %1$.1f:1 on black, %2$.1f:1 on cards.</string>

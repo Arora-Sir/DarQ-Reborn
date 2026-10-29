@@ -116,7 +116,7 @@ object ThemeManager {
      *  A string describing everything this class applies, so an activity can tell that the appearance changed while it was in the background.
      */
     fun signature(settings: DarqSharedPreferences): String = with(settings) {
-        "$themeAccent:$monetColor:$themePureBlack:$themeTintedIcons"
+        "$themeAccent:$monetColor:$themePureBlack:${PureBlackLift.stepOf(themePureBlackLift)}:$themeTintedIcons"
     }
 
     /**
@@ -139,7 +139,7 @@ object ThemeManager {
             }
         }
         if (settings.themePureBlack && activity.isDarkTheme) {
-            activity.theme.applyStyle(R.style.ThemeOverlay_Darq_PureBlack, true)
+            activity.theme.applyStyle(PureBlackLift.overlayFor(settings.themePureBlackLift), true)
         }
         return signature(settings)
     }
