@@ -190,57 +190,39 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         super.onPause()
     }
 
-    // NOTE: The line is rebuilt on every resume, so coming back from the app picker shows the new count.
-    // NOTE: A working service is plain text. A missing service gets a tinted, tappable pill that opens the FAQ.
-    private fun updateStatusCard(connecting: Boolean) = with(binding) {
-        val context = requireContext()
+    // NOTE: The status is the second line of the main switch. It inherits the switch text color, so it can never flash white on the accent container.
+    // NOTE: The label is only set again when its text changed, so coming back from another screen causes no redraw.
+    private var statusLine: String? = null
+    private var switchWarning: Int? = null
+
+    private fun statusText(connecting: Boolean): String {
         val type = connection.connectedServiceType
         val connected = type != DarqServiceConnectionProvider.ServiceType.UNKNOWN
+        if (!connected) {
+            return getString(if (connecting) R.string.status_title_connecting else R.string.status_content_not_connected)
+        }
         val count = settings.enabledApps.size
-        val apps = if (count == 0) getString(R.string.status_content_none_selected) else resources.getQuantityString(R.plurals.status_content_apps, count, count)
-        val title = getString(when {
-            type == DarqServiceConnectionProvider.ServiceType.SHIZUKU -> R.string.status_title_shizuku
-            type == DarqServiceConnectionProvider.ServiceType.ROOT -> R.string.status_title_root
-            connecting -> R.string.status_title_connecting
-            else -> R.string.status_title_none
-        })
-        val details = if (connected && XposedState.isActive) getString(R.string.status_content_xposed, apps) else apps
-        val problem = !connected && !connecting
-        val onSurface = themeColors.getOnSurfaceColor(context)
-        val onError = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnErrorContainer, Color.WHITE)
-        val accent = themeColors.getAccentColor(context)
-        statusTitle.text = if (problem) {
-            SpannableStringBuilder().apply {
-                append(title, StyleSpan(Typeface.BOLD), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                append(". ")
-                append(getString(R.string.status_content_not_connected))
-            }
-        } else {
-            SpannableStringBuilder().apply {
-                append(title, ForegroundColorSpan(onSurface), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                append("  •  ")
-                append(details)
-            }
+        val title = getString(if (type == DarqServiceConnectionProvider.ServiceType.ROOT) R.string.status_title_root else R.string.status_title_shizuku)
+        //No apps yet is left out, the first list row already says to select some, and the line stays on one row
+        val apps = if (count == 0) null else resources.getQuantityString(R.plurals.status_content_apps, count, count)
+        val details = when {
+            apps == null -> null
+            XposedState.isActive -> getString(R.string.status_content_xposed, apps)
+            else -> apps
         }
-        statusTitle.setTextColor(if (problem) onError else onSurface and 0x00FFFFFF or (0xB3 shl 24))
-        statusIcon.setImageResource(when {
-            connected -> R.drawable.ic_check
-            connecting -> R.drawable.ic_update
-            else -> R.drawable.ic_close
-        })
-        statusIcon.imageTintList = ColorStateList.valueOf(if (problem) onError else accent)
-        if (problem) {
-            val container = MaterialColors.getColor(context, com.google.android.material.R.attr.colorErrorContainer, Color.DKGRAY)
-            statusCard.background = ContextCompat.getDrawable(context, R.drawable.button_background_backup_restore)?.mutate()?.also { DrawableCompat.setTint(it, container) }
-            statusCard.foreground = ContextCompat.getDrawable(context, R.drawable.rounded_ripple_36)
-            statusCard.isClickable = true
-            statusCard.setOnClickListener { viewModel.onFaqClicked() }
-        } else {
-            statusCard.background = null
-            statusCard.foreground = null
-            statusCard.isClickable = false
-            statusCard.setOnClickListener(null)
-        }
+        return if (details == null) title else "$title  •  $details"
+    }
+
+    private fun updateStatusCard(connecting: Boolean) {
+        val text = statusText(connecting)
+        if (text == statusLine) return
+        statusLine = text
+        refreshMainSwitchLabel()
+    }
+
+    private fun refreshMainSwitchLabel() {
+        val warning = switchWarning
+        binding.switchMain.mainSwitchSwitch.text = if (warning != null) getMainSwitchLabel(getString(warning)) else getMainSwitchLabel(statusLine)
     }
 
     private fun setupMainSwitch() {
@@ -248,10 +230,14 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
             mainSwitchSwitch.typeface = ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium)
             updateMainSwitch()
         }
+        //The first frame already has the status, so there is no empty second line that then fills in
+        statusLine = statusText(connecting = true)
+        refreshMainSwitchLabel()
         lifecycleScope.launch {
             sharedViewModel.switchWarning.collect {
                 val update = {
-                    binding.switchMain.mainSwitchSwitch.text = getMainSwitchLabel(it)
+                    switchWarning = it
+                    refreshMainSwitchLabel()
                 }
                 if(!isAdded){
                     lifecycleScope.launchWhenResumed {
@@ -301,13 +287,13 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         }
     }
 
-    private fun getMainSwitchLabel(@StringRes subtitle: Int?): CharSequence {
+    private fun getMainSwitchLabel(subtitle: CharSequence?): CharSequence {
         return if(subtitle == null){
             getString(R.string.item_switch_main_title)
         }else{
             val sizeSpan = RelativeSizeSpan(0.75f)
             val fontSpan = TypefaceSpan(googleSans ?: Typeface.DEFAULT)
-            val secondLine = SpannableString(getString(subtitle)).apply {
+            val secondLine = SpannableString(subtitle).apply {
                 setSpan(sizeSpan, 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
                 setSpan(fontSpan, 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             }

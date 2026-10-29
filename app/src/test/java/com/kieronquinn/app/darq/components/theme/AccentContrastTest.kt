@@ -54,13 +54,14 @@ class AccentContrastTest {
         assertEquals(0xFF7E57C2.toInt(), ThemeManager.Preset.PURPLE.seed)
         assertEquals(0xFFEF6C00.toInt(), ThemeManager.Preset.ORANGE.seed)
         assertEquals(0xFFD81B60.toInt(), ThemeManager.Preset.ROSE.seed)
+        assertEquals(0xFFFFB300.toInt(), ThemeManager.Preset.AMBER.seed)
         assertEquals(0xFF808080.toInt(), ThemeManager.Preset.MONO.seed)
         assertEquals(0xFF00BCD4.toInt(), ColorMath.DEFAULT_CUSTOM)
     }
 
     @Test
     fun storedPresetKeysFromEarlierReleasesStillResolve() {
-        listOf("blue", "teal", "green", "purple", "orange", "rose", "mono").forEach {
+        listOf("blue", "teal", "green", "purple", "orange", "rose", "amber", "mono").forEach {
             assertTrue("key $it", ThemeManager.Preset.fromKey(it) != null)
         }
     }

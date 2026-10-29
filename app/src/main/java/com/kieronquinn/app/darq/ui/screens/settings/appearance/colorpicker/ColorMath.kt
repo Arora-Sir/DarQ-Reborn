@@ -103,14 +103,4 @@ object ColorMath {
     fun onColor(background: Int): Int =
         if (contrast(background, 0xFF000000.toInt()) >= contrast(background, 0xFFFFFFFF.toInt())) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
 
-    /**
-     *  The 24 Material 500 swatches offered as a quick pick, in hue order with a neutral row last.
-     */
-    val PALETTE: List<Int> = listOf(
-        0xFFF44336, 0xFFE91E63, 0xFF9C27B0, 0xFF673AB7, 0xFF3F51B5, 0xFF2196F3,
-        0xFF03A9F4, 0xFF00BCD4, 0xFF009688, 0xFF4CAF50, 0xFF8BC34A, 0xFFCDDC39,
-        0xFFFFEB3B, 0xFFFFC107, 0xFFFF9800, 0xFFFF5722, 0xFF795548, 0xFF9E9E9E,
-        0xFF607D8B, 0xFF0072DE, 0xFFFF6D00, 0xFF00C853, 0xFF7C4DFF, 0xFFD81B60
-    ).map { it.toInt() }
-
 }

@@ -251,23 +251,18 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="appearance_accent_low_contrast">This color is hard to see on dark surfaces.</string>
     <string name="appearance_accent_reset">Reset</string>
     <string name="appearance_accent_wallpaper">Wallpaper</string>
-    <string name="appearance_accent_custom">Color %1$d</string>
-    <string name="appearance_accent_auto">Automatic</string>
-    <string name="appearance_accent_section_wallpaper">Match your wallpaper</string>
-    <string name="appearance_accent_section_presets">Presets</string>
-    <string name="appearance_accent_section_custom">Custom</string>
     <string name="appearance_accent_custom_value">Custom color %1$s</string>
     <string name="appearance_accent_custom_summary">Wallpaper color</string>
     <string name="appearance_accent_custom_title">Custom color</string>
     <string name="appearance_accent_custom_pick">Custom</string>
-    <string name="appearance_accent_yours">Your color</string>
-    <string name="appearance_accent_palette">Palette</string>
-    <string name="appearance_accent_mix">Mix your own</string>
     <string name="appearance_accent_hex">Hex color</string>
     <string name="appearance_accent_hex_error">Use six hex digits, like #0072DE</string>
+    <string name="appearance_accent_light">Light</string>
+    <string name="appearance_accent_dark">Dark</string>
+    <string name="appearance_accent_sample_title">Dark mode</string>
+    <string name="appearance_accent_sample_button">Turn on</string>
+    <string name="appearance_accent_use_color">Use this color</string>
     <string name="appearance_accent_apply">Apply</string>
-    <string name="appearance_accent_preview_surface">On surface</string>
-    <string name="appearance_accent_preview_black">On black</string>
     <string name="appearance_accent_area_description">Saturation and brightness</string>
     <string name="appearance_accent_hue_description">Hue</string>
     <string name="appearance_accent_note_dynamic">Android builds the full color scheme from this color.</string>
@@ -279,6 +274,7 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
         <item>Purple</item>
         <item>Orange</item>
         <item>Rose</item>
+        <item>Amber</item>
         <item>Mono</item>
     </string-array>
     <string name="appearance_tinted_icons_title">Tinted icons</string>

@@ -9,7 +9,7 @@ from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 from materialyoucolor.scheme.scheme_monochrome import SchemeMonochrome
 
 SEEDS = [("Blue", 0xFF2196F3), ("Teal", 0xFF00897B), ("Green", 0xFF388E3C), ("Purple", 0xFF7E57C2),
-         ("Orange", 0xFFEF6C00), ("Rose", 0xFFD81B60), ("Mono", 0xFF808080)]
+         ("Orange", 0xFFEF6C00), ("Rose", 0xFFD81B60), ("Amber", 0xFFFFB300), ("Mono", 0xFF808080)]
 ROLES = [("colorPrimary", "primary"), ("colorOnPrimary", "onPrimary"), ("colorPrimaryContainer", "primaryContainer"),
          ("colorOnPrimaryContainer", "onPrimaryContainer"), ("colorPrimaryInverse", "inversePrimary"),
          ("colorSecondary", "secondary"), ("colorOnSecondary", "onSecondary"), ("colorSecondaryContainer", "secondaryContainer"),

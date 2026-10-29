@@ -31,7 +31,6 @@ class DialogsAndLayoutsSmokeTest {
         R.layout.fragment_bottom_sheet_donation,
         R.layout.fragment_bottom_sheet_social_links,
         R.layout.fragment_bottom_sheet_color_picker,
-        R.layout.item_palette_swatch,
         R.layout.item_color_picker,
         R.layout.item_setting_about
     )

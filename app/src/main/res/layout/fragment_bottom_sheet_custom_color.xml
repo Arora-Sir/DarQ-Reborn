@@ -48,73 +48,96 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <FrameLayout
-                        android:id="@+id/custom_color_preview_surface"
+                    <LinearLayout
+                        android:id="@+id/custom_color_card_light"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/padding_8"
                         android:layout_weight="1"
+                        android:orientation="vertical"
                         android:padding="@dimen/padding_16">
 
                         <TextView
-                            android:id="@+id/custom_color_sample_surface"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/custom_color_light_label"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/appearance_accent_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq" />
+
+                        <TextView
+                            android:id="@+id/custom_color_light_sample"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_8"
                             android:background="@drawable/button_background_backup_restore"
+                            android:gravity="center_vertical"
                             android:minHeight="40dp"
-                            android:gravity="center"
                             android:paddingStart="@dimen/padding_16"
                             android:paddingEnd="@dimen/padding_16"
-                            android:text="@string/appearance_accent_preview_surface"
+                            android:text="@string/appearance_accent_sample_title"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
 
-                    </FrameLayout>
+                        <TextView
+                            android:id="@+id/custom_color_light_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_8"
+                            android:background="@drawable/button_background_backup_restore"
+                            android:gravity="center"
+                            android:minHeight="40dp"
+                            android:text="@string/appearance_accent_sample_button"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
 
-                    <FrameLayout
-                        android:id="@+id/custom_color_preview_black"
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/custom_color_card_dark"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:orientation="vertical"
                         android:padding="@dimen/padding_16">
 
                         <TextView
-                            android:id="@+id/custom_color_sample_black"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/custom_color_dark_label"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/appearance_accent_dark"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq" />
+
+                        <TextView
+                            android:id="@+id/custom_color_dark_sample"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_8"
                             android:background="@drawable/button_background_backup_restore"
+                            android:gravity="center_vertical"
                             android:minHeight="40dp"
-                            android:gravity="center"
                             android:paddingStart="@dimen/padding_16"
                             android:paddingEnd="@dimen/padding_16"
-                            android:text="@string/appearance_accent_preview_black"
+                            android:text="@string/appearance_accent_sample_title"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
 
-                    </FrameLayout>
+                        <TextView
+                            android:id="@+id/custom_color_dark_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_8"
+                            android:background="@drawable/button_background_backup_restore"
+                            android:gravity="center"
+                            android:minHeight="40dp"
+                            android:text="@string/appearance_accent_sample_button"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
-
-                <TextView
-                    style="@style/Darq.PickerSection"
-                    android:text="@string/appearance_accent_palette" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/custom_color_palette"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    tools:itemCount="24"
-                    tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    tools:spanCount="6" />
-
-                <TextView
-                    style="@style/Darq.PickerSection"
-                    android:text="@string/appearance_accent_mix" />
 
                 <com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.SaturationBrightnessView
                     android:id="@+id/custom_color_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_16"
                     android:contentDescription="@string/appearance_accent_area_description" />
 
                 <com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker.HueStripView
@@ -210,7 +233,7 @@
             android:layout_marginStart="@dimen/padding_8"
             android:fontFamily="@font/google_sans_text_medium"
             android:minHeight="48dp"
-            android:text="@string/appearance_accent_apply"
+            android:text="@string/appearance_accent_use_color"
             android:textAllCaps="false" />
 
     </LinearLayout>

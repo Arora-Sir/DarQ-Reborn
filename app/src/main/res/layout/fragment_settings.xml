@@ -6,43 +6,9 @@
     android:transitionGroup="true"
     android:id="@+id/root">
 
+    <!-- NOTE: The status is the second line of the main switch, so the home screen has no extra row and nothing that looks tappable but is not. -->
     <include layout="@layout/include_switch_main"
         android:id="@+id/switch_main"/>
-
-    <!-- NOTE: The status line is plain text under the main switch, so it reads as information and not as a button. -->
-    <!-- NOTE: Only the problem state gets a tinted pill and a ripple, because only that state can be tapped (it opens the FAQ). -->
-    <LinearLayout
-        android:id="@+id/status_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_16"
-        android:layout_marginEnd="@dimen/padding_16"
-        android:layout_marginBottom="@dimen/padding_8"
-        android:gravity="center_vertical"
-        android:minHeight="40dp"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/padding_24"
-        android:paddingTop="@dimen/padding_8"
-        android:paddingEnd="@dimen/padding_16"
-        android:paddingBottom="@dimen/padding_8">
-
-        <ImageView
-            android:id="@+id/status_icon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="@dimen/padding_8"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_check" />
-
-        <TextView
-            android:id="@+id/status_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
-            android:textColor="?android:textColorSecondary" />
-
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

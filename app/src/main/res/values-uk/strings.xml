@@ -233,23 +233,18 @@
     <string name="appearance_accent_low_contrast">Цей колір погано видно на темних поверхнях.</string>
     <string name="appearance_accent_reset">Скинути</string>
     <string name="appearance_accent_wallpaper">Шпалери</string>
-    <string name="appearance_accent_custom">Колір %1$d</string>
-    <string name="appearance_accent_auto">Автоматично</string>
-    <string name="appearance_accent_section_wallpaper">Підібрати до шпалер</string>
-    <string name="appearance_accent_section_presets">Готові</string>
-    <string name="appearance_accent_section_custom">Власний</string>
     <string name="appearance_accent_custom_value">Власний колір %1$s</string>
     <string name="appearance_accent_custom_summary">Колір шпалер</string>
     <string name="appearance_accent_custom_title">Власний колір</string>
     <string name="appearance_accent_custom_pick">Власний</string>
-    <string name="appearance_accent_yours">Ваш колір</string>
-    <string name="appearance_accent_palette">Палітра</string>
-    <string name="appearance_accent_mix">Створіть свій</string>
     <string name="appearance_accent_hex">Колір у форматі hex</string>
     <string name="appearance_accent_hex_error">Введіть шість шістнадцяткових цифр, наприклад #0072DE</string>
+    <string name="appearance_accent_light">Світла</string>
+    <string name="appearance_accent_dark">Темна</string>
+    <string name="appearance_accent_sample_title">Темний режим</string>
+    <string name="appearance_accent_sample_button">Увімкнути</string>
+    <string name="appearance_accent_use_color">Використати цей колір</string>
     <string name="appearance_accent_apply">Застосувати</string>
-    <string name="appearance_accent_preview_surface">На поверхні</string>
-    <string name="appearance_accent_preview_black">На чорному</string>
     <string name="appearance_accent_area_description">Насиченість і яскравість</string>
     <string name="appearance_accent_hue_description">Відтінок</string>
     <string name="appearance_accent_note_dynamic">Android створює повну колірну схему на основі цього кольору.</string>
@@ -297,6 +292,7 @@
         <item>Фіолетовий</item>
         <item>Помаранчевий</item>
         <item>Рожевий</item>
+        <item>Бурштиновий</item>
         <item>Монохромний</item>
     </string-array>
     <string-array name="diagnostics_send_options">

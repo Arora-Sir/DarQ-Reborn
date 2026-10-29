@@ -49,7 +49,7 @@ class ColorMathTest {
 
     @Test
     fun hsvRoundTripKeepsTheColor() {
-        for (color in ColorMath.PALETTE) {
+        for (color in listOf(0xFF2196F3, 0xFF00897B, 0xFF388E3C, 0xFF7E57C2, 0xFFEF6C00, 0xFFD81B60, 0xFF00BCD4).map { it.toInt() }) {
             val hsv = ColorMath.colorToHsv(color)
             assertEquals(color, ColorMath.hsvToColor(hsv[0], hsv[1], hsv[2]))
         }
@@ -68,15 +68,6 @@ class ColorMathTest {
         assertEquals(1.0, ColorMath.contrast(0xFF123456.toInt(), 0xFF123456.toInt()), 0.0001)
         assertEquals(0xFF000000.toInt(), ColorMath.onColor(0xFFFFEB3B.toInt()))
         assertEquals(0xFFFFFFFF.toInt(), ColorMath.onColor(0xFF673AB7.toInt()))
-    }
-
-    @Test
-    fun paletteHasTwentyFourDistinctColorsIncludingTheSignatureAccents() {
-        assertEquals(24, ColorMath.PALETTE.size)
-        assertEquals(24, ColorMath.PALETTE.distinct().size)
-        listOf(0xFF0072DE, 0xFFFF6D00, 0xFF00C853, 0xFF7C4DFF).forEach {
-            assertTrue(ColorMath.PALETTE.contains(it.toInt()))
-        }
     }
 
 }

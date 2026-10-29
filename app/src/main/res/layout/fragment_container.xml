@@ -16,21 +16,17 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/app_bar_height"
-            app:maxLines="2"
-            app:contentScrim="?attr/colorPrimaryVariant"
-            app:statusBarScrim="@android:color/transparent"
-            app:titleCollapseMode="fade"
-            app:scrimAnimationDuration="@android:integer/config_shortAnimTime"
-            app:scrimVisibleHeightTrigger="@dimen/toolbar_scrim_visible_height"
-            app:expandedTitleMarginStart="@dimen/toolbar_expanded_title_margin"
-            app:expandedTitleMarginEnd="@dimen/toolbar_expanded_title_margin"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:titleEnabled="false"
+            app:statusBarScrim="@android:color/transparent">
 
+            <!-- NOTE: The title is a plain toolbar title in a fixed bar, so it is visible from the first frame and nothing collapses. -->
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize"
                 android:outlineProvider="none"
                 app:layout_collapseMode="pin"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Title.Darq"
+                app:titleTextColor="?attr/colorOnSurface"
                 android:id="@+id/toolbar"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>

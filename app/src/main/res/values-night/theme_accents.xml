@@ -193,6 +193,38 @@
         <item name="colorSurfaceContainerHigh">#312829</item>
         <item name="colorSurfaceContainerHighest">#3C3234</item>
     </style>
+    <style name="ThemeOverlay.Darq.Accent.Amber" parent="">
+        <item name="colorPrimary">#F0BE6D</item>
+        <item name="colorOnPrimary">#432C00</item>
+        <item name="colorPrimaryContainer">#604100</item>
+        <item name="colorOnPrimaryContainer">#FFDEAC</item>
+        <item name="colorPrimaryInverse">#7D570D</item>
+        <item name="colorSecondary">#DBC3A1</item>
+        <item name="colorOnSecondary">#3D2E16</item>
+        <item name="colorSecondaryContainer">#55442A</item>
+        <item name="colorOnSecondaryContainer">#F8DFBB</item>
+        <item name="colorTertiary">#B5CEA4</item>
+        <item name="colorOnTertiary">#213618</item>
+        <item name="colorTertiaryContainer">#374C2C</item>
+        <item name="colorOnTertiaryContainer">#D1EABF</item>
+        <item name="android:colorBackground">#17130B</item>
+        <item name="colorOnBackground">#ECE1D4</item>
+        <item name="colorSurface">#17130B</item>
+        <item name="colorOnSurface">#ECE1D4</item>
+        <item name="colorSurfaceVariant">#4E4539</item>
+        <item name="colorOnSurfaceVariant">#D2C4B4</item>
+        <item name="colorSurfaceInverse">#ECE1D4</item>
+        <item name="colorOnSurfaceInverse">#362F27</item>
+        <item name="colorOutline">#9B8F80</item>
+        <item name="colorOutlineVariant">#4E4539</item>
+        <item name="colorSurfaceBright">#3F382F</item>
+        <item name="colorSurfaceDim">#17130B</item>
+        <item name="colorSurfaceContainerLowest">#120D07</item>
+        <item name="colorSurfaceContainerLow">#201B13</item>
+        <item name="colorSurfaceContainer">#241F17</item>
+        <item name="colorSurfaceContainerHigh">#2F2921</item>
+        <item name="colorSurfaceContainerHighest">#3A342B</item>
+    </style>
     <style name="ThemeOverlay.Darq.Accent.Mono" parent="">
         <item name="colorPrimary">#FFFFFF</item>
         <item name="colorOnPrimary">#1B1B1B</item>

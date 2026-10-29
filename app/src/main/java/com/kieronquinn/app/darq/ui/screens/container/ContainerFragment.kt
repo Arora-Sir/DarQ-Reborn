@@ -32,6 +32,9 @@ import org.koin.android.ext.android.inject
 import rikka.shizuku.Shizuku
 import kotlin.math.roundToInt
 
+private const val STATE_TITLE = "container_title"
+private const val STATE_BACK = "container_back"
+
 class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContainerBinding::inflate) {
 
     internal val settings by inject<DarqSharedPreferences>()
@@ -56,7 +59,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         super.onViewCreated(view, savedInstanceState)
         setupBackground()
         setupInsets()
-        setupToolbar()
+        setupToolbar(savedInstanceState)
         setupFragmentListener()
         setupNavigation()
         setupLoading()
@@ -129,9 +132,21 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         }else null
     }
 
-    private fun setupToolbar(){
+    // NOTE: A recreate (Pure black, accent) restores the title that was on screen, so the app name never shows for a few frames.
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(view != null) {
+            outState.putString(STATE_TITLE, binding.toolbar.title?.toString())
+            outState.putBoolean(STATE_BACK, binding.toolbar.navigationIcon != null)
+        }
+    }
+
+    private fun setupToolbar(savedInstanceState: Bundle?){
         with(binding){
-            collapsingToolbar.title = getString(R.string.app_name)
+            toolbar.title = savedInstanceState?.getString(STATE_TITLE) ?: getString(R.string.app_name)
+            if(savedInstanceState?.getBoolean(STATE_BACK) == true) {
+                toolbar.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_back)
+            }
             //Always start expanded and without animation, the top fragment then restores its own saved state, so the large title is there from the first frame
             appBar.setExpanded(!requireContext().isLandscape, false)
             appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->

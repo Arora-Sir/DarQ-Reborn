@@ -38,6 +38,7 @@ object ThemeManager {
         PURPLE("purple", 0xFF7E57C2.toInt(), R.style.ThemeOverlay_Darq_Accent_Purple),
         ORANGE("orange", 0xFFEF6C00.toInt(), R.style.ThemeOverlay_Darq_Accent_Orange),
         ROSE("rose", 0xFFD81B60.toInt(), R.style.ThemeOverlay_Darq_Accent_Rose),
+        AMBER("amber", 0xFFFFB300.toInt(), R.style.ThemeOverlay_Darq_Accent_Amber),
         MONO("mono", 0xFF808080.toInt(), R.style.ThemeOverlay_Darq_Accent_Mono);
 
         companion object {

@@ -1,37 +1,35 @@
 package com.kieronquinn.app.darq.ui.screens.settings.appearance.colorpicker
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.components.theme.ThemeManager
 import com.kieronquinn.app.darq.databinding.FragmentBottomSheetCustomColorBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
-import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import org.koin.android.ext.android.inject
 
+// NOTE: The sheet has no palette of its own, because the presets are already one tap away on the accent sheet and repeating them here only adds noise.
 // NOTE: The picked color is kept in the saved state, so a rotation or recreate() does not lose it.
 // NOTE: Android 12 and later grow a full Material scheme from the color. Android 10 and 11 use the closest preset, and the sheet says so.
 class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSheetCustomColorBinding>(FragmentBottomSheetCustomColorBinding::inflate) {
 
     companion object {
         private const val STATE_COLOR = "color"
-        private const val PALETTE_SPAN = 6
         private const val MAX_COLUMN_DP = 400
         private const val LOW_CONTRAST = 3.0
         private const val CHROME_DP = 200
@@ -43,7 +41,6 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
 
     private var color = Color.BLUE
     private var updating = false
-    private var paletteAdapter: PaletteAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,25 +75,18 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
                 val chrome = (CHROME_DP * density).toInt()
                 val available = screenHeight - statusBar - bottom - chrome
                 val maxHeight = available.coerceIn((MIN_SCROLL_DP * density).toInt(), (screenHeight * 0.75f).toInt())
-                (customColorScroll.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams).matchConstraintMaxHeight = maxHeight
+                (customColorScroll.layoutParams as ConstraintLayout.LayoutParams).matchConstraintMaxHeight = maxHeight
                 customColorScroll.requestLayout()
                 insets
             }
             customColorHex.setOnFocusChangeListener { _, focused ->
                 if (focused) customColorScroll.postDelayed({ customColorScroll.smoothScrollTo(0, customColorColumn.height) }, 250)
             }
-            val maxColumn = (MAX_COLUMN_DP * resources.displayMetrics.density).toInt()
+            val maxColumn = (MAX_COLUMN_DP * density).toInt()
             customColorColumn.updateLayoutParams<ViewGroup.LayoutParams> { width = ViewGroup.LayoutParams.MATCH_PARENT }
             customColorColumn.post {
                 if (customColorColumn.width > maxColumn) customColorColumn.updateLayoutParams<ViewGroup.LayoutParams> { width = maxColumn }
             }
-
-            customColorPreviewSurface.background = rounded(themeColors.getBackgroundColor(context), context)
-            customColorPreviewBlack.background = rounded(Color.BLACK, context)
-
-            paletteAdapter = PaletteAdapter { picked -> setColor(picked) }
-            customColorPalette.layoutManager = GridLayoutManager(context, PALETTE_SPAN)
-            customColorPalette.adapter = paletteAdapter
 
             customColorArea.onChanged = { s, v -> fromArea(s, v) }
             customColorHue.onHueChanged = { h -> fromHue(h) }
@@ -117,8 +107,8 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         setColor(color, force = true)
     }
 
-    private fun rounded(fill: Int, context: android.content.Context) = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.button_background_backup_restore)!!
-        .mutate().also { androidx.core.graphics.drawable.DrawableCompat.setTint(it, fill) }
+    private fun rounded(fill: Int, context: Context) = ContextCompat.getDrawable(context, R.drawable.button_background_backup_restore)!!
+        .mutate().also { DrawableCompat.setTint(it, fill) }
 
     private fun fromArea(saturation: Float, brightness: Float) {
         val hue = binding.customColorHue.hue
@@ -166,12 +156,11 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
                 if (customColorHex.text?.toString() != hex) customColorHex.setText(hex)
                 customColorHexLayout.error = null
             }
-            tint(customColorSampleSurface, color)
-            tint(customColorSampleBlack, color)
+            drawCard(customColorCardLight, customColorLightLabel, customColorLightSample, customColorLightButton, PreviewScheme.build(color, dark = false))
+            drawCard(customColorCardDark, customColorDarkLabel, customColorDarkSample, customColorDarkButton, PreviewScheme.build(color, dark = true))
             customColorApply.backgroundTintList = ColorStateList.valueOf(color)
             customColorApply.setTextColor(ColorMath.onColor(color))
             customColorApply.isEnabled = true
-            paletteAdapter?.selected = color
             val onBlack = ColorMath.contrast(color, Color.BLACK)
             val onCard = ColorMath.contrast(color, themeColors.getBackgroundColorSecondary(requireContext()))
             val low = onBlack < LOW_CONTRAST || onCard < LOW_CONTRAST
@@ -181,9 +170,14 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         updating = false
     }
 
-    private fun tint(view: android.widget.TextView, fill: Int) {
-        view.background.mutate().let { androidx.core.graphics.drawable.DrawableCompat.setTint(it, fill) }
-        view.setTextColor(ColorMath.onColor(fill))
+    // NOTE: A preview card is painted with the roles of the real scheme, a surface with a container row and a primary button.
+    private fun drawCard(card: View, label: TextView, row: TextView, button: TextView, colors: PreviewScheme.Colors) {
+        card.background = rounded(colors.surface, requireContext())
+        label.setTextColor(colors.onSurface)
+        row.background = rounded(colors.container, requireContext())
+        row.setTextColor(colors.onContainer)
+        button.background = rounded(colors.primary, requireContext())
+        button.setTextColor(colors.onPrimary)
     }
 
     private fun apply() {
@@ -192,37 +186,6 @@ class CustomColorBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomShe
         dismiss()
         //The accent lives in the activity theme, so it shows only after the activity is rebuilt
         requireActivity().recreate()
-    }
-
-    private class PaletteAdapter(private val onPicked: (Int) -> Unit) : RecyclerView.Adapter<PaletteAdapter.Holder>() {
-
-        var selected: Int = 0
-            set(value) {
-                if (field == value) return
-                field = value
-                notifyDataSetChanged()
-            }
-
-        class Holder(val root: FrameLayout, val circle: View, val check: ImageView) : RecyclerView.ViewHolder(root)
-
-        override fun getItemCount() = ColorMath.PALETTE.size
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_palette_swatch, parent, false) as FrameLayout
-            return Holder(view, view.findViewById(R.id.item_palette_circle), view.findViewById(R.id.item_palette_check))
-        }
-
-        override fun onBindViewHolder(holder: Holder, position: Int) {
-            val swatch = ColorMath.PALETTE[position]
-            holder.circle.backgroundTintList = ColorStateList.valueOf(swatch)
-            holder.circle.contentDescription = ColorMath.toHex(swatch)
-            val isSelected = (swatch or 0xFF000000.toInt()) == (selected or 0xFF000000.toInt())
-            holder.check.isVisible = isSelected
-            holder.check.imageTintList = ColorStateList.valueOf(ColorMath.onColor(swatch))
-            holder.circle.setOnClickListener { onPicked(swatch) }
-            holder.circle.applyPressFeedback()
-        }
-
     }
 
 }

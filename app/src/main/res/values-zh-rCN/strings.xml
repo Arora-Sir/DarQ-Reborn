@@ -179,23 +179,18 @@
     <string name="appearance_accent_low_contrast">此颜色在深色表面上不易看清。</string>
     <string name="appearance_accent_reset">重置</string>
     <string name="appearance_accent_wallpaper">壁纸</string>
-    <string name="appearance_accent_custom">颜色 %1$d</string>
-    <string name="appearance_accent_auto">自动</string>
-    <string name="appearance_accent_section_wallpaper">匹配壁纸</string>
-    <string name="appearance_accent_section_presets">预设</string>
-    <string name="appearance_accent_section_custom">自定义</string>
     <string name="appearance_accent_custom_value">自定义颜色 %1$s</string>
     <string name="appearance_accent_custom_summary">壁纸颜色</string>
     <string name="appearance_accent_custom_title">自定义颜色</string>
     <string name="appearance_accent_custom_pick">自定义</string>
-    <string name="appearance_accent_yours">你的颜色</string>
-    <string name="appearance_accent_palette">调色板</string>
-    <string name="appearance_accent_mix">自己调色</string>
     <string name="appearance_accent_hex">十六进制颜色</string>
     <string name="appearance_accent_hex_error">请输入六位十六进制数字，例如 #0072DE</string>
+    <string name="appearance_accent_light">浅色</string>
+    <string name="appearance_accent_dark">深色</string>
+    <string name="appearance_accent_sample_title">深色模式</string>
+    <string name="appearance_accent_sample_button">开启</string>
+    <string name="appearance_accent_use_color">使用此颜色</string>
     <string name="appearance_accent_apply">应用</string>
-    <string name="appearance_accent_preview_surface">在表面上</string>
-    <string name="appearance_accent_preview_black">在黑色上</string>
     <string name="appearance_accent_area_description">饱和度和亮度</string>
     <string name="appearance_accent_hue_description">色相</string>
     <string name="appearance_accent_note_dynamic">Android 会根据此颜色生成完整的配色方案。</string>
@@ -243,6 +238,7 @@
         <item>紫色</item>
         <item>橙色</item>
         <item>玫红</item>
+        <item>琥珀色</item>
         <item>单色</item>
     </string-array>
     <string-array name="diagnostics_send_options">

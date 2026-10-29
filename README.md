@@ -103,7 +103,7 @@ Open **Appearance** in DarQ to change how the app looks.
 
 * **Theme:** light, dark or follow the system.
 * **Pure black:** true black backgrounds in dark mode, which saves power on AMOLED screens.
-* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (Blue, Teal, Green, Purple, Orange, Rose, Mono), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
+* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (Blue, Teal, Green, Purple, Orange, Rose, Amber, Mono), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
 * **Tinted icons:** colors the settings icons with the accent instead of the classic multicolor set.
 
 | Light | Dark | Pure black |

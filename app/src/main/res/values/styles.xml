@@ -66,6 +66,11 @@
         <item name="android:textFontWeight">500</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.Title.Darq" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/google_sans_text_medium</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
     <style name="TextAppearance.AppCompat.Large.Darq" parent="TextAppearance.AppCompat.Large">
         <item name="android:fontFamily">@font/google_sans_text</item>
         <item name="android:textFontWeight">500</item>
