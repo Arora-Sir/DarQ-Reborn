@@ -46,7 +46,7 @@ jobs:
           SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
         run: |
           test -n "$SIGNING_KEYSTORE_BASE64" || { echo "SIGNING_KEYSTORE_BASE64 is not set in the release environment"; exit 1; }
-          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | tr -d ' \r\n' | base64 -d > "$RUNNER_TEMP/release.keystore"
 
       - name: Build the signed release APK
         env:
