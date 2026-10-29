@@ -93,6 +93,25 @@ jobs:
           cp "$APK" "DarQ-Reborn.$VERSION.apk"
           sha256sum "DarQ-Reborn.$VERSION.apk" > "DarQ-Reborn.$VERSION.apk.sha256"
 
+      # NOTE: The probe is a tiny white test app. People install it from the release to check that DarQ really darkens an app on their device.
+      # NOTE: It has its own package id and no permissions, and it is signed with the same release key.
+      - name: Build and sign the probe app
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew :forcedarkprobe:assembleRelease --console=plain
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          UNSIGNED=$(ls testing/forcedark-probe/build/outputs/apk/release/*.apk | head -1)
+          "$BT/apksigner" sign \
+            --ks "$RUNNER_TEMP/release.keystore" --ks-key-alias "$SIGNING_KEY_ALIAS" \
+            --ks-pass env:SIGNING_KEYSTORE_PASSWORD --key-pass env:SIGNING_KEY_PASSWORD \
+            --out "DarQ-Probe.$VERSION.apk" "$UNSIGNED"
+          "$BT/apksigner" verify "DarQ-Probe.$VERSION.apk"
+          "$BT/aapt2" dump badging "DarQ-Probe.$VERSION.apk" | grep -q "package: name='com.darq.forcedarkprobe'" || { echo "Unexpected probe package"; exit 1; }
+          sha256sum "DarQ-Probe.$VERSION.apk" > "DarQ-Probe.$VERSION.apk.sha256"
+
       - name: Create the draft pre-release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -100,7 +119,8 @@ jobs:
           gh release create "v$VERSION" --draft --prerelease \
             --title "DarQ Reborn v$VERSION" \
             --notes-file ".github/release-notes/$VERSION.md" \
-            "DarQ-Reborn.$VERSION.apk" "DarQ-Reborn.$VERSION.apk.sha256"
+            "DarQ-Reborn.$VERSION.apk" "DarQ-Reborn.$VERSION.apk.sha256" \
+            "DarQ-Probe.$VERSION.apk" "DarQ-Probe.$VERSION.apk.sha256"
 
       - name: Delete the signing key
         if: always()

@@ -212,6 +212,12 @@
     <string name="item_obtainium_title">Стежити через Obtainium</string>
     <string name="item_obtainium_content">Додайте DarQ до Obtainium одним дотиком і отримуйте сповіщення про нові випуски</string>
     <string name="bottom_sheet_update_obtainium">Стежити через Obtainium</string>
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">З&#8217;єднання</string>
+    <string name="status_label_not_connected">Не підключено</string>
+    <string name="status_description">Стан: %1$s</string>
     <string name="status_title_shizuku">Shizuku підключено</string>
     <string name="status_title_root">Root підключено</string>
     <string name="status_title_connecting">Підключення до сервісу</string>
@@ -229,7 +235,10 @@
     <string name="appearance_pure_black_content">Використовує справжній чорний фон у темному режимі, що заощаджує заряд на екранах AMOLED</string>
     <string name="appearance_pure_black_lift_title">Підйом поверхонь</string>
     <string name="appearance_pure_black_lift_summary">Підйом поверхонь: %1$s. Торкніться, щоб змінити.</string>
-    <string name="appearance_pure_black_lift_hint">Картки й поля залишаються на крок світлішими за чорну сторінку. Вищі рівні роблять їх помітнішими.</string>
+    <string name="appearance_pure_black_lift_hint">Піднімає картки, поля й розділи чистого чорного від пласких до піднятих. Сторінка лишається чорною.</string>
+    <string name="appearance_pure_black_lift_sample_section">Розділ</string>
+    <string name="appearance_pure_black_lift_sample_field">Поле</string>
+    <string name="appearance_pure_black_lift_sample_selected">Вибраний елемент</string>
     <string name="appearance_pure_black_lift_level">Рівень %1$d з 10</string>
     <string name="appearance_pure_black_lift_level_recommended">Рівень %1$d з 10, рекомендований</string>
     <string name="appearance_pure_black_lift_reset">Скинути</string>

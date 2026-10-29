@@ -297,6 +297,32 @@ def main() -> int:
         except Exception as error:
             report.add("S6", "Advanced and Auto Dark screens open", False, str(error))
 
+        # S10: the title bar shows the service status and the Appearance screen offers the surface lift dialog.
+        try:
+            open_main(dev)
+            texts = [node.text for node in dev.dump_ui()]
+            status = [text for text in texts if text in ("Shizuku", "Root", "Shizuku · Xposed", "Root · Xposed", "Connecting", "Not connected")]
+            report.add("S10", "Title bar shows the service status", bool(status), (status or ["no status text found"])[0])
+            dev.tap_text("Appearance")
+            dev.wait_for_text("Pure black", timeout=15)
+            time.sleep(1)
+            if not any(node.text.startswith("Surface lift") for node in dev.dump_ui()):
+                dev.tap_text("Pure black")
+                time.sleep(4)
+                dev.wait_for_text("Pure black", timeout=15)
+            dev.tap_text("Pure black")
+            time.sleep(2)
+            dialog = [node.text for node in dev.dump_ui()]
+            shown = "Surface lift" in dialog and any(text.startswith("Level ") for text in dialog)
+            dev.screenshot(out_dir / "s10_surface_lift_dialog.png")
+            if "Cancel" in dialog:
+                dev.tap_text("Cancel")
+            report.add("S10", "Pure black row opens the surface lift dialog", shown, next((text for text in dialog if text.startswith("Level ")), "no level text"))
+            dev.back()
+            dev.wait_for_text(MAIN_LIST_TEXT, timeout=15)
+        except Exception as error:
+            report.add("S10", "Status and surface lift dialog", False, str(error))
+
         # S7: without LSPosed the Xposed entry stays hidden.
         open_main(dev)
         report.add("S7", "No Xposed entry without LSPosed", not dev.find(text="Xposed Module"), "Entry hidden")

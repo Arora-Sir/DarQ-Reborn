@@ -158,6 +158,12 @@
     <string name="item_obtainium_title">使用 Obtainium 跟踪</string>
     <string name="item_obtainium_content">一键将 DarQ 添加到 Obtainium，并获取新版本通知</string>
     <string name="bottom_sheet_update_obtainium">使用 Obtainium 跟踪</string>
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">连接中</string>
+    <string name="status_label_not_connected">未连接</string>
+    <string name="status_description">状态：%1$s</string>
     <string name="status_title_shizuku">Shizuku 已连接</string>
     <string name="status_title_root">root 已连接</string>
     <string name="status_title_connecting">正在连接服务</string>
@@ -175,7 +181,10 @@
     <string name="appearance_pure_black_content">在深色模式下使用真正的黑色背景，可在 AMOLED 屏幕上省电</string>
     <string name="appearance_pure_black_lift_title">表面层次</string>
     <string name="appearance_pure_black_lift_summary">表面层次：%1$s。点按可调整。</string>
-    <string name="appearance_pure_black_lift_hint">卡片和输入框会比黑色页面亮一级。级别越高，越容易看清。</string>
+    <string name="appearance_pure_black_lift_hint">将纯黑下的卡片、输入框和分区从平面调到凸起。页面本身保持黑色。</string>
+    <string name="appearance_pure_black_lift_sample_section">分区</string>
+    <string name="appearance_pure_black_lift_sample_field">输入框</string>
+    <string name="appearance_pure_black_lift_sample_selected">已选项目</string>
     <string name="appearance_pure_black_lift_level">第 %1$d 级，共 10 级</string>
     <string name="appearance_pure_black_lift_level_recommended">第 %1$d 级，共 10 级，推荐</string>
     <string name="appearance_pure_black_lift_reset">重置</string>

@@ -87,6 +87,10 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_THEME_PURE_BLACK_LIFT = "theme_pure_black_lift"
         const val DEFAULT_THEME_PURE_BLACK_LIFT = 50
 
+        // NOTE: The last connected mode is kept only to draw the first frame after a cold start, it is not part of Backup and Restore.
+        private const val KEY_LAST_SERVICE_MODE = "last_service_mode"
+        private const val KEY_LAST_XPOSED = "last_xposed"
+
         private const val KEY_THEME_ACCENT = "theme_accent"
         const val DEFAULT_THEME_ACCENT = "wallpaper"
 
@@ -140,6 +144,8 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     var themePureBlack by this.shared(KEY_THEME_PURE_BLACK, DEFAULT_THEME_PURE_BLACK)
     var themePureBlackLift by this.shared(KEY_THEME_PURE_BLACK_LIFT, DEFAULT_THEME_PURE_BLACK_LIFT)
     var themeAccent by this.shared(KEY_THEME_ACCENT, DEFAULT_THEME_ACCENT)
+    var lastServiceMode by this.shared(KEY_LAST_SERVICE_MODE, "")
+    var lastXposed by this.shared(KEY_LAST_XPOSED, false)
     var themeTintedIcons by this.shared(KEY_THEME_TINTED_ICONS, DEFAULT_THEME_TINTED_ICONS)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
 

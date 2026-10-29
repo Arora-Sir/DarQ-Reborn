@@ -29,6 +29,7 @@ import com.kieronquinn.app.darq.utils.Links
 import com.kieronquinn.app.darq.ui.utils.MultiTapDetector
 import com.kieronquinn.app.darq.utils.LinkSpans
 import com.kieronquinn.app.darq.utils.SafeRun
+import com.kieronquinn.app.darq.ui.utils.HeartBeat
 import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
 import com.kieronquinn.app.darq.utils.openLink
 
@@ -126,17 +127,22 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
 
     private fun setupSetting(binding: ItemSettingBinding, item: SettingsItem.Setting) = with(binding) {
         itemSettingTitle.text = item.title
-        if(item.content.isNullOrEmpty()){
+        val content = item.contentProvider?.invoke() ?: item.content
+        if(content.isNullOrEmpty()){
             itemSettingContent.isVisible = false
         }else{
             itemSettingContent.isVisible = true
-            itemSettingContent.text = item.content
+            itemSettingContent.text = content
         }
         if(item.icon != 0) {
             itemSettingIcon.setImageDrawable(SettingsIcons.load(itemSettingIcon.context, item.icon, settings.themeTintedIcons))
         }else{
             itemSettingIcon.setImageDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+        val isHeart = item.icon == R.drawable.ic_support_heart
+        itemSettingIconOverlay.isVisible = isHeart
+        itemSettingIconOverlay.setImageDrawable(if (isHeart) SettingsIcons.heartGlyph(itemSettingIcon.context) else null)
+        HeartBeat.attach(itemSettingIconOverlay, isHeart)
         item.tapAction?.let { action ->
             root.setOnClickListener {
                 root.isPressed = false
@@ -220,6 +226,7 @@ class SettingsAdapter(context: Context, private var items: List<SettingsItem>): 
         }
         itemSettingSwitchSwitch.setOnCheckedChangeListener(null)
         itemSettingSwitchSwitch.isChecked = item.getValue?.invoke() ?: item.setting?.get() ?: false
+        itemSettingSwitchDivider.isVisible = item.rowTapAction != null && itemSettingSwitchSwitch.isChecked
         itemSettingSwitchSwitch.setOnCheckedChangeListener { button, isChecked ->
             if(item.tapAction != null){
                 if(item.tapAction.invoke(isChecked)){

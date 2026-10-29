@@ -11,7 +11,9 @@ sealed class SettingsItem constructor(open val itemType: SettingsItemType, open 
         var content: CharSequence? = null,
         override var centerIconVertically: Boolean = true,
         override var visible: () -> Boolean = {true},
-        val tapAction: (() -> Unit)? = null
+        val tapAction: (() -> Unit)? = null,
+        //Read on every bind, so a subtitle such as the count of darkened apps stays current
+        val contentProvider: (() -> CharSequence?)? = null
     ): SettingsItem(SettingsItemType.SETTING)
     data class SwitchSetting(
         @DrawableRes val icon: Int,

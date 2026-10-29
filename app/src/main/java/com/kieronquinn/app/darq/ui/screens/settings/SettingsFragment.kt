@@ -33,6 +33,7 @@ import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.components.xposed.XposedState
 import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
+import com.kieronquinn.app.darq.ui.screens.container.ContainerFragment
 import com.kieronquinn.app.darq.utils.ObtainiumLink
 import com.kieronquinn.app.darq.utils.openLink
 import kotlinx.coroutines.Job
@@ -55,7 +56,8 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 R.drawable.ic_app_whitelist_round,
                 getString(R.string.item_whitelist_title),
                 getString(R.string.item_whitelist_content),
-                tapAction = viewModel::onAppWhitelistClicked
+                tapAction = viewModel::onAppWhitelistClicked,
+                contentProvider = ::whitelistContent
             ),
             SettingsItem.Header(getString(R.string.item_header_options)),
             SettingsItem.SwitchSetting(
@@ -117,7 +119,7 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
                 }
             ),
             SettingsItem.Setting(
-                R.drawable.ic_update,
+                R.drawable.ic_obtainium,
                 getString(R.string.item_obtainium_title),
                 getString(R.string.item_obtainium_content),
                 tapAction = { requireContext().openLink(ObtainiumLink.url()) }
@@ -169,7 +171,8 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
 
     private var statusJob: Job? = null
 
-    // NOTE: The service binds a moment after the list appears, so the card shows a connecting state and polls before it reports a problem.
+    // NOTE: The service binds a moment after the list appears, so the status polls before it reports a problem.
+    // NOTE: Red appears only after the wait, a slow bind shows the last known mode on a grey dot instead.
     override fun onResume() {
         super.onResume()
         statusJob?.cancel()
@@ -177,12 +180,13 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
             var waited = 0L
             while (isActive) {
                 val connected = connection.connectedServiceType != DarqServiceConnectionProvider.ServiceType.UNKNOWN
-                updateStatusCard(connecting = !connected && waited < STATUS_CONNECT_WAIT_MS)
+                publishStatus(connecting = !connected && waited < STATUS_CONNECT_WAIT_MS)
                 if (connected) break
                 delay(STATUS_POLL_MS)
                 waited += STATUS_POLL_MS
             }
         }
+        refreshWhitelistRow()
     }
 
     override fun onPause() {
@@ -190,39 +194,53 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
         super.onPause()
     }
 
-    // NOTE: The status is the second line of the main switch. It inherits the switch text color, so it can never flash white on the accent container.
-    // NOTE: The label is only set again when its text changed, so coming back from another screen causes no redraw.
-    private var statusLine: String? = null
     private var switchWarning: Int? = null
+    private var lastAppCount = -1
 
-    private fun statusText(connecting: Boolean): String {
+    // NOTE: The status goes to the title bar of the container as a dot and one word. The count of darkened apps lives in the first row.
+    private fun publishStatus(connecting: Boolean) {
+        val container = parentFragment?.parentFragment as? ContainerFragment ?: return
         val type = connection.connectedServiceType
         val connected = type != DarqServiceConnectionProvider.ServiceType.UNKNOWN
-        if (!connected) {
-            return getString(if (connecting) R.string.status_title_connecting else R.string.status_content_not_connected)
+        if (connected) {
+            val mode = if (type == DarqServiceConnectionProvider.ServiceType.ROOT) "root" else "shizuku"
+            settings.lastServiceMode = mode
+            settings.lastXposed = XposedState.isActive
+            container.setServiceStatus(ContainerFragment.ServiceStatus(modeLabel(mode, XposedState.isActive), ContainerFragment.StatusLevel.OK))
+            return
         }
-        val count = settings.enabledApps.size
-        val title = getString(if (type == DarqServiceConnectionProvider.ServiceType.ROOT) R.string.status_title_root else R.string.status_title_shizuku)
-        //No apps yet is left out, the first list row already says to select some, and the line stays on one row
-        val apps = if (count == 0) null else resources.getQuantityString(R.plurals.status_content_apps, count, count)
-        val details = when {
-            apps == null -> null
-            XposedState.isActive -> getString(R.string.status_content_xposed, apps)
-            else -> apps
+        if (connecting) {
+            val last = settings.lastServiceMode
+            val label = if (last.isEmpty()) getString(R.string.status_label_connecting) else modeLabel(last, settings.lastXposed)
+            container.setServiceStatus(ContainerFragment.ServiceStatus(label, ContainerFragment.StatusLevel.PENDING))
+        } else {
+            container.setServiceStatus(
+                ContainerFragment.ServiceStatus(getString(R.string.status_label_not_connected), ContainerFragment.StatusLevel.ERROR),
+                onClick = { viewModel.onFaqClicked() }
+            )
         }
-        return if (details == null) title else "$title  •  $details"
     }
 
-    private fun updateStatusCard(connecting: Boolean) {
-        val text = statusText(connecting)
-        if (text == statusLine) return
-        statusLine = text
-        refreshMainSwitchLabel()
+    private fun modeLabel(mode: String, xposed: Boolean): String {
+        val name = getString(if (mode == "root") R.string.status_label_root else R.string.status_label_shizuku)
+        return if (xposed) "$name · ${getString(R.string.status_label_xposed)}" else name
+    }
+
+    private fun whitelistContent(): CharSequence {
+        val count = settings.enabledApps.size
+        return if (count == 0) getString(R.string.item_whitelist_content) else resources.getQuantityString(R.plurals.status_content_apps, count, count)
+    }
+
+    private fun refreshWhitelistRow() {
+        val count = settings.enabledApps.size
+        if (count == lastAppCount) return
+        lastAppCount = count
+        adapter.notifyItemChanged(0)
     }
 
     private fun refreshMainSwitchLabel() {
         val warning = switchWarning
-        binding.switchMain.mainSwitchSwitch.text = if (warning != null) getMainSwitchLabel(getString(warning)) else getMainSwitchLabel(statusLine)
+        binding.switchMain.mainSwitchSwitch.text = getMainSwitchLabel(warning?.let { getString(it) })
     }
 
     private fun setupMainSwitch() {
@@ -230,8 +248,9 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
             mainSwitchSwitch.typeface = ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium)
             updateMainSwitch()
         }
-        //The first frame already has the status, so there is no empty second line that then fills in
-        statusLine = statusText(connecting = true)
+        //The first frame already has the status, drawn from the last known mode, so nothing pops in afterwards
+        publishStatus(connecting = true)
+        lastAppCount = settings.enabledApps.size
         refreshMainSwitchLabel()
         lifecycleScope.launch {
             sharedViewModel.switchWarning.collect {
@@ -282,6 +301,7 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
     private fun setupXposedState(){
         lifecycleScope.launchWhenResumed {
             XposedBridge.isActive.collect {
+                publishStatus(connecting = connection.connectedServiceType == DarqServiceConnectionProvider.ServiceType.UNKNOWN)
                 adapter.notifyDataSetChanged()
             }
         }

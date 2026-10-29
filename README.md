@@ -110,6 +110,17 @@ Open **Appearance** in DarQ to change how the app looks.
 | --- | --- | --- |
 | ![Light](assets/screenshots/main_light.png) | ![Dark](assets/screenshots/main_dark.png) | ![Pure black](assets/screenshots/main_black.png) |
 
+## Check that DarQ works (DarQ Probe)
+
+Every release has a second small app, **DarQ Probe** (`DarQ-Probe.<version>.apk`, signed with the same release key as DarQ). It shows one plain white page, so you can see at a glance whether force dark reaches an app on your device.
+
+1. Install the probe from the release page of the version you use.
+2. Open DarQ, tap **DarQ Per-App Force Dark** and select DarQ Probe.
+3. Make sure **Enable DarQ** is on and the status in the title bar is green.
+4. Close the probe and open it again. The page should now be dark.
+
+If the page stays white, open **Settings > Report an issue** in DarQ and attach the log. Uninstall the probe when you are done, it has no permissions and does nothing else.
+
 ## Report an issue
 
 **Settings > Report an issue** opens one form for a bug or a feature idea. For bugs you can type what happened and the steps, and the diagnostic log is included by default.

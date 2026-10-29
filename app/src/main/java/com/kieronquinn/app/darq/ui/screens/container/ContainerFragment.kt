@@ -34,6 +34,7 @@ import kotlin.math.roundToInt
 
 private const val STATE_TITLE = "container_title"
 private const val STATE_BACK = "container_back"
+private const val STATE_STATUS = "container_status_visible"
 
 class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContainerBinding::inflate) {
 
@@ -138,12 +139,14 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         if(view != null) {
             outState.putString(STATE_TITLE, binding.toolbar.title?.toString())
             outState.putBoolean(STATE_BACK, binding.toolbar.navigationIcon != null)
+            outState.putBoolean(STATE_STATUS, statusVisible)
         }
     }
 
     private fun setupToolbar(savedInstanceState: Bundle?){
         with(binding){
             toolbar.title = savedInstanceState?.getString(STATE_TITLE) ?: getString(R.string.app_name)
+            statusVisible = savedInstanceState?.getBoolean(STATE_STATUS, true) ?: true
             if(savedInstanceState?.getBoolean(STATE_BACK) == true) {
                 toolbar.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_back)
             }
@@ -259,6 +262,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     }
 
     private fun onTopFragmentChanged(topFragment: Fragment){
+        statusVisible = topFragment is com.kieronquinn.app.darq.ui.screens.settings.SettingsFragment
+        applyStatus()
         val backIcon = if(topFragment is BackAvailable){
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_back)
         } else null
@@ -275,6 +280,74 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         }
         val isExpanded = fragmentExpandedState[topFragment::class.java.name] ?: (topFragment is AutoExpandOnRotate)
         binding.appBar.setExpanded(isExpanded, false)
+    }
+
+    enum class StatusLevel { PENDING, OK, ERROR }
+
+    data class ServiceStatus(val label: String, val level: StatusLevel)
+
+    private var serviceStatus: ServiceStatus? = null
+    private var statusOnClick: (() -> Unit)? = null
+    private var statusVisible = true
+    private var shownDotColor: Int? = null
+
+    // NOTE: The home screen reports the service status here. It shows as a dot and one word at the end of the title bar, and only on the home screen.
+    // NOTE: The first call draws without animation, later changes fade the dot color in 150 ms and move nothing else.
+    fun setServiceStatus(status: ServiceStatus?, onClick: (() -> Unit)? = null) {
+        serviceStatus = status
+        statusOnClick = onClick
+        if(view != null) applyStatus()
+    }
+
+    private fun dotColor(level: StatusLevel): Int = when(level){
+        StatusLevel.OK -> ContextCompat.getColor(requireContext(), R.color.status_dot_ok)
+        StatusLevel.ERROR -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorError)
+        StatusLevel.PENDING -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorOutline)
+    }
+
+    // NOTE: With a large system font the word would squeeze the title, so it moves under the title as the toolbar subtitle.
+    private fun applyStatus() = with(binding) {
+        val status = serviceStatus
+        if(!statusVisible || status == null){
+            statusContainer.isVisible = false
+            toolbar.subtitle = null
+            return@with
+        }
+        val color = dotColor(status.level)
+        val largeFont = resources.configuration.fontScale > 1.15f
+        statusContainer.contentDescription = getString(R.string.status_description, status.label)
+        if(largeFont){
+            statusContainer.isVisible = false
+            toolbar.subtitle = android.text.SpannableString("● ${status.label}").apply {
+                setSpan(android.text.style.ForegroundColorSpan(color), 0, 1, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }else{
+            toolbar.subtitle = null
+            statusContainer.isVisible = true
+            statusLabel.text = status.label
+            statusLabel.setTextColor(
+                if(status.level == StatusLevel.ERROR) color else com.google.android.material.color.MaterialColors.getColor(statusLabel, com.google.android.material.R.attr.colorOnSurfaceVariant)
+            )
+            val dot = statusDot.background.mutate()
+            val from = shownDotColor
+            if(from == null || from == color){
+                dot.setTint(color)
+            }else{
+                android.animation.ValueAnimator.ofArgb(from, color).apply {
+                    duration = 150
+                    addUpdateListener { dot.setTint(it.animatedValue as Int) }
+                }.start()
+            }
+            shownDotColor = color
+            val onClick = statusOnClick
+            if(status.level == StatusLevel.ERROR && onClick != null){
+                statusContainer.setOnClickListener { onClick.invoke() }
+                statusContainer.isClickable = true
+            }else{
+                statusContainer.setOnClickListener(null)
+                statusContainer.isClickable = false
+            }
+        }
     }
 
     private fun setupMenu(menuProvider: ProvidesOverflow?){

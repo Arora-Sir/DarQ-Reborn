@@ -1,6 +1,8 @@
 package com.kieronquinn.app.darq.components.theme
 
 import android.content.Context
+import android.graphics.Color
+import com.google.android.material.color.MaterialColors
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
@@ -22,14 +24,31 @@ object SettingsIcons {
 
     fun load(context: Context, @DrawableRes icon: Int, tinted: Boolean): Drawable? {
         val drawable = ContextCompat.getDrawable(context, icon)?.mutate() ?: return null
-        //The support heart is the one colored icon in Settings, so it keeps its fixed red and has no circle
-        if (icon == R.drawable.ic_support_heart) return drawable
+        //The support heart sits in the same circle as every other icon, in the error container of the theme. Its glyph is a separate overlay so it can beat from its own center
+        if (icon == R.drawable.ic_support_heart) return heartCircle(context)
         val round = (drawable as? LayerDrawable)?.takeIf { it.numberOfLayers >= 2 } ?: wrap(context, icon, drawable)
         if (tinted) {
             round.getDrawable(0).setTint(ThemeColors.getIconContainerColor(context))
             round.getDrawable(1).setTint(ThemeColors.getOnIconContainerColor(context))
         }
         return round
+    }
+
+    private fun heartCircle(context: Context): Drawable {
+        val density = context.resources.displayMetrics.density
+        val circleSize = (36 * density).toInt()
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorErrorContainer, Color.parseColor("#93000A")))
+            setSize(circleSize, circleSize)
+        }
+    }
+
+    /** The heart glyph of the Support row, tinted with the on-error-container role so it reads on the circle in light, dark and Pure black. */
+    fun heartGlyph(context: Context): Drawable? {
+        val glyph = ContextCompat.getDrawable(context, R.drawable.ic_support_heart)?.mutate() ?: return null
+        glyph.setTint(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnErrorContainer, Color.parseColor("#FFDAD6")))
+        return glyph
     }
 
     private fun wrap(context: Context, @DrawableRes icon: Int, glyph: Drawable): LayerDrawable {

@@ -27,7 +27,40 @@
                 app:layout_collapseMode="pin"
                 app:titleTextAppearance="@style/TextAppearance.AppCompat.Title.Darq"
                 app:titleTextColor="?attr/colorOnSurface"
-                android:id="@+id/toolbar"/>
+                android:id="@+id/toolbar">
+
+                <!-- NOTE: The service status sits at the end of the home title bar, a dot and one short word, and it is not a button unless it reports a problem. -->
+                <LinearLayout
+                    android:id="@+id/status_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="@dimen/padding_8"
+                    android:gravity="center_vertical"
+                    android:minHeight="32dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <View
+                        android:id="@+id/status_dot"
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/status_dot"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:id="@+id/status_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq.Medium"
+                        android:textColor="?android:textColorSecondary" />
+
+                </LinearLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
