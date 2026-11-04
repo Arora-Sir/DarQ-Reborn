@@ -4,7 +4,7 @@ DarQ Reborn is a single-activity View-system app (ViewBinding, Navigation compon
 
 ## Modules and processes
 
-* `app` is the only shipped module. `systemstubs` holds compile-only stubs for hidden APIs. `testing/forcedark-probe` is a fixture app used by the device suites and is never shipped.
+* `app` is the main shipped module. `systemstubs` holds compile-only stubs for hidden APIs. `testing/forcedark-probe` is a fixture app used by the device suites and published as an optional verification APK (`DarQ-Probe.<version>.apk`) attached to each release.
 * The UI runs in the main process. The privileged work runs in a separate `:service` process started by Shizuku (user service) or by libsu (root service). Both expose the same AIDL interface `IDarqService`.
 * `providers/DarqServiceConnectionProvider` binds that service. It prefers Shizuku, falls back to root, serializes binds with a mutex and reports the connected mode (`connectedServiceType`).
 * Xposed mode is a third, optional path. `Xposed.kt` (LibXposed 101) and `XposedLegacy.kt` (API 82) hook `SystemProperties` inside each scoped app process so apps that opt out of Force Dark still get it. The default build ships only the legacy entry.

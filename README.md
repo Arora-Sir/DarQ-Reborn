@@ -119,7 +119,7 @@ Every release has a second small app, **DarQ Probe** (`DarQ-Probe.<version>.apk`
 3. Make sure **Enable DarQ** is on and the status in the title bar is green.
 4. Close the probe and open it again. The page should now be dark.
 
-If the page stays white, open **Settings > Report an issue** in DarQ and attach the log. Uninstall the probe when you are done, it has no permissions and does nothing else.
+If the page stays white, open **Settings > Report an issue** in DarQ to attach diagnostic logs. Uninstall the probe when testing is complete. The app requests no permissions.
 
 ## Report an issue
 
