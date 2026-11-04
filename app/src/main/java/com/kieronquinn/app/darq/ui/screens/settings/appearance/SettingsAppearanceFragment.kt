@@ -2,7 +2,9 @@ package com.kieronquinn.app.darq.ui.screens.settings.appearance
 
 import android.os.Bundle
 import android.view.View
+import com.kieronquinn.app.darq.components.theme.AppLanguage
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.components.theme.PureBlackLift
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.navigation.Navigation
@@ -63,6 +65,12 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
                 accentSummary(),
                 tapAction = this::onAccentClicked
             ),
+            SettingsItem.Setting(
+                R.drawable.ic_language,
+                getString(R.string.appearance_language_title),
+                languageSummary(),
+                tapAction = this::onLanguageClicked
+            ),
             SettingsItem.SwitchSetting(
                 R.drawable.ic_appearance_icons_round,
                 getString(R.string.appearance_tinted_icons_title),
@@ -104,6 +112,32 @@ class SettingsAppearanceFragment: BaseSettingsFragment<FragmentSettingsDeveloper
         val fromWallpaper = ThemeManager.isDynamicAvailable && color in ThemeManager.wallpaperColors(requireContext())
         return if(fromWallpaper || color == Integer.MAX_VALUE) getString(R.string.appearance_accent_custom_summary)
         else getString(R.string.appearance_accent_custom_value, ColorMath.toHex(color))
+    }
+
+    private fun currentLanguageIndex(): Int {
+        val tag = AppLanguage.tag(requireContext())
+        if(tag.isEmpty()) return -1
+        return AppLanguage.TAGS.indexOfFirst { tag.equals(it, ignoreCase = true) || tag.startsWith("$it-", ignoreCase = true) || it.startsWith("$tag-", ignoreCase = true) }
+    }
+
+    private fun languageSummary(): String {
+        val index = currentLanguageIndex()
+        return if(index < 0) getString(R.string.appearance_language_system)
+        else resources.getStringArray(R.array.appearance_language_names)[index]
+    }
+
+    private fun onLanguageClicked() {
+        val labels = arrayOf(getString(R.string.appearance_language_system)) + resources.getStringArray(R.array.appearance_language_names)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.appearance_language_title)
+            .setSingleChoiceItems(labels, currentLanguageIndex() + 1) { dialog, which ->
+                dialog.dismiss()
+                //The OS locale is not touched here, DarqActivity syncs it after it stops, so no black flash shows
+                AppLanguage.set(requireContext(), if(which == 0) "" else AppLanguage.TAGS[which - 1])
+                (requireActivity() as com.kieronquinn.app.darq.ui.activities.DarqActivity).applyLanguageInPlace()
+            }
+            .setNegativeButton(R.string.close, null)
+            .show()
     }
 
     private fun onThemeClicked() {

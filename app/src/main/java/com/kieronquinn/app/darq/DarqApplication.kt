@@ -93,7 +93,8 @@ class DarqApplication : Application() {
     }
 
     override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
+        //Strings read through the application context follow the chosen language from the first moment of the process
+        super.attachBaseContext(com.kieronquinn.app.darq.components.theme.AppLanguage.wrap(base))
         //LSPosed 2.x and Vector deliver their service binder through a content provider, so the listener is registered before any provider runs
         XposedBridge.register()
     }

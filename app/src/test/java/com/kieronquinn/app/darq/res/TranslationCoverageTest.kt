@@ -18,10 +18,10 @@ class TranslationCoverageTest {
     }
 
     @Test
-    fun ukrainianAndChineseCoverEveryNewKey() {
+    fun everyShippedTranslationCoversEveryNewKey() {
         val default = keys("src/main/res/values/strings.xml").filter { key -> prefixes.any { key.startsWith(it) } }
         assertTrue(default.size > 60)
-        for (folder in listOf("values-uk", "values-zh-rCN")) {
+        for (folder in listOf("values-uk", "values-zh-rCN", "values-hi")) {
             val translated = keys("src/main/res/$folder/strings.xml")
             val missing = default.filterNot { it in translated }
             assertTrue("$folder is missing $missing", missing.isEmpty())

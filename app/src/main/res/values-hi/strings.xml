@@ -1,0 +1,359 @@
+<resources>
+    <string name="app_name">DarQ Reborn</string>
+    <string name="xposed_desc">ऐप्स को Force Dark का उपयोग बंद करने से रोकें</string>
+    <string name="item_switch_main_title">DarQ चालू करें</string>
+    <string name="item_switch_main_subtitle">DarQ केवल तभी काम करता है जब सिस्टम डार्क मोड में हो</string>
+    <string name="item_switch_main_subtitle_off">DarQ को काम करने के लिए सिस्टम डार्क मोड चालू होना ज़रूरी है</string>
+    <string name="item_whitelist_title">DarQ ऐप-वार Force Dark</string>
+    <string name="item_whitelist_content">जिन ऐप्स में डार्क मोड ज़बरदस्ती लगाना है उन्हें चुनें</string>
+    <string name="item_header_options">विकल्प</string>
+    <string name="item_oxygen_force_title">Oxygen OS Force Dark</string>
+    <string name="item_oxygen_force_content">Oxygen OS का \"Entire World\" Force Dark चालू करें (ज़्यादातर ऐप्स पर लागू)</string>
+    <string name="item_day_night_auto_title">ऑटो डार्क थीम</string>
+    <string name="item_day_night_auto_content">डार्क थीम अपने आप शेड्यूल करें</string>
+    <string name="item_advanced_options_title">उन्नत विकल्प</string>
+    <string name="item_advanced_options_content">Force Dark को हमेशा चालू रखने और ऐप स्विचिंग की सेटिंग बदलें</string>
+    <string name="item_always_use_force_dark_title">हमेशा Force Dark का उपयोग करें</string>
+    <string name="item_always_use_force_dark_content">Force Dark ऐप्स की सूची को अनदेखा करें और सभी ऐप्स के लिए Force Dark <b>हमेशा चालू</b> रखें।</string>
+    <string name="item_send_app_closes_title">ऐप बंद होने पर नज़र रखें</string>
+    <string name="item_send_app_closes_content">Force Dark सूची का कोई ऐप बंद होने पर Force Dark बंद कर देता है। इससे ऐप्स के बीच स्विच करते समय कुछ ऐप्स पर Force Dark समय पर लागू न होने की संभावना बढ़ जाती है।</string>
+    <string name="item_check_for_updates_title">लॉन्च पर अपडेट जाँचें</string>
+    <string name="item_check_for_updates_content">ऐप खोलते समय नए रिलीज़ अपने आप जाँचें और सीधे इंस्टॉल करने के लिए पूछें।</string>
+    <string name="item_auto_dark_options_title">ऑटो डार्क विकल्प</string>
+    <string name="item_auto_dark_header_master">ऑटो डार्क शेड्यूल</string>
+    <string name="item_auto_dark_master_title">ऑटो डार्क शेड्यूल चालू करें</string>
+    <string name="item_auto_dark_master_content">शेड्यूल के अनुसार डार्क थीम अपने आप चालू करें</string>
+    <string name="item_auto_dark_header_mode">शेड्यूल मोड</string>
+    <string name="item_auto_dark_mode_sun_title">सूर्यास्त से सूर्योदय</string>
+    <string name="item_auto_dark_mode_sun_content">सूर्यास्त पर डार्क मोड चालू और सूर्योदय पर बंद करें</string>
+    <string name="item_auto_dark_mode_custom_title">कस्टम समय शेड्यूल</string>
+    <string name="item_auto_dark_mode_custom_content">अपने चुने हुए शुरू और खत्म होने के समय के अनुसार डार्क मोड चालू करें</string>
+    <string name="item_auto_dark_mode_system_title">सिस्टम थीम का पालन करें</string>
+    <string name="item_auto_dark_mode_system_content">आपके फ़ोन की डार्क थीम सेटिंग को लाइव दोहराएँ, आपके बदलते ही DarQ भी बदल जाता है</string>
+    <string name="auto_dark_persistent_service_auto_enabled">सिस्टम थीम का पालन करें तुरंत अपडेट हो सके, इसलिए पर्सिस्टेंट बैकग्राउंड सर्विस चालू कर दी गई</string>
+    <string name="dialog_disable_persistent_service_title">पर्सिस्टेंट सर्विस बंद करें?</string>
+    <string name="dialog_disable_persistent_service_message">सिस्टम थीम का पालन करें को तुरंत अपडेट होने के लिए पर्सिस्टेंट सर्विस चाहिए। इसे बंद करने पर DarQ सिस्टम थीम के साथ केवल ऐप खुलने या डिवाइस रीबूट होने पर ही सिंक होगा।</string>
+    <string name="dialog_disable_persistent_service_confirm">फिर भी बंद करें</string>
+    <string name="item_auto_dark_header_sunset_options">सूर्यास्त और सूर्योदय विकल्प</string>
+    <string name="item_auto_dark_header_custom_options">कस्टम समय विकल्प</string>
+    <string name="item_auto_dark_header_target">शेड्यूल का लक्ष्य</string>
+    <string name="item_auto_dark_target_system_title">सिस्टम और DarQ डार्क मोड</string>
+    <string name="item_auto_dark_target_system_content">शेड्यूल पर Android सिस्टम डार्क मोड और DarQ Force Dark दोनों साथ में बदलें</string>
+    <string name="item_auto_dark_target_darq_title">केवल DarQ Force Dark</string>
+    <string name="item_auto_dark_target_darq_content">सिस्टम डार्क मोड बदले बिना शेड्यूल पर DarQ का ऐप-वार Force Dark बदलें</string>
+    <string name="item_auto_dark_start_time_title">शुरू होने का समय (डार्क मोड चालू)</string>
+    <string name="item_auto_dark_end_time_title">खत्म होने का समय (डार्क मोड बंद)</string>
+    <string name="item_use_location_title">GPS लोकेशन का उपयोग करें</string>
+    <string name="item_use_location_content">सूर्यास्त और सूर्योदय की गणना के लिए सटीक GPS लोकेशन का उपयोग करें</string>
+    <string name="dialog_select_time">समय चुनें</string>
+    <string name="item_advanced_group_service_title">सर्विस और इंटीग्रेशन</string>
+    <string name="item_advanced_group_updates_title">अपडेट</string>
+    <string name="item_advanced_group_theme_title">थीम विकल्प</string>
+    <string name="item_advanced_group_behaviour_title">ऐप का व्यवहार</string>
+    <string name="item_persistent_service_title">सर्विस को बैकग्राउंड में चालू रखें</string>
+    <string name="item_persistent_service_content">कम प्राथमिकता वाली फ़ोरग्राउंड सर्विस चलाता है ताकि OS, DarQ और Shizuku को बंद न कर दे। OxygenOS, ColorOS और HyperOS के लिए बहुत अनुशंसित।</string>
+    <string name="item_persistent_notification_settings_title">नोटिफ़िकेशन प्रबंधित करें</string>
+    <string name="item_persistent_notification_settings_content">सिस्टम सेटिंग में बैकग्राउंड सर्विस का स्थायी नोटिफ़िकेशन छोटा या छिपाने के लिए टैप करें।</string>
+    <string name="persistent_foreground_service_notification_title">DarQ बैकग्राउंड सर्विस</string>
+    <string name="persistent_foreground_service_notification_content">डार्क मोड लगाने के लिए चालू ऐप्स पर नज़र रखी जा रही है।</string>
+    <string name="item_header_about">जानकारी</string>
+    <string name="item_about_faq_title">अक्सर पूछे जाने वाले प्रश्न</string>
+    <string name="item_about_title">DarQ Reborn v%1s</string>
+    <string name="item_about_content">विकसित और संचालित: &lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;। <br/><br/>सोर्स कोड &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt; पर उपलब्ध है।</string>
+    <string name="item_developer_options_title">डेवलपर विकल्प</string>
+    <string name="item_developer_options_kill_service_title">डुप्लिकेट सर्विस बंद करें</string>
+    <string name="item_developer_options_kill_service_content">किसी भी डुप्लिकेट DarQ सर्विस को बंद करें। सर्विस के संचालन के तरीके के कारण इसकी ज़रूरत नहीं पड़नी चाहिए, लेकिन Shizuku और root मोड के बीच बदलने पर पड़ सकती है।</string>
+    <string name="item_developer_options_kill_service_toast_success">सफल</string>
+    <string name="item_developer_options_kill_service_toast_failed">विफल</string>
+    <string name="item_developer_options_service_info">सर्विस की जानकारी</string>
+    <string name="item_developer_options_service_info_not_connected">कनेक्ट नहीं है</string>
+    <string name="item_developer_options_service_info_connected">कनेक्टेड, सर्विस का प्रकार: %1s</string>
+    <string name="item_backup_restore_title">बैकअप और रीस्टोर</string>
+    <string name="item_backup_restore_content">अपना DarQ कॉन्फ़िग डिवाइस या क्लाउड में सेव और रीस्टोर करें</string>
+    <string name="item_backup_restore_backup">बैकअप</string>
+    <string name="item_backup_restore_backup_creating">बैकअप बनाया जा रहा है…</string>
+    <string name="item_backup_restore_backup_success">बैकअप बन गया</string>
+    <string name="item_backup_restore_backup_failed">बैकअप विफल रहा</string>
+    <string name="item_backup_restore_restore_success">सफलतापूर्वक रीस्टोर हुआ</string>
+    <string name="item_backup_restore_restore_failed">रीस्टोर विफल रहा</string>
+    <string name="item_backup_restore_restore_running">बैकअप रीस्टोर हो रहा है…</string>
+    <string name="item_backup_restore_restore">रीस्टोर</string>
+    <string name="item_xposed_title">Xposed मॉड्यूल</string>
+    <string name="item_xposed_content">DarQ Xposed मॉड्यूल की सेटिंग बदलें</string>
+    <string name="item_xposed_aggressive_dark_title">आक्रामक Force Dark</string>
+    <string name="item_xposed_aggressive_dark_content">डार्क मोड में थीम को लाइट स्टाइल में बदलने वाले ऐप्स को ओवरराइड करें। इससे कुछ ऐप्स में रंग की समस्या आ सकती है।</string>
+    <string name="item_xposed_invert_status_bar_fix_title">स्टेटस बार इन्वर्शन ठीक करें</string>
+    <string name="item_xposed_invert_status_bar_fix_content">Force Dark ऐप्स में स्टेटस बार इन्वर्शन बंद करने की कोशिश करें, ताकि गहरे बैकग्राउंड पर गहरे आइकन न दिखें</string>
+    <string name="item_xposed_info_title">Xposed नोट्स</string>
+    <string name="item_xposed_info_content">DarQ, LSPosed 1.9.2, उसके अनुरक्षित फ़ोर्क और Vector के साथ काम करता है।
+हर ऐप को अपने Xposed मैनेजर के साथ-साथ DarQ में भी चालू करें, फिर सेटिंग बदलने के बाद ऐप को रीस्टार्ट करें।
+DarQ आपकी सेटिंग का बैकअप रखता है, इसलिए मॉड्यूल को बंद और चालू करने पर वे रीसेट नहीं होतीं।</string>
+    <string name="item_xposed_request_scope_title">चुने हुए ऐप्स को LSPosed स्कोप में जोड़ें</string>
+    <string name="item_xposed_request_scope_content">LSPosed या Vector से कहें कि DarQ में चुना गया हर ऐप मॉड्यूल के स्कोप में जोड़ दे</string>
+    <string name="xposed_scope_approved">%1$s को LSPosed स्कोप में जोड़ा गया</string>
+    <string name="xposed_scope_approved_count">%1$d ऐप्स को LSPosed स्कोप में जोड़ा गया</string>
+    <string name="xposed_scope_failed">LSPosed स्कोप अनुरोध विफल रहा: %1$s</string>
+    <string name="xposed_scope_already">चुने हुए सभी ऐप्स पहले से LSPosed स्कोप में हैं</string>
+    <string name="xposed_scope_unavailable">DarQ मॉड्यूल चालू होने के साथ LSPosed 2.x या Vector चाहिए</string>
+    <string name="loading_service_connect">सर्विस से कनेक्ट हो रहा है…</string>
+    <string name="snackbar_syncing_text">सर्विस के साथ बदलाव सिंक हो रहे हैं…</string>
+    <string name="snackbar_syncing_complete_text">बदलाव सर्विस के साथ सिंक हो गए।</string>
+    <string name="snackbar_syncing_complete_app_enabled">%1$s चालू किया गया।</string>
+    <string name="snackbar_syncing_complete_app_disabled">%1$s बंद किया गया।</string>
+    <string name="snackbar_syncing_failed_text">बदलाव सिंक नहीं हो सके। बदलाव अगले रीस्टार्ट पर लागू होंगे।</string>
+    <string name="snackbar_syncing_failed_button">अधिक जानकारी</string>
+    <string name="loading_apps">ऐप्स लोड हो रहे हैं…</string>
+    <string name="loading_apps_progress">ऐप्स लोड हो रहे हैं… (%1$d/%2$d)</string>
+    <string name="search">खोजें</string>
+    <string name="app_search_empty">कुछ नहीं मिला</string>
+    <string name="menu_app_picker_show_non_launchable_apps">लॉन्च न होने वाले ऐप्स दिखाएँ\t</string>
+    <string name="bottom_sheet_shizuku_not_running_title">Shizuku चालू नहीं है</string>
+    <string name="bottom_sheet_shizuku_not_running_content">Shizuku इंस्टॉल है लेकिन सर्विस शुरू नहीं हुई है। आगे बढ़ने के लिए Shizuku खोलें और ADB से सर्विस शुरू करें।</string>
+    <string name="bottom_sheet_shizuku_not_running_positive">Shizuku खोलें</string>
+    <string name="bottom_sheet_shizuku_not_running_negative">बंद करें</string>
+    <string name="bottom_sheet_service_timeout_title">सर्विस टाइमआउट</string>
+    <string name="bottom_sheet_service_timeout_content">DarQ सर्विस शुरू या कनेक्ट करते समय समय सीमा खत्म हो गई। अपना डिवाइस रीबूट करके देखें।</string>
+    <string name="bottom_sheet_service_timeout_positive">बंद करें</string>
+    <string name="bottom_sheet_service_timeout_neutral">डायग्नोस्टिक्स कॉपी करें</string>
+    <string name="bottom_sheet_service_timeout_copied">डायग्नोस्टिक्स क्लिपबोर्ड पर कॉपी हो गए</string>
+    <string name="bottom_sheet_shizuku_not_installed_title">Shizuku इंस्टॉल नहीं है</string>
+    <string name="bottom_sheet_shizuku_not_installed_content">Shizuku इंस्टॉल नहीं है और आपका डिवाइस रूटेड नहीं है (या आपने root अनुमति अस्वीकार कर दी)। root के बिना DarQ का उपयोग करने के लिए कृपया Shizuku इंस्टॉल करें।</string>
+    <string name="bottom_sheet_shizuku_not_installed_positive">Shizuku पाएँ</string>
+    <string name="bottom_sheet_shizuku_not_installed_negative">बंद करें</string>
+    <string name="bottom_sheet_shizuku_not_installed_neutral">अधिक जानकारी</string>
+    <string name="bottom_sheet_shizuku_more_info_title">Shizuku</string>
+    <string name="bottom_sheet_shizuku_more_info_content"><b>Shizuku</b> एक ऐप और फ़्रेमवर्क है जिससे ऐप्स ADB अनुमतियों के साथ कोड चला सकते हैं।\nDarQ के पिछले संस्करणों में इस्तेमाल होने वाली ADB स्क्रिप्ट की तरह, आपको इसकी सर्विस हर बूट पर एक बार शुरू करनी होती है।\nहालाँकि स्क्रिप्ट के उलट, Shizuku उन ऐप्स को (जिन्हें आपकी अनुमति है और जो फ़्रेमवर्क लागू करते हैं, जैसे DarQ) बिना किसी दूसरे कमांड के अपनी सर्विस शुरू करने देता है। यह root ऐप्स और Superuser से काफ़ी मिलता-जुलता है, असल में Shizuku मूल रूप से वही है, ऊँची अनुमति वाला कोड चलाने का Superuser जैसा फ़्रेमवर्क।\nShizuku आपको Android 11 और उससे ऊपर Wireless Debugging से <i>अपने ही डिवाइस</i> से कनेक्ट करके सर्विस <b>बिना PC के</b> शुरू करने की सुविधा भी देता है।</string>
+    <string name="boot_foreground_service_notification_title">DarQ</string>
+    <string name="boot_foreground_service_notification_content">DarQ सर्विस शुरू हो रही है…</string>
+    <string name="boot_foreground_service_notification_failed_title">DarQ सर्विस शुरू नहीं हो सकी</string>
+    <string name="boot_foreground_service_notification_failed_content">DarQ खोलकर दोबारा कोशिश करने के लिए टैप करें</string>
+    <string name="boot_foreground_service_notification_shizuku_title">DarQ Shizuku सर्विस</string>
+    <string name="boot_foreground_service_notification_shizuku_content">रीबूट के बाद काम करने के लिए DarQ को Shizuku की सर्विस शुरू होना ज़रूरी है, Shizuku खोलने के लिए टैप करें</string>
+    <string name="notification_channel_boot_startup_title">स्टार्ट अप</string>
+    <string name="notification_channel_boot_startup_description">बूट प्रक्रिया के दौरान स्टार्ट अप पर दिखने वाले नोटिफ़िकेशन</string>
+    <string name="notification_channel_boot_auto_dark_title">ऑटो डार्क</string>
+    <string name="notification_channel_boot_auto_dark_description">सूर्योदय या सूर्यास्त पर अपने आप डार्क मोड में जाने या बाहर आने पर दिखने वाला नोटिफ़िकेशन</string>
+    <string name="auto_dark_foreground_notification_title">DarQ ऑटो डार्क थीम</string>
+    <string name="auto_dark_foreground_notification_content">थीम बदलाव लागू हो रहा है…</string>
+    <string name="auto_dark_foreground_notification_content_changes">बदलाव लागू हो रहे हैं…</string>
+    <string name="auto_dark_foreground_notification_failed_title">DarQ ऑटो डार्क थीम</string>
+    <string name="auto_dark_foreground_notification_failed_content">थीम लागू नहीं हो सकी, अपना डिवाइस रीबूट करके देखें।</string>
+    <string name="dialog_location_permission_text">सूर्योदय और सूर्यास्त का समय पाने के लिए <b>DarQ</b> को आपकी लोकेशन का उपयोग करने दें?</string>
+    <string name="dialog_location_permission_use_location">लोकेशन का उपयोग करें</string>
+    <string name="dialog_location_permission_use_timezone">टाइम ज़ोन का उपयोग करें\n<small>(कम सटीक)</small></string>
+    <string name="chip_donate">विकास में सहयोग करें</string>
+    <string name="chip_twitter">X</string>
+    <string name="chip_github">GitHub</string>
+    <string name="chip_socials">डेवलपर</string>
+    <string name="chip_credits">श्रेय</string>
+    <string name="menu_open_source_libraries">ओपन सोर्स लाइब्रेरी</string>
+    <string name="bottom_sheet_update_available_title">अपडेट उपलब्ध है</string>
+    <string name="bottom_sheet_update_available_positive">डाउनलोड</string>
+    <string name="bottom_sheet_update_available_negative">बंद करें</string>
+    <string name="bottom_sheet_update_available_neutral">GitHub पर देखें</string>
+    <string name="download_manager_description">अपडेट डाउनलोड हो रहा है…</string>
+    <string name="bs_update_download_failed">डाउनलोड विफल रहा</string>
+    <string name="item_check_updates_manual_title">अपडेट जाँचें</string>
+    <string name="item_check_updates_manual_content">DarQ Reborn के नए संस्करण हाथ से जाँचें</string>
+    <string name="checking_for_updates">अपडेट जाँचे जा रहे हैं…</string>
+    <string name="up_to_date">DarQ अप टू डेट है</string>
+    <string name="check_updates_failed">अपडेट जाँचना विफल रहा</string>
+    <string name="download_complete">डाउनलोड पूरा हुआ</string>
+    <string name="install">इंस्टॉल करें</string>
+    <string name="close">बंद करें</string>
+    <string name="app_picker_header_active">सक्रिय</string>
+    <string name="app_picker_clear_search">खोज साफ़ करें</string>
+    <string name="app_picker_header_all">अन्य ऐप्लिकेशन</string>
+    <string name="item_boot_wait_shizuku_title">बूट पर Shizuku का इंतज़ार करें</string>
+    <string name="item_boot_wait_shizuku_content">कनेक्ट करने से पहले बूट पर Shizuku के शुरू होने का इंतज़ार करता है, जिससे स्टार्ट अप विफलता के नोटिफ़िकेशन से बचा जा सके।</string>
+    <string name="item_check_for_prereleases_title">प्री-रिलीज़ जाँचें</string>
+    <string name="item_check_for_prereleases_content">अपडेट जाँचते समय बीटा और प्री-रिलीज़ संस्करण भी शामिल करें।</string>
+    <string name="donation_dialog_title">विकास में सहयोग करें</string>
+    <string name="donation_dialog_upi_title">UPI से भुगतान करें</string>
+    <string name="donation_dialog_upi_summary">Google Pay, PhonePe, Paytm, BHIM आदि से भुगतान करें (भारत)</string>
+    <string name="donation_dialog_global_title">PayPal</string>
+    <string name="donation_dialog_global_summary">अंतरराष्ट्रीय क्रेडिट/डेबिट कार्ड या PayPal से भुगतान करें</string>
+
+    <string name="social_developer_name">Mohit Arora</string>
+    <string name="social_developer_role">सिस्टम आर्किटेक्ट और मोबाइल इंजीनियर</string>
+    <string name="social_website_title">निजी वेबसाइट</string>
+    <string name="social_website_summary">mohitarora.me</string>
+    <string name="social_github_profile_title">GitHub प्रोफ़ाइल</string>
+    <string name="social_github_profile_summary">@Arora-Sir</string>
+    <string name="social_linkedin_profile_title">LinkedIn प्रोफ़ाइल</string>
+    <string name="social_linkedin_profile_summary">in/arora-sir</string>
+    <string name="social_github_repo_title">GitHub रिपॉज़िटरी</string>
+    <string name="social_github_repo_summary">Arora-Sir/DarQ-Reborn</string>
+    <string name="social_twitter_title">X</string>
+    <string name="social_twitter_summary">@MohitAr0rA</string>
+    <string name="social_instagram_title">Instagram</string>
+    <string name="social_instagram_summary">@arora.sir</string>
+    <string name="social_reddit_title">Reddit</string>
+    <string name="social_reddit_summary">u/AroraSir</string>
+
+    <!-- Support, credits and updates -->
+    <string name="safe_run_failed">कुछ गड़बड़ हो गई। त्रुटि अगली रिपोर्ट के लिए सेव कर ली गई है।</string>
+    <string name="link_no_browser">यह लिंक खोलने के लिए कोई ब्राउज़र नहीं मिला</string>
+    <string name="item_support_content">वैकल्पिक, हमेशा आपकी मर्ज़ी</string>
+    <string name="support_intro">DarQ Reborn मुफ़्त और ओपन सोर्स है। इसका सहयोग करना वैकल्पिक है और हमेशा आपकी मर्ज़ी पर निर्भर है।</string>
+    <string name="support_upi_chooser">UPI से सहयोग करें</string>
+    <string name="support_upi_none">कोई UPI ऐप नहीं मिला। UPI ID क्लिपबोर्ड पर कॉपी हो गई।</string>
+    <string name="support_upi_copied">UPI ID कॉपी हुई: %1$s</string>
+    <string name="support_copy_upi_title">UPI ID कॉपी करें</string>
+    <string name="support_copy_upi_summary">mohit1998arora@yescred</string>
+    <string name="support_sponsors_title">GitHub Sponsors</string>
+    <string name="support_sponsors_summary">GitHub के ज़रिए मासिक या एक बार सहयोग करें</string>
+    <string name="credits_title">श्रेय</string>
+    <string name="credits_intro">DarQ Reborn मूल DarQ को आगे बढ़ाता है और इन ओपन सोर्स प्रोजेक्ट के काम पर टिका है।</string>
+    <string name="credits_upstream_title">Kieron Quinn का DarQ</string>
+    <string name="credits_upstream_summary">वह मूल प्रोजेक्ट जिससे यह ऐप फ़ोर्क किया गया है</string>
+    <string name="credits_author_title">Kieron Quinn</string>
+    <string name="credits_author_summary">DarQ के मूल लेखक</string>
+    <string name="credits_shizuku_title">Shizuku</string>
+    <string name="credits_shizuku_summary">Rikka Apps, root के बिना DarQ को सिस्टम एक्सेस के साथ चलाता है</string>
+    <string name="credits_xposed_title">LSPosed और LibXposed</string>
+    <string name="credits_xposed_summary">वे Xposed फ़्रेमवर्क जिनके ज़रिए DarQ हुक करता है</string>
+    <string name="credits_libsu_title">libsu</string>
+    <string name="credits_libsu_summary">topjohnwu, root सर्विस चलाता है</string>
+    <string name="credits_contributors_title">योगदानकर्ता</string>
+    <string name="credits_contributors_summary">वे सभी जिन्होंने GitHub पर कोई सुधार या विचार भेजा</string>
+    <string name="credits_licences_title">ओपन सोर्स लाइसेंस</string>
+    <string name="credits_licences_summary">इस ऐप में शामिल लाइब्रेरी</string>
+    <string name="item_obtainium_title">Obtainium से ट्रैक करें</string>
+    <string name="item_obtainium_content">एक टैप में DarQ को Obtainium में जोड़ें और नए रिलीज़ की सूचना पाएँ</string>
+    <string name="bottom_sheet_update_obtainium">Obtainium से ट्रैक करें</string>
+
+    <!-- Status card -->
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">कनेक्ट हो रहा है</string>
+    <string name="status_label_not_connected">कनेक्ट नहीं है</string>
+    <string name="status_description">स्थिति: %1$s</string>
+    <string name="status_title_shizuku">Shizuku कनेक्टेड</string>
+    <string name="status_title_root">Root कनेक्टेड</string>
+    <string name="status_title_connecting">सर्विस से कनेक्ट हो रहा है</string>
+    <string name="status_title_none">सर्विस कनेक्ट नहीं है</string>
+    <string name="status_content_none_selected">अभी तक कोई ऐप नहीं चुना गया</string>
+    <plurals name="status_content_apps">
+        <item quantity="one">%d ऐप डार्क किया गया</item>
+        <item quantity="other">%d ऐप्स डार्क किए गए</item>
+    </plurals>
+    <string name="status_content_xposed">%1$s, Xposed मॉड्यूल सक्रिय</string>
+    <string name="status_content_not_connected">Shizuku खोलें या root दें, फिर DarQ दोबारा खोलें। मदद के लिए टैप करें।</string>
+
+    <!-- Appearance -->
+    <string name="item_appearance_title">रूप-रंग</string>
+    <string name="item_appearance_content">थीम, एक्सेंट रंग, प्योर ब्लैक और आइकन</string>
+    <string name="appearance_theme_title">थीम</string>
+    <string name="appearance_theme_system">सिस्टम का पालन करें</string>
+    <string name="appearance_theme_system_summary">आपके डिवाइस के डिस्प्ले मोड से मेल खाता है</string>
+    <string name="appearance_theme_light">लाइट</string>
+    <string name="appearance_theme_light_summary">लाइट थीम हमेशा चालू रखें</string>
+    <string name="appearance_theme_dark">डार्क</string>
+    <string name="appearance_theme_dark_summary">डार्क थीम हमेशा चालू रखें</string>
+    <string name="appearance_pure_black_title">प्योर ब्लैक</string>
+    <string name="appearance_pure_black_content">डार्क मोड में असली काला बैकग्राउंड इस्तेमाल करता है, जिससे AMOLED स्क्रीन पर बिजली बचती है</string>
+    <string name="appearance_pure_black_lift_title">सतह उठान</string>
+    <string name="appearance_pure_black_lift_summary">सतह उठान: %1$s। बदलने के लिए टैप करें।</string>
+    <string name="appearance_pure_black_lift_hint">प्योर ब्लैक के कार्ड, फ़ील्ड और सेक्शन को सपाट से उभरे हुए की ओर ले जाता है। पेज काला ही रहता है।</string>
+    <string name="appearance_pure_black_lift_sample_section">सेक्शन</string>
+    <string name="appearance_pure_black_lift_sample_field">फ़ील्ड</string>
+    <string name="appearance_pure_black_lift_sample_selected">चुना हुआ आइटम</string>
+    <string name="appearance_pure_black_lift_level">10 में से स्तर %1$d</string>
+    <string name="appearance_pure_black_lift_level_recommended">10 में से स्तर %1$d, अनुशंसित</string>
+    <string name="appearance_pure_black_lift_reset">रीसेट</string>
+    <string name="appearance_accent_title">एक्सेंट रंग</string>
+    <string name="appearance_accent_title_chosen">एक्सेंट रंग: %1$s</string>
+    <string name="appearance_accent_contrast">कॉन्ट्रास्ट काले पर %1$.1f:1, कार्ड पर %2$.1f:1।</string>
+    <string name="appearance_accent_low_contrast">यह रंग गहरी सतहों पर मुश्किल से दिखता है।</string>
+    <string name="appearance_accent_reset">रीसेट</string>
+    <string name="appearance_accent_wallpaper">वॉलपेपर</string>
+    <string name="appearance_accent_custom_value">कस्टम रंग %1$s</string>
+    <string name="appearance_accent_custom_summary">वॉलपेपर का रंग</string>
+    <string name="appearance_accent_custom_title">कस्टम रंग</string>
+    <string name="appearance_accent_custom_pick">कस्टम</string>
+    <string name="appearance_accent_hex">हेक्स रंग</string>
+    <string name="appearance_accent_hex_error">छह हेक्स अंक इस्तेमाल करें, जैसे #0072DE</string>
+    <string name="appearance_accent_light">लाइट</string>
+    <string name="appearance_accent_dark">डार्क</string>
+    <string name="appearance_accent_sample_title">डार्क मोड</string>
+    <string name="appearance_accent_sample_button">चालू करें</string>
+    <string name="appearance_accent_use_color">यह रंग इस्तेमाल करें</string>
+    <string name="appearance_accent_apply">लागू करें</string>
+    <string name="appearance_accent_area_description">संतृप्ति और चमक</string>
+    <string name="appearance_accent_hue_description">ह्यू</string>
+    <string name="appearance_accent_note_dynamic">Android इसी रंग से पूरी रंग योजना बनाता है।</string>
+    <string name="appearance_accent_fallback">Android 10 और 11 इस रंग के सबसे नज़दीकी प्रीसेट का उपयोग करते हैं</string>
+    <string-array name="appearance_accent_presets">
+        <item>नीला</item>
+        <item>टील</item>
+        <item>हरा</item>
+        <item>बैंगनी</item>
+        <item>नारंगी</item>
+        <item>गुलाबी</item>
+        <item>अंबर</item>
+        <item>मोनो</item>
+    </string-array>
+    <string name="appearance_tinted_icons_title">रंगीन आइकन</string>
+    <string name="appearance_language_title">भाषा</string>
+    <string name="appearance_language_system">सिस्टम डिफ़ॉल्ट</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
+    <string name="appearance_tinted_icons_content">सेटिंग आइकन को क्लासिक बहुरंगी सेट की जगह एक्सेंट रंग में रंगता है</string>
+
+    <!-- Diagnostics -->
+    <string name="item_report_issue_title">समस्या बताएँ</string>
+    <string name="item_report_issue_content">डायग्नोस्टिक लॉग के साथ बग बताएँ या GitHub पर कोई फ़ीचर सुझाएँ</string>
+    <string name="report_issue_bug">बग बताएँ</string>
+    <string name="report_issue_feature">फ़ीचर सुझाएँ</string>
+    <string name="report_issue_include_log">डायग्नोस्टिक लॉग शामिल करें</string>
+    <string name="report_issue_include_log_hint">आप पहले उसे देख सकते हैं। आपके ऐप्स और लोकेशन हटा दिए जाते हैं।</string>
+    <string name="report_issue_no_log_title">लॉग की ज़रूरत नहीं</string>
+    <string name="report_issue_no_log_hint">लॉग केवल बग रिपोर्ट में जोड़े जाते हैं।</string>
+    <string name="report_issue_continue">आगे बढ़ें</string>
+    <string name="diagnostics_crash_title">DarQ अचानक बंद हो गया</string>
+    <string name="diagnostics_crash_content">इस डिवाइस पर एक क्रैश रिपोर्ट सेव की गई है। जब तक आप न चुनें, कुछ भी भेजा नहीं जाता।</string>
+    <string name="diagnostics_crash_review">रिपोर्ट देखें</string>
+    <string name="diagnostics_crash_not_now">अभी नहीं</string>
+    <string name="diagnostics_report_title">DarQ डायग्नोस्टिक लॉग</string>
+    <string name="diagnostics_preview_trimmed">[लॉग की %1$d और वर्ण-पंक्तियाँ, उसी तरह छिपाई हुई, आगे बढ़ने पर शामिल की जाती हैं]</string>
+    <string name="diagnostics_report_github">GitHub पर जारी रखें</string>
+    <string name="diagnostics_report_more">और विकल्प</string>
+    <string name="diagnostics_summary_note">पूरा लॉग DarQ ने कॉपी कर लिया है। उसे इस पंक्ति के नीचे चिपकाएँ।</string>
+    <string name="diagnostics_report_close">बंद करें</string>
+    <string name="diagnostics_report_summary">सारांश</string>
+    <string name="diagnostics_report_last_crash">आख़िरी क्रैश</string>
+    <string name="diagnostics_report_handled">संभाली गई त्रुटियाँ</string>
+    <string name="diagnostics_report_none">कोई नहीं</string>
+    <string name="diagnostics_report_log_hint">आगे बढ़ने पर पूरा छिपाया हुआ लॉग शामिल होता है। आपके ऐप्स की जगह छोटे कोड लगाए जाते हैं और आपकी लोकेशन हटा दी जाती है।</string>
+    <string name="diagnostics_report_show_log">पूरा लॉग दिखाएँ</string>
+    <string name="diagnostics_report_hide_log">पूरा लॉग छिपाएँ</string>
+    <string name="report_issue_what_happened">क्या हुआ?</string>
+    <string name="report_issue_steps">समस्या दोहराने के चरण</string>
+    <string name="report_issue_problem">आप DarQ से क्या करवाना चाहेंगे?</string>
+    <string name="report_issue_solution">यह कैसे काम करना चाहिए? (वैकल्पिक)</string>
+    <string name="diagnostics_send_title">लॉग भेजें</string>
+    <string-array name="diagnostics_send_options">
+        <item>GitHub पर बग रिपोर्ट खोलें</item>
+        <item>मौजूदा issue में जोड़ें</item>
+        <item>Downloads में सेव करें</item>
+        <item>शेयर करें</item>
+        <item>क्लिपबोर्ड पर कॉपी करें</item>
+    </string-array>
+    <string name="diagnostics_send_github_summary">ब्राउज़र में नया GitHub issue पहले से भरकर खोलता है</string>
+    <string name="diagnostics_send_comment_summary">फ़ॉर्मैट की हुई टिप्पणी कॉपी करता है और issues की सूची खोलता है</string>
+    <string name="diagnostics_send_save_summary">कच्चा डायग्नोस्टिक लॉग लोकल स्टोरेज में सेव करता है</string>
+    <string name="diagnostics_send_share_summary">Android शेयर शीट से भेजें</string>
+    <string name="diagnostics_send_copy_summary">पूरा डायग्नोस्टिक टेक्स्ट क्लिपबोर्ड पर कॉपी करता है</string>
+    <string name="diagnostics_copied_form">पूरा लॉग कॉपी हो गया। उसे Relevant log output के अंत में चिपकाएँ।</string>
+    <string name="diagnostics_copied_comment">लॉग कॉपी हो गया। issue खोलें और उसे टिप्पणी में चिपकाएँ।</string>
+    <string name="diagnostics_copied">लॉग क्लिपबोर्ड पर कॉपी हो गया</string>
+    <string name="diagnostics_saved">लॉग Downloads में सेव हो गया</string>
+    <string name="diagnostics_save_failed">लॉग को Downloads में सेव नहीं किया जा सका</string>
+
+</resources>

@@ -35,6 +35,7 @@ class ReportIntakeBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSh
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = requireContext()
+        android.util.Log.i("DarqLang", "report sheet: " + com.kieronquinn.app.darq.components.theme.AppLanguage.describe(context))
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -88,10 +89,10 @@ class ReportIntakeBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSh
                 val bug = isBug()
                 reportIssueFirstLayout.hint = getString(if (bug) R.string.report_issue_what_happened else R.string.report_issue_problem)
                 reportIssueSecondLayout.hint = getString(if (bug) R.string.report_issue_steps else R.string.report_issue_solution)
-                reportIssueIncludeLog.isEnabled = bug
-                reportIssueLogTitle.isEnabled = bug
-                reportIssueLogHint.isEnabled = bug
-                reportCardLogOption.alpha = if (bug) 1.0f else 0.5f
+                //A feature request has no log, so the card says so in full color instead of showing a greyed checkbox that looks mandatory. The checkbox stays invisible, not gone, so nothing shifts.
+                reportIssueLogTitle.setText(if (bug) R.string.report_issue_include_log else R.string.report_issue_no_log_title)
+                reportIssueLogHint.setText(if (bug) R.string.report_issue_include_log_hint else R.string.report_issue_no_log_hint)
+                reportIssueIncludeLog.visibility = if (bug) View.VISIBLE else View.INVISIBLE
 
                 if (bug) {
                     reportIssueBug.backgroundTintList = ColorStateList.valueOf(accent)
@@ -106,6 +107,8 @@ class ReportIntakeBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSh
                 }
             }
 
+            //Both modes reserve two hint lines, so the sheet keeps its height when the mode changes
+            reportIssueLogHint.minLines = 2
             reportIssueType.addOnButtonCheckedListener { _, _, isChecked ->
                 if (isChecked) update()
             }

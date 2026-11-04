@@ -45,12 +45,23 @@
 		android:roundIcon="@mipmap/ic_launcher"
 		android:supportsRtl="true"
 		android:enableOnBackInvokedCallback="true"
+		android:localeConfig="@xml/locales_config"
 		tools:ignore="GoogleAppIndexingWarning">
+
+		<service
+			android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+			android:enabled="false"
+			android:exported="false">
+			<meta-data
+				android:name="autoStoreLocales"
+				android:value="true" />
+		</service>
 
 		<activity
 			android:name="com.kieronquinn.app.darq.ui.activities.DarqActivity"
 			android:theme="@style/AppTheme"
 			android:launchMode="singleTask"
+			android:configChanges="locale|layoutDirection"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

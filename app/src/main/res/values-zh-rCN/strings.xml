@@ -214,6 +214,14 @@
     <string name="appearance_accent_note_dynamic">Android 会根据此颜色生成完整的配色方案。</string>
     <string name="appearance_accent_fallback">Android 10 和 11 使用与此颜色最接近的预设</string>
     <string name="appearance_tinted_icons_title">着色图标</string>
+    <string name="appearance_language_title">语言</string>
+    <string name="appearance_language_system">跟随系统</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
     <string name="appearance_tinted_icons_content">使用强调色为设置图标着色，而不是经典的多彩图标</string>
     <string name="item_report_issue_title">报告问题</string>
     <string name="item_report_issue_content">附带诊断日志报告错误，或在 GitHub 上提出功能建议</string>
@@ -221,6 +229,8 @@
     <string name="report_issue_feature">建议新功能</string>
     <string name="report_issue_include_log">包含诊断日志</string>
     <string name="report_issue_include_log_hint">发送前你可以先查看。你的应用和位置信息已被移除。</string>
+    <string name="report_issue_no_log_title">无需日志</string>
+    <string name="report_issue_no_log_hint">日志仅会添加到错误报告中。</string>
     <string name="report_issue_continue">继续</string>
     <string name="diagnostics_crash_title">DarQ 意外关闭</string>
     <string name="diagnostics_crash_content">崩溃报告已保存在此设备上。除非你选择发送，否则不会发送任何内容。</string>

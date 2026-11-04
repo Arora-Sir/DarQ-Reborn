@@ -268,6 +268,14 @@
     <string name="appearance_accent_note_dynamic">Android створює повну колірну схему на основі цього кольору.</string>
     <string name="appearance_accent_fallback">Android 10 і 11 використовують готовий колір, найближчий до цього</string>
     <string name="appearance_tinted_icons_title">Кольорові піктограми</string>
+    <string name="appearance_language_title">Мова</string>
+    <string name="appearance_language_system">Системна</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
     <string name="appearance_tinted_icons_content">Фарбує піктограми налаштувань у колір акценту замість класичного різнокольорового набору</string>
     <string name="item_report_issue_title">Повідомити про проблему</string>
     <string name="item_report_issue_content">Повідомте про помилку з діагностичним журналом або запропонуйте функцію на GitHub</string>
@@ -275,6 +283,8 @@
     <string name="report_issue_feature">Запропонувати функцію</string>
     <string name="report_issue_include_log">Додати діагностичний журнал</string>
     <string name="report_issue_include_log_hint">Ви перегляньте його перед надсиланням. Ваші додатки та місцезнаходження видалено.</string>
+    <string name="report_issue_no_log_title">Журнал не потрібен</string>
+    <string name="report_issue_no_log_hint">Журнал додається лише до звітів про помилки.</string>
     <string name="report_issue_continue">Продовжити</string>
     <string name="diagnostics_crash_title">DarQ несподівано закрився</string>
     <string name="diagnostics_crash_content">Звіт про збій збережено на цьому пристрої. Нічого не надсилається, доки ви самі цього не оберете.</string>

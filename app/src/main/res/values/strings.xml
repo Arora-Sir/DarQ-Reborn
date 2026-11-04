@@ -296,6 +296,14 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
         <item>Mono</item>
     </string-array>
     <string name="appearance_tinted_icons_title">Tinted icons</string>
+    <string name="appearance_language_title">Language</string>
+    <string name="appearance_language_system">System default</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
     <string name="appearance_tinted_icons_content">Colors the settings icons with the accent color instead of the classic multicolor set</string>
 
     <!-- Diagnostics -->
@@ -305,6 +313,8 @@ DarQ keeps a backup of your settings, so switching the module off and on no long
     <string name="report_issue_feature">Suggest a feature</string>
     <string name="report_issue_include_log">Include diagnostic log</string>
     <string name="report_issue_include_log_hint">You review it first. Your apps and location are removed.</string>
+    <string name="report_issue_no_log_title">No log needed</string>
+    <string name="report_issue_no_log_hint">Logs are only added to bug reports.</string>
     <string name="report_issue_continue">Continue</string>
     <string name="diagnostics_crash_title">DarQ closed unexpectedly</string>
     <string name="diagnostics_crash_content">A crash report was saved on this device. Nothing is sent unless you choose to send it.</string>
