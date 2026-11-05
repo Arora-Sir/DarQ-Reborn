@@ -195,7 +195,7 @@ Open **Appearance** on the main screen. Pick light, dark or follow system, turn 
 
 ### How do I change the language?
 
-Open **Appearance** and tap **Language**. Pick System default, English, Hindi, Ukrainian or Simplified Chinese. The screens switch immediately and stay where they were. On Android 13 and later you can also choose the language in the system settings under Apps, DarQ, Language. Hindi, Ukrainian and Chinese are machine translated, so wording may not be perfect.
+Open **Appearance** and tap **Language**. Pick System default, English, Hindi, Ukrainian or Simplified Chinese. The screens switch immediately and stay where they were. On Android 13 and later you can also choose the language in the system settings under Apps, DarQ, Language. Hindi, Ukrainian and Chinese are machine translated, so wording may not be perfect. **Backup & Restore** includes your language.
 
 ### What does Report an issue send?
 

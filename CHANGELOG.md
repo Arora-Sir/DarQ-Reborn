@@ -9,7 +9,7 @@ All notable changes to DarQ Reborn are listed here. Versions follow the GitHub r
 * Report an issue for bugs and feature ideas with a structured preview, a redacted diagnostic log and prefilled GitHub forms, plus crash reports offered on the next launch.
 * Main screen status line showing the connected mode and the number of selected apps.
 * Support development row, Developer sheet, Credits sheet and an Obtainium one-tap link in Settings and the update sheet.
-* Language setting in Appearance with System default, English, Hindi, Ukrainian and Simplified Chinese. The switch applies on the same screen with no flash, and Android 13 and later list the languages in the system per-app language screen.
+* Language setting in Appearance with System default, English, Hindi, Ukrainian and Simplified Chinese. The switch applies on the same screen with no flash, Backup & Restore includes it, and Android 13 and later list the languages in the system per-app language screen.
 * Hindi translation, plus Ukrainian and Simplified Chinese translations of the new screens (all machine translated).
 
 ### Changed
