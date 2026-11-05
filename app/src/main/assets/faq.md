@@ -166,7 +166,9 @@ Adding System Framework or System UI to the scope is unnecessary and may cause s
 
 ### Why does the status bar invert (have black icons) when force dark is enabled? Can it be fixed?
 
-This appears to be a bug in Android, and as force dark is a developer option, may not be fixed. It may be possible to fix it with DarQ, and this is being investigated. In the meantime, you can mitigate this issue by enabling Force Dark on a per-app basis rather than enabling it globally for all apps at once.
+Each app decides the color of its status bar icons, not DarQ. A light themed app asks Android for dark icons, and Android keeps that request after DarQ has darkened the app. When the page runs under the status bar, the icons end up dark on a dark background and are hard to read. Apps that already ask for white icons, such as ones with a colored or dark header, are not affected.
+
+In Shizuku mode DarQ only switches the system force dark setting and cannot change another app's status bar request, so there is no fix on that path for now. If an app is affected, remove it from DarQ's app list so it keeps its light theme. On a rooted phone with LSPosed or Vector, the Xposed setting "Fix Status Bar Inversion" (on by default) clears the dark icon request for the apps in the scope, though it may not cover every app.
 
 ### On Samsung, a Pop-up View window sometimes has a white title bar. Why?
 
