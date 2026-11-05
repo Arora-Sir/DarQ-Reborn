@@ -113,7 +113,7 @@ Open **Appearance** in DarQ to change how the app looks.
 
 ## Check that DarQ works (DarQ Probe)
 
-Every release has a second small app, **DarQ Probe** (`DarQ-Probe.<version>.apk`, signed with the same release key as DarQ). It shows one plain white page, so you can see at a glance whether force dark reaches an app on your device.
+Every release has a second small app, **DarQ Probe** (`Probe-for-DarQ.<version>.apk`, signed with the same release key as DarQ). It shows one plain white page, so you can see at a glance whether force dark reaches an app on your device.
 
 1. Install the probe from the release page of the version you use.
 2. Open DarQ, tap **DarQ Per-App Force Dark** and select DarQ Probe.

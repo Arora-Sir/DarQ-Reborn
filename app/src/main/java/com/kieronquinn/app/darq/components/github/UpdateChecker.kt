@@ -43,6 +43,13 @@ class UpdateChecker(private val settings: DarqSharedPreferences) {
         private const val GITHUB_REPO = "Arora-Sir/DarQ-Reborn"
         private const val BASE_URL = "https://api.github.com/repos/$GITHUB_REPO/"
         private const val RELEASES_URL = "https://github.com/$GITHUB_REPO/releases"
+
+        // NOTE: A release also carries the DarQ Probe APK, and GitHub lists assets in its own order, so the first .apk can be the probe. The updater picks the DarQ APK by name and never falls back to a probe.
+        internal fun pickApkAsset(assets: List<Asset>?): Asset? {
+            val apks = assets?.filter { it.name?.endsWith(".apk") == true } ?: return null
+            return apks.firstOrNull { it.name?.startsWith("DarQ-Reborn", ignoreCase = true) == true }
+                ?: apks.firstOrNull { it.name?.contains("probe", ignoreCase = true) != true }
+        }
     }
 
     private fun isNewerVersion(remoteTag: String, localTag: String): Boolean {
@@ -97,8 +104,7 @@ class UpdateChecker(private val settings: DarqSharedPreferences) {
                         assets?.forEach {
                             Log.d("DarQUpdate", "getLatestRelease: Found asset option: name=${it.name}, url=${it.browserDownloadUrl}")
                         }
-                        val asset =
-                            gitHubReleaseResponse.assets?.firstOrNull { it.name?.endsWith(".apk") == true }
+                        val asset = pickApkAsset(gitHubReleaseResponse.assets)
                         if (asset == null) {
                             Log.e("DarQUpdate", "getLatestRelease: No asset ending in .apk found")
                             this@callbackFlow.trySend(null).isSuccess

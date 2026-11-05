@@ -122,10 +122,10 @@ jobs:
           "$BT/apksigner" sign \
             --ks "$RUNNER_TEMP/release.keystore" --ks-key-alias "$SIGNING_KEY_ALIAS" \
             --ks-pass env:SIGNING_KEYSTORE_PASSWORD --key-pass env:SIGNING_KEY_PASSWORD \
-            --out "DarQ-Probe.$VERSION.apk" "$UNSIGNED"
-          "$BT/apksigner" verify "DarQ-Probe.$VERSION.apk"
-          "$BT/aapt2" dump badging "DarQ-Probe.$VERSION.apk" | grep -q "package: name='com.darq.forcedarkprobe'" || { echo "Unexpected probe package"; exit 1; }
-          sha256sum "DarQ-Probe.$VERSION.apk" > "DarQ-Probe.$VERSION.apk.sha256"
+            --out "Probe-for-DarQ.$VERSION.apk" "$UNSIGNED"
+          "$BT/apksigner" verify "Probe-for-DarQ.$VERSION.apk"
+          "$BT/aapt2" dump badging "Probe-for-DarQ.$VERSION.apk" | grep -q "package: name='com.darq.forcedarkprobe'" || { echo "Unexpected probe package"; exit 1; }
+          sha256sum "Probe-for-DarQ.$VERSION.apk" > "Probe-for-DarQ.$VERSION.apk.sha256"
 
       - name: Create the draft pre-release
         env:
@@ -135,7 +135,7 @@ jobs:
             --title "DarQ Reborn v$VERSION" \
             --notes-file ".github/release-notes/$VERSION.md" \
             "DarQ-Reborn.$VERSION.apk" "DarQ-Reborn.$VERSION.apk.sha256" \
-            "DarQ-Probe.$VERSION.apk" "DarQ-Probe.$VERSION.apk.sha256"
+            "Probe-for-DarQ.$VERSION.apk" "Probe-for-DarQ.$VERSION.apk.sha256"
 
       - name: Delete the signing key
         if: always()
