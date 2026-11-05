@@ -88,11 +88,11 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         }
         val appBarHeight = resources.getDimension(R.dimen.app_bar_height)
         binding.collapsingToolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
-            height = (appBarHeight + statusBarHeight).roundToInt()
+            height = (appBarHeight + statusBarHeight + barExtra).roundToInt()
         }
         getToolbarHeight()?.let { toolbarHeight ->
             binding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
-                height = toolbarHeight + statusBarHeight
+                height = toolbarHeight + statusBarHeight + barExtra
             }
             binding.toolbar.updatePadding(top = statusBarHeight)
         }
@@ -108,7 +108,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         ViewCompat.setOnApplyWindowInsetsListener(binding.collapsingToolbar){ view, insets ->
             view.updateLayoutParams<AppBarLayout.LayoutParams> {
                 val appBarHeight = view.context.resources.getDimension(R.dimen.app_bar_height)
-                height = (appBarHeight + insets.getInsets(WindowInsetsCompat.Type.statusBars()).top).roundToInt()
+                height = (appBarHeight + insets.getInsets(WindowInsetsCompat.Type.statusBars()).top + barExtra).roundToInt()
             }
             insets
         }
@@ -118,7 +118,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                 val overflowPadding = resources.getDimension(R.dimen.padding_8)
                 val topInset = statusInsets.top
                 view.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
-                    height = it + topInset
+                    height = it + topInset + barExtra
                 }
                 view.updatePadding(left = statusInsets.left, top = topInset, right = statusInsets.right + overflowPadding.toInt())
             }
@@ -305,12 +305,31 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         StatusLevel.PENDING -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorOutline)
     }
 
+    //Extra bar height for the status subtitle at large fonts, added to every bar height computed from the insets
+    private var barExtra = 0
+
+    private fun setBarExtra(extra: Int) {
+        if(barExtra == extra || view == null) return
+        barExtra = extra
+        val statusTop = ViewCompat.getRootWindowInsets(binding.root)?.getInsets(WindowInsetsCompat.Type.statusBars())?.top
+            ?: resources.getIdentifier("status_bar_height", "dimen", "android").let { if(it > 0) resources.getDimensionPixelSize(it) else 0 }
+        binding.collapsingToolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
+            height = (resources.getDimension(R.dimen.app_bar_height) + statusTop + barExtra).roundToInt()
+        }
+        getToolbarHeight()?.let { toolbarHeight ->
+            binding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
+                height = toolbarHeight + statusTop + barExtra
+            }
+        }
+    }
+
     // NOTE: With a large system font the word would squeeze the title, so it moves under the title as the toolbar subtitle.
     private fun applyStatus() = with(binding) {
         val status = serviceStatus
         if(!statusVisible || status == null){
             statusContainer.isVisible = false
             toolbar.subtitle = null
+            setBarExtra(0)
             return@with
         }
         val color = dotColor(status.level)
@@ -318,11 +337,14 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         statusContainer.contentDescription = getString(R.string.status_description, status.label)
         if(largeFont){
             statusContainer.isVisible = false
+            //The subtitle needs its own line, so the bar grows by one scaled line instead of clipping it
+            setBarExtra(android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics).toInt())
             toolbar.subtitle = android.text.SpannableString("● ${status.label}").apply {
                 setSpan(android.text.style.ForegroundColorSpan(color), 0, 1, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }else{
             toolbar.subtitle = null
+            setBarExtra(0)
             statusContainer.isVisible = true
             statusLabel.text = status.label
             statusLabel.setTextColor(
