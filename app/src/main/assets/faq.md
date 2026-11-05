@@ -193,13 +193,17 @@ No. There is no customisation with force dark, so you cannot change the colours.
 
 Open **Appearance** on the main screen. Pick light, dark or follow system, turn on **Pure black** for true black backgrounds in dark mode, and choose an accent. The **Custom** swatch opens a picker with a palette, saturation and hue sliders and a hex field. On Android 10 and 11 a custom or wallpaper accent is matched to the closest preset, since the full color engine needs Android 12.
 
+### How do I change the language?
+
+Open **Appearance** and tap **Language**. Pick System default, English, Hindi, Ukrainian or Simplified Chinese. The screens switch immediately and stay where they were. On Android 13 and later you can also choose the language in the system settings under Apps, DarQ, Language. Hindi, Ukrainian and Chinese are machine translated, so wording may not be perfect.
+
 ### What does Report an issue send?
 
-Nothing, until you tap a send option. The preview shows exactly what would be sent. Your installed apps are replaced by short codes, and coordinates and email addresses are removed. **Continue to GitHub** opens a prefilled form in your default browser and copies the full log so you can paste it under the form.
+Nothing, until you tap a send option. The preview shows exactly what would be sent. Your installed apps are replaced by short codes, and coordinates and email addresses are removed. A feature request never includes a log. **Continue to GitHub** opens a prefilled form in your default browser and copies the full log so you can paste it under the form.
 
 ### Why are some new texts only in English?
 
-Ukrainian and Simplified Chinese translations for the newest screens are machine translated, so wording may not be perfect. Corrections are welcome as pull requests.
+Hindi, Ukrainian and Simplified Chinese translations are machine translated, so wording may not be perfect. Corrections are welcome as pull requests.
 
 ### How can I support DarQ Reborn?
 

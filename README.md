@@ -105,6 +105,7 @@ Open **Appearance** in DarQ to change how the app looks.
 * **Pure black:** true black backgrounds in dark mode, which saves power on AMOLED screens. With the switch on, tap the row to set the surface lift, a ten step slider that moves cards and fields between a flat and a lifted look while the page stays black.
 * **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (Blue, Teal, Green, Purple, Orange, Rose, Amber, Mono), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
 * **Tinted icons:** colors the settings icons with the accent instead of the classic multicolor set.
+* **Language:** System default, English, Hindi, Ukrainian or Simplified Chinese. The change applies at once on the same screen with no flash. Android 13 and later also list these languages in the system per-app language screen. Hindi, Ukrainian and Chinese are machine translated.
 
 | Light | Dark | Pure black |
 | --- | --- | --- |
@@ -125,6 +126,7 @@ If the page stays white, open **Settings > Report an issue** in DarQ to attach d
 
 **Settings > Report an issue** opens one form for a bug or a feature idea. For bugs you can type what happened and the steps, and the diagnostic log is included by default.
 
+* **Suggest a feature** sends no log, and the card says so. Only **Report a bug** includes the diagnostic log.
 * The preview shows a summary, the last crash and handled errors first, and keeps the full log behind **Show full log**.
 * Every app you have installed is replaced by a short code, and coordinates and email addresses are removed. You see exactly what would be sent.
 * Nothing leaves your device until you tap **Continue to GitHub** or one of the other send options. GitHub opens in your default browser with the form prefilled, and the full log is copied for you to paste.
