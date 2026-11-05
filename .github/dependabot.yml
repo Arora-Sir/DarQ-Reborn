@@ -8,3 +8,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # NOTE: Koin 4 changes its API and Gradle 9 needs Android Gradle Plugin 9, so both majors are planned by hand and never arrive as a surprise PR.
+    ignore:
+      - dependency-name: "gradle-wrapper"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "io.insert-koin:*"
+        update-types: ["version-update:semver-major"]
