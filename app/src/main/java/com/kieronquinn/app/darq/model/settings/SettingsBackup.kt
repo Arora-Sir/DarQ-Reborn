@@ -26,5 +26,7 @@ data class SettingsBackup(
     val themePureBlack: Boolean? = null,
     val themePureBlackLift: Int? = null,
     val themeAccent: String? = null,
-    val themeTintedIcons: Boolean? = null
+    val themeTintedIcons: Boolean? = null,
+    //Nullable like the theme fields, so a backup made before the language setting restores without touching the language
+    val language: String? = null
 )

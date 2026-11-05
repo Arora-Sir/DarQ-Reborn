@@ -321,6 +321,8 @@ class SettingsFragment : BaseSettingsFragment<FragmentSettingsBinding>(FragmentS
             sharedViewModel.restoreBus.collect {
                 adapter.notifySwitchSettings()
                 updateMainSwitch()
+                //The restored language is applied after this screen is back, so the rebuild keeps this screen
+                view?.post { (activity as? com.kieronquinn.app.darq.ui.activities.DarqActivity)?.applyLanguageIfChanged() }
             }
         }
     }

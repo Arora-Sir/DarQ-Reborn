@@ -77,6 +77,15 @@ class SettingsSnapshotTest {
     }
 
     @Test
+    fun languageRoundTripsAndOlderBackupsLeaveItUnset() {
+        val withLanguage = backup.copy(language = "hi")
+        val stored = SettingsSnapshot.Stored(revision = 9, settings = withLanguage)
+        assertEquals("hi", SettingsSnapshot.decode(SettingsSnapshot.encode(stored))!!.settings.language)
+        val legacyJson = SettingsSnapshot.encode(stored).replace(Regex(""",\s*"language"\s*:\s*"[^"]*""""), "")
+        assertNull(SettingsSnapshot.decode(legacyJson)!!.settings.language)
+    }
+
+    @Test
     fun corruptSnapshotIsIgnored() {
         assertNull(SettingsSnapshot.decode("{not json"))
         assertNull(SettingsSnapshot.decode(""))

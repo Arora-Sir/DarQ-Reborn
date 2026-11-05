@@ -33,9 +33,11 @@ class DarqActivity: AppCompatActivity() {
 
     private val settings by inject<DarqSharedPreferences>()
     private var appliedTheme: String? = null
+    private var appliedLanguage = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appliedTheme = ThemeManager.apply(this, settings)
+        appliedLanguage = AppLanguage.tag(this)
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_darq)
@@ -53,6 +55,7 @@ class DarqActivity: AppCompatActivity() {
 
     //Recreating the activity shows a black frame while the system builds a new window, so the language is swapped in place and every screen is rebuilt inside the same window
     fun applyLanguageInPlace() {
+        appliedLanguage = AppLanguage.tag(this)
         val locale = AppLanguage.effectiveLocale(this)
         Locale.setDefault(locale)
         for(res in listOf(resources, applicationContext.resources)){
@@ -67,6 +70,11 @@ class DarqActivity: AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container_fragment, container)
             .commitNowAllowingStateLoss()
+    }
+
+    //A restore can change the stored language while the screens are showing the old one
+    fun applyLanguageIfChanged() {
+        if(AppLanguage.tag(this) != appliedLanguage) applyLanguageInPlace()
     }
 
     override fun onStart() {

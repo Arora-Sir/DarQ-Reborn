@@ -60,9 +60,6 @@ object AppLanguage {
         }
     }
 
-    fun describe(context: Context): String =
-        "context=${context.resources.configuration.locales[0].toLanguageTag()} default=${Locale.getDefault().toLanguageTag()} chosen=${tag(context)} os=${AppCompatDelegate.getApplicationLocales().toLanguageTags()}"
-
     private const val KEY_SYNCED = "synced"
 
     //A language picked in the Android 13 system screen is adopted. The OS value only counts as a change when it differs from what DarQ last handed over, so a choice that was not synced yet (the app was killed first) is kept.

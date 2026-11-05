@@ -174,6 +174,11 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         )
     }
 
+    //The chosen language lives in its own store because it must be readable before the app starts, so only AppSharedPreferences bridges it. The Xposed copy has no language.
+    open var languageTag: String?
+        get() = null
+        set(_) {}
+
     fun getSettingsBackup(): SettingsBackup {
         return SettingsBackup(
             enabled = this.enabled,
@@ -199,7 +204,8 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             themePureBlack = this.themePureBlack,
             themePureBlackLift = this.themePureBlackLift,
             themeAccent = this.themeAccent,
-            themeTintedIcons = this.themeTintedIcons
+            themeTintedIcons = this.themeTintedIcons,
+            language = this.languageTag
         )
     }
 
@@ -234,6 +240,8 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         settingsBackup.themePureBlackLift?.let { themePureBlackLift = it.coerceIn(0, 100) }
         settingsBackup.themeAccent?.let { themeAccent = it }
         settingsBackup.themeTintedIcons?.let { themeTintedIcons = it }
+        //Backups made before the language setting leave the current language alone
+        settingsBackup.language?.let { languageTag = it }
         //Each write above mirrors its own key to the LibXposed remote preferences, this final pass covers a write that raced a rebind
         XposedBridge.syncAll()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation

@@ -35,7 +35,6 @@ class ReportIntakeBottomSheetFragment : BaseBottomSheetFragment<FragmentBottomSh
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = requireContext()
-        android.util.Log.i("DarqLang", "report sheet: " + com.kieronquinn.app.darq.components.theme.AppLanguage.describe(context))
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
