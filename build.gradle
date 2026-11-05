@@ -3,7 +3,7 @@
 buildscript {
     ext.kotlin_version = '2.4.21'
     // Runtime navigation libraries stay on 2.4.1. Only the safe-args plugin moves, because 2.4.1 does not load on AGP 8.
-    ext.nav_version = "2.4.1"
+    ext.nav_version = "2.10.2"
     ext.nav_plugin_version = "2.8.9"
     repositories {
         google()
