@@ -1,8 +1,8 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.backuprestore.restore
 
 import android.os.Bundle
+import com.kieronquinn.app.darq.utils.Toasts
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -13,7 +13,6 @@ import com.kieronquinn.app.darq.databinding.FragmentBottomSheetRestoreBinding
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,7 +27,6 @@ class BackupRestoreRestoreBottomSheetFragment: BaseBottomSheetFragment<FragmentB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding){
-            fragmentRestoreProgress.applyMonet()
             ViewCompat.setOnApplyWindowInsetsListener(root){ view, insets ->
                 val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
                 val extraPadding = resources.getDimension(R.dimen.padding_8).toInt()
@@ -53,11 +51,11 @@ class BackupRestoreRestoreBottomSheetFragment: BaseBottomSheetFragment<FragmentB
     private fun handleComplete(result: BackupRestoreRestoreViewModel.Result){
         when(result){
             BackupRestoreRestoreViewModel.Result.SUCCESS -> {
-                Toast.makeText(requireContext(), R.string.item_backup_restore_restore_success, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_backup_restore_restore_success, long = true)
                 sharedViewModel.onRestoreSuccess()
             }
             BackupRestoreRestoreViewModel.Result.FAILED -> {
-                Toast.makeText(requireContext(), R.string.item_backup_restore_restore_failed, Toast.LENGTH_LONG).show()
+                Toasts.show(requireContext(), R.string.item_backup_restore_restore_failed, long = true)
             }
         }
     }

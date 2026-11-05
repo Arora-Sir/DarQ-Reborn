@@ -43,6 +43,8 @@ If your device is not rooted, you must set up **Shizuku** before running DarQ:
 
 ### Xposed / LSPosed Mode Setup
 
+DarQ works with **LSPosed 1.9.2**, its maintained forks and **Vector**. Any of them is fine, there is no need to switch managers.
+
 If you are using the **Xposed / LSPosed** mode (to override apps that block Force Dark in code), the setup requires two steps:
 
 1. **LSPosed Manager -> DarQ module scope**: Add the apps you want Force Dark to work on. This gives DarQ permission to inject into those app processes.
@@ -95,6 +97,47 @@ DarQ provides automated dark theme scheduling to protect your eyes when needed:
 Please read the Frequently Asked Questions sections in the app or [here](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) for more information and answers.
 
 
+## Appearance
+
+Open **Appearance** in DarQ to change how the app looks.
+
+* **Theme:** light, dark or follow the system.
+* **Pure black:** true black backgrounds in dark mode, which saves power on AMOLED screens. With the switch on, tap the row to set the surface lift, a ten step slider that moves cards and fields between a flat and a lifted look while the page stays black.
+* **Accent color:** match your wallpaper (Android 12 and later), pick one of the presets (Blue, Teal, Green, Purple, Orange, Rose, Amber, Mono), or tap **Custom** to mix your own with the palette, the saturation and hue sliders or a hex value. Android 10 and 11 use the preset closest to a custom color.
+* **Tinted icons:** colors the settings icons with the accent instead of the classic multicolor set.
+* **Language:** System default, English, Hindi, Ukrainian or Simplified Chinese. The change applies at once on the same screen with no flash. Android 13 and later also list these languages in the system per-app language screen. Hindi, Ukrainian and Chinese are machine translated.
+
+| Light | Dark | Pure black |
+| --- | --- | --- |
+| ![Light](assets/screenshots/main_light.png) | ![Dark](assets/screenshots/main_dark.png) | ![Pure black](assets/screenshots/main_black.png) |
+
+## Check that DarQ works (DarQ Probe)
+
+Every release has a second small app, **DarQ Probe** (`DarQ-Probe.<version>.apk`, signed with the same release key as DarQ). It shows one plain white page, so you can see at a glance whether force dark reaches an app on your device.
+
+1. Install the probe from the release page of the version you use.
+2. Open DarQ, tap **DarQ Per-App Force Dark** and select DarQ Probe.
+3. Make sure **Enable DarQ** is on and the status in the title bar is green.
+4. Close the probe and open it again. The page should now be dark.
+
+If the page stays white, open **Settings > Report an issue** in DarQ to attach diagnostic logs. Uninstall the probe when testing is complete. The app requests no permissions.
+
+## Report an issue
+
+**Settings > Report an issue** opens one form for a bug or a feature idea. For bugs you can type what happened and the steps, and the diagnostic log is included by default.
+
+* **Suggest a feature** sends no log, and the card says so. Only **Report a bug** includes the diagnostic log.
+* The preview shows a summary, the last crash and handled errors first, and keeps the full log behind **Show full log**.
+* Every app you have installed is replaced by a short code, and coordinates and email addresses are removed. You see exactly what would be sent.
+* Nothing leaves your device until you tap **Continue to GitHub** or one of the other send options. GitHub opens in your default browser with the form prefilled, and the full log is copied for you to paste.
+* If DarQ closes unexpectedly, the next launch offers the crash report once.
+
+## Support, credits and updates
+
+* **Support development:** an optional card with UPI, PayPal and GitHub Sponsors. There are no popups or nag screens.
+* **Credits:** DarQ Reborn continues the original [DarQ](https://github.com/KieronQuinn/DarQ) by Kieron Quinn and builds on Shizuku, LSPosed, libsu and other open source projects.
+* **Updates:** DarQ checks GitHub for new releases, and **Track with Obtainium** adds it to [Obtainium](https://github.com/ImranR98/Obtainium) in one tap.
+
 ## Known Behaviour
 
 **Samsung Pop-up View title bar.** If you summon a Pop-up View window within the first few seconds of launching an app you have selected in DarQ, that pop-up's title bar can appear white. Opening a pop-up at any other time is unaffected, and the app itself is always correctly darkened.
@@ -106,11 +149,12 @@ See the [FAQ](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/
 
 ## Troubleshooting & Bug Reporting
 
-If you encounter crashes or issues, sharing a logcat log is extremely helpful for diagnostics. Here is how to capture it on-device:
+Open **Report an issue** in DarQ settings. It takes what happened and the steps, adds a redacted diagnostic log you can review first, and opens a prefilled GitHub form in your browser with the full log copied for you to paste. If DarQ closes unexpectedly, the next launch offers the saved crash report once.
 
-1. Install an open-source log viewer like [**LogFox**](https://github.com/F0x1d/LogFox).
-2. Open LogFox and grant it Shizuku access.
-3. Start recording logs, launch DarQ Reborn to trigger the crash, and copy the captured logs from the notification pop-up.
-4. Share the copied crash log in your bug report or GitHub issue.
+If DarQ cannot start at all, capture a log on the device instead:
+
+1. Install an open-source log viewer like [**LogFox**](https://github.com/F0x1d/LogFox) and grant it Shizuku access.
+2. Start recording logs, launch DarQ Reborn to trigger the problem, and copy the captured logs from the notification pop-up.
+3. Share the log in your GitHub issue.
 
 [Download from GitHub Releases](https://github.com/Arora-Sir/DarQ-Reborn/releases)

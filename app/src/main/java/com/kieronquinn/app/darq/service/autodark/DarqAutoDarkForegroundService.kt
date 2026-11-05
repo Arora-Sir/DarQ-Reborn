@@ -11,7 +11,7 @@ import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.model.location.LatLng
 import com.kieronquinn.app.darq.model.settings.IPCSetting
-import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
+import com.kieronquinn.app.darq.components.xposed.XposedState
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.utils.AutoDarkUtils
@@ -219,7 +219,7 @@ class DarqAutoDarkForegroundService: LifecycleService() {
         if (isServiceConnected) {
             try {
                 val ipcService = (serviceResult as DarqServiceConnectionProvider.ServiceResult.Success).service
-                val isXposed = XposedSelfHooks.isXposedModuleEnabled()
+                val isXposed = XposedState.isActive
                 ipcService.notifySettingsChange(IPCSetting(
                     autoDarkManagedEnabled = isDark,
                     isXposedActive = isXposed
@@ -261,7 +261,7 @@ class DarqAutoDarkForegroundService: LifecycleService() {
             settings.autoDarkHasManaged = false
             settings.preAutoDarkSystemNightMode = false
             // Notify DarqService to clear isAutoDarkBlocking and re-evaluate foreground app
-            val isXposed = XposedSelfHooks.isXposedModuleEnabled()
+            val isXposed = XposedState.isActive
             try {
                 svc.notifySettingsChange(IPCSetting(
                     autoDarkManagedEnabled = true,

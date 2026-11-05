@@ -11,7 +11,11 @@ import com.kieronquinn.app.darq.ui.base.BaseBottomSheetDialogFragment
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.utils.openLink
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
+import com.kieronquinn.app.darq.utils.LinkOpener
+import com.kieronquinn.app.darq.utils.ObtainiumLink
+import ru.noties.markwon.AbstractMarkwonPlugin
 import ru.noties.markwon.Markwon
+import ru.noties.markwon.MarkwonConfiguration
 
 class UpdateAvailableBottomSheetFragment: BaseBottomSheetDialogFragment() {
 
@@ -31,7 +35,8 @@ class UpdateAvailableBottomSheetFragment: BaseBottomSheetDialogFragment() {
         val currentVer = com.kieronquinn.app.darq.BuildConfig.VERSION_NAME
         val newVer = update?.version ?: ""
         val versionInfo = "**Current Version:** $currentVer\n**New Version:** $newVer\n\n"
-        versionInfo + (update?.changelog ?: "")
+        //The one-tap Obtainium link sits under the changelog, so the three buttons stay Download, Close and View on GitHub
+        versionInfo + (update?.changelog ?: "") + "\n\n[" + getString(R.string.bottom_sheet_update_obtainium) + "](" + ObtainiumLink.url() + ")"
     }
 
     override val positiveText by lazy {
@@ -65,7 +70,14 @@ class UpdateAvailableBottomSheetFragment: BaseBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d("DarQUpdate", "UpdateAvailableBottomSheetFragment: onViewCreated. Title: $title, content is empty: ${content.isEmpty()}, updateObj: $update")
         super.onViewCreated(view, savedInstanceState)
-        val markwon = Markwon.create(requireContext())
+        //Links in the changelog open through the safe link helper, never straight from a URLSpan
+        val markwon = Markwon.builder(requireContext())
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
+                    builder.linkResolver { _, link -> LinkOpener.open(requireContext(), link) }
+                }
+            })
+            .build()
         markwon.setMarkdown(binding.bottomSheetContent, content.toString())
     }
 

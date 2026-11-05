@@ -1,19 +1,21 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.kieronquinn.app.darq.utils.extensions.applyPressFeedback
+import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.databinding.ItemAppBinding
 import com.kieronquinn.app.darq.databinding.ItemHeaderBinding
 import com.kieronquinn.app.darq.databinding.ItemSnackbarPaddingBinding
 import com.kieronquinn.app.darq.model.settings.AppPickerItem
 import com.kieronquinn.app.darq.model.settings.AppPickerItemType
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
-import com.kieronquinn.monetcompat.core.MonetCompat
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import com.squareup.picasso.Picasso
 
 class SettingsAppPickerAdapter(
@@ -34,9 +36,7 @@ class SettingsAppPickerAdapter(
         Picasso.get()
     }
 
-    private val monet by lazy {
-        MonetCompat.getInstance()
-    }
+    private val themeColors = ThemeColors
 
     override fun getItemCount(): Int {
         return items.size
@@ -49,9 +49,10 @@ class SettingsAppPickerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when(AppPickerItemType.values().find { it.ordinal == viewType }!!){
-            AppPickerItemType.APP -> ViewHolder.ItemAppViewHolder(ItemAppBinding.inflate(layoutInflater, parent, false))
+            AppPickerItemType.APP -> ViewHolder.ItemAppViewHolder(ItemAppBinding.inflate(layoutInflater, parent, false).also { it.root.applyPressFeedback() })
             AppPickerItemType.SNACKBAR_PADDING -> ViewHolder.ItemSnackbarPaddingViewHolder(ItemSnackbarPaddingBinding.inflate(layoutInflater, parent, false))
             AppPickerItemType.HEADER -> ViewHolder.ItemHeaderViewHolder(ItemHeaderBinding.inflate(layoutInflater, parent, false))
+            AppPickerItemType.LETTER -> ViewHolder.ItemHeaderViewHolder(ItemHeaderBinding.inflate(layoutInflater, parent, false))
         }
     }
 
@@ -59,7 +60,9 @@ class SettingsAppPickerAdapter(
         val item = items[holder.adapterPosition]
         when(holder){
             is ViewHolder.ItemAppViewHolder -> setupApp(holder.binding, item as AppPickerItem.App)
-            is ViewHolder.ItemHeaderViewHolder -> setupHeader(holder.binding, item as AppPickerItem.Header)
+            is ViewHolder.ItemHeaderViewHolder -> setupHeader(holder.binding, item)
+            //The snackbar padding row has nothing to bind
+            else -> {}
         }
     }
 
@@ -67,8 +70,8 @@ class SettingsAppPickerAdapter(
         with(binding){
             title.text = item.label
             val uri = Uri.parse("${AppIconRequestHandler.SCHEME_PNAME}:${item.packageName}")
-            picasso.load(uri).into(icon)
-            appSwitch.applyMonet()
+            //Decoded at row size, so the memory cache holds many more icons than at full launcher density
+            picasso.load(uri).resizeDimen(R.dimen.item_app_height, R.dimen.item_app_height).centerInside().into(icon)
             appSwitch.setOnCheckedChangeListener(null)
             appSwitch.isChecked = item.enabled
             appSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -81,25 +84,40 @@ class SettingsAppPickerAdapter(
         }
     }
 
-    private fun setupHeader(binding: ItemHeaderBinding, item: AppPickerItem.Header) {
+    private fun setupHeader(binding: ItemHeaderBinding, item: AppPickerItem) {
         with(binding) {
-            itemHeadingTitle.setText(item.titleResId)
-            itemHeadingTitle.setTextColor(monet.getAccentColor(itemHeadingTitle.context))
+            when (item) {
+                is AppPickerItem.Header -> itemHeadingTitle.setText(item.titleResId)
+                is AppPickerItem.Letter -> itemHeadingTitle.text = item.letter
+                else -> {}
+            }
+            itemHeadingTitle.setTextColor(themeColors.getAccentColor(itemHeadingTitle.context))
         }
     }
 
-    fun setItems(items: List<AppPickerItem>){
-        this.items.clear()
-        this.items.addAll(items)
-        notifyDataSetChanged()
+    // NOTE: A diff keeps untouched rows in place and animates a toggled app into its new section instead of redrawing the whole list.
+    fun setItems(newItems: List<AppPickerItem>){
+        val old = ArrayList(items)
+        val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = old.size
+            override fun getNewListSize() = newItems.size
+            override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = idOf(old[oldPosition]) == idOf(newItems[newPosition])
+            override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = old[oldPosition] == newItems[newPosition]
+        })
+        items.clear()
+        items.addAll(newItems)
+        result.dispatchUpdatesTo(this)
+    }
+
+    private fun idOf(item: AppPickerItem): Long = when(item){
+        is AppPickerItem.App -> item.packageName.hashCode().toLong()
+        is AppPickerItem.SnackbarPadding -> "SnackbarPadding".hashCode().toLong()
+        is AppPickerItem.Header -> item.titleResId.toLong()
+        is AppPickerItem.Letter -> "Letter${item.letter}".hashCode().toLong()
     }
 
     override fun getItemId(position: Int): Long {
-        return when(val item = items[position]){
-            is AppPickerItem.App -> item.packageName.hashCode().toLong()
-            is AppPickerItem.SnackbarPadding -> "SnackbarPadding".hashCode().toLong()
-            is AppPickerItem.Header -> item.titleResId.toLong()
-        }
+        return idOf(items[position])
     }
 
     fun addSnackbarPadding(){

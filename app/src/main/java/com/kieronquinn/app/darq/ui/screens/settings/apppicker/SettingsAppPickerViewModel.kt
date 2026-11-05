@@ -1,19 +1,17 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kieronquinn.app.darq.BuildConfig
+import com.kieronquinn.app.darq.components.apps.InstalledAppsRepository
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
 import com.kieronquinn.app.darq.model.settings.AppPickerItem
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import java.util.Locale
 
 abstract class SettingsAppPickerViewModel : ViewModel() {
 
-    abstract val loadState: Flow<LoadState>
+    abstract val loadState: StateFlow<LoadState>
     abstract val showSearchClearButton: Flow<Boolean>
     abstract val loadingProgress: Flow<Pair<Int, Int>?>
 
@@ -31,99 +29,20 @@ abstract class SettingsAppPickerViewModel : ViewModel() {
 }
 
 class SettingsAppPickerViewModelImpl(
-    context: Context,
+    private val repository: InstalledAppsRepository,
     private val settings: DarqSharedPreferences
 ) : SettingsAppPickerViewModel() {
 
-    private val packageManager by lazy {
-        context.packageManager
-    }
+    //Progress only shows on the very first scan, later opens use the cached list
+    override val loadingProgress = repository.scanProgress
 
-    private val _loadingProgress = MutableStateFlow<Pair<Int, Int>?>(null)
-    override val loadingProgress = _loadingProgress.asStateFlow()
+    private val selectedApps = MutableStateFlow(settings.enabledApps.toMutableList())
 
-    private val allApps = MutableSharedFlow<List<InstalledApp>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    private val _loadState = MutableStateFlow<LoadState>(
+        repository.apps.value?.let { cached ->
+            LoadState.Loaded(buildItems(cached, selectedApps.value, "", false))
+        } ?: LoadState.Loading
     )
-
-    private val launchableApps = MutableSharedFlow<List<InstalledApp>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-
-    private val allAppsLoading = java.util.concurrent.atomic.AtomicBoolean(false)
-    private fun loadAllAppsAsync() {
-        if (allAppsLoading.compareAndSet(false, true)) {
-            viewModelScope.launch(Dispatchers.IO) {
-                // Wait for fragment transition to complete (300ms) before making intensive Binder calls
-                delay(300)
-                val rawApps = packageManager.getInstalledApplications(0).filter {
-                    it.packageName != BuildConfig.APPLICATION_ID
-                }
-                val total = rawApps.size
-                val loadedApps = mutableListOf<InstalledApp>()
-                var count = 0
-                _loadingProgress.emit(Pair(0, total))
-                
-                rawApps.chunked(25).forEach { batch ->
-                    val deferred = batch.map { app ->
-                        async {
-                            InstalledApp(app.packageName, app.loadLabel(packageManager))
-                        }
-                    }
-                    loadedApps.addAll(deferred.awaitAll())
-                    count += batch.size
-                    _loadingProgress.emit(Pair(count, total))
-                }
-                allApps.emit(loadedApps)
-                _loadingProgress.emit(null)
-            }
-        }
-    }
-
-    private val launchableAppsLoading = java.util.concurrent.atomic.AtomicBoolean(false)
-    private fun loadLaunchableAppsAsync() {
-        if (launchableAppsLoading.compareAndSet(false, true)) {
-            viewModelScope.launch(Dispatchers.IO) {
-                // Wait for fragment transition to complete (300ms) before making intensive Binder calls
-                delay(300)
-                val intent = android.content.Intent(android.content.Intent.ACTION_MAIN).apply {
-                    addCategory(android.content.Intent.CATEGORY_LAUNCHER)
-                }
-                val resolveInfos = packageManager.queryIntentActivities(intent, 0)
-                val rawInfos = resolveInfos.filter {
-                    it.activityInfo.packageName != BuildConfig.APPLICATION_ID
-                }
-                val total = rawInfos.size
-                val loadedApps = mutableListOf<InstalledApp>()
-                var count = 0
-                _loadingProgress.emit(Pair(0, total))
-                
-                rawInfos.chunked(25).forEach { batch ->
-                    val deferred = batch.map { resolveInfo ->
-                        async {
-                            val packageName = resolveInfo.activityInfo.packageName
-                            InstalledApp(packageName, resolveInfo.loadLabel(packageManager))
-                        }
-                    }
-                    loadedApps.addAll(deferred.awaitAll())
-                    count += batch.size
-                    _loadingProgress.emit(Pair(count, total))
-                }
-                launchableApps.emit(loadedApps.distinctBy { it.packageName })
-                _loadingProgress.emit(null)
-            }
-        }
-    }
-
-    private val selectedApps = MutableStateFlow<MutableList<String>?>(null).apply {
-        viewModelScope.launch(Dispatchers.IO) {
-            emit(settings.enabledApps.toMutableList())
-        }
-    }
-
-    private val _loadState = MutableStateFlow<LoadState>(LoadState.Loading)
     override val loadState = _loadState.asStateFlow()
 
     private val searchTerm = MutableStateFlow("")
@@ -133,42 +52,39 @@ class SettingsAppPickerViewModelImpl(
     private val showAllApps = MutableStateFlow(false)
 
     init {
+        repository.refresh()
         viewModelScope.launch {
-            showAllApps.collect {
+            //Reloads when the filter changes and when a background refresh brings a newer list
+            combine(showAllApps, repository.apps.filterNotNull()) { _, _ -> }.collect {
                 loadApps()
             }
         }
     }
 
     private suspend fun loadApps() {
-        _loadState.emit(LoadState.Loading)
-        val selected = selectedApps.filterNotNull().first()
+        if (repository.apps.value == null) _loadState.emit(LoadState.Loading)
+        val selected = selectedApps.value
+        val cached = repository.apps.value ?: repository.apps.filterNotNull().first()
         val search = searchTerm.value
-        val rawList = if (showAllApps.value) {
-            loadAllAppsAsync()
-            allApps.first()
-        } else {
-            loadLaunchableAppsAsync()
-            launchableApps.first()
+        val showAll = showAllApps.value
+        val items = withContext(Dispatchers.Default) {
+            buildItems(cached, selected, search, showAll)
         }
+        _loadState.emit(LoadState.Loaded(items))
+    }
 
-        val apps = withContext(Dispatchers.IO) {
-            rawList.map {
-                AppPickerItem.App(
-                    it.packageName,
-                    it.label,
-                    selected.contains(it.packageName)
-                )
-            }
-        }.sortedBy { it.label.toString().toLowerCase(Locale.getDefault()) }.run {
-            if (search.isNotEmpty()) filter {
-                it.label.toString().toLowerCase(Locale.getDefault()).contains(
-                    search.toLowerCase(
-                        Locale.getDefault()
-                    )
-                )
-            }else this
-        }
+    private fun buildItems(
+        cached: List<InstalledAppsRepository.App>,
+        selected: List<String>,
+        search: String,
+        showAll: Boolean
+    ): List<AppPickerItem> {
+        val query = search.lowercase(Locale.getDefault())
+        val apps = cached.asSequence()
+            .filter { showAll || it.launchable }
+            .filter { query.isEmpty() || it.label.lowercase(Locale.getDefault()).contains(query) }
+            .map { AppPickerItem.App(it.packageName, it.label, selected.contains(it.packageName)) }
+            .toList()
 
         val activeApps = apps.filter { it.enabled }
         val inactiveApps = apps.filter { !it.enabled }
@@ -180,15 +96,30 @@ class SettingsAppPickerViewModelImpl(
         }
         if (inactiveApps.isNotEmpty()) {
             listWithHeaders.add(AppPickerItem.Header(com.kieronquinn.app.darq.R.string.app_picker_header_all))
-            listWithHeaders.addAll(inactiveApps)
+            if (query.isEmpty()) listWithHeaders.addAll(withLetterHeaders(inactiveApps)) else listWithHeaders.addAll(inactiveApps)
         }
+        return listWithHeaders
+    }
 
-        _loadState.emit(LoadState.Loaded(listWithHeaders))
+    private fun withLetterHeaders(apps: List<AppPickerItem.App>): List<AppPickerItem> {
+        val result = ArrayList<AppPickerItem>(apps.size + 27)
+        var last: String? = null
+        //Names that start with a digit or a symbol are grouped under one "#" header, which sorts first
+        val sorted = apps.sortedWith(compareBy<AppPickerItem.App> { letterOf(it.label) != "#" }.thenBy { it.label.toString().lowercase(Locale.getDefault()) })
+        for (app in sorted) {
+            val letter = letterOf(app.label)
+            if (letter != last) {
+                result.add(AppPickerItem.Letter(letter))
+                last = letter
+            }
+            result.add(app)
+        }
+        return result
     }
 
     override fun onPackageEnabledChanged(app: AppPickerItem.App) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentSelectedApps = selectedApps.value ?: return@launch
+            val currentSelectedApps = selectedApps.value
             if (app.enabled) {
                 if (!currentSelectedApps.contains(app.packageName)) {
                     currentSelectedApps.add(app.packageName)
@@ -224,6 +155,11 @@ class SettingsAppPickerViewModelImpl(
         return showAllApps.value
     }
 
-    private data class InstalledApp(val packageName: String, val label: CharSequence)
+    companion object {
+        fun letterOf(label: CharSequence): String {
+            val first = label.firstOrNull()?.uppercaseChar() ?: return "#"
+            return if (first.isLetter()) first.toString() else "#"
+        }
+    }
 
 }

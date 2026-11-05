@@ -1,5 +1,6 @@
 package com.kieronquinn.app.darq.ui.base
 
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 import android.animation.ValueAnimator
 import android.app.Dialog
 import android.os.Bundle
@@ -16,14 +17,11 @@ import androidx.viewbinding.ViewBinding
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.providers.blur.BlurProvider
 import com.kieronquinn.app.darq.ui.utils.autoCleared
-import com.kieronquinn.monetcompat.core.MonetCompat
 import org.koin.android.ext.android.inject
 
 abstract class BaseDialogFragment<T: ViewBinding>(private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> T): DialogFragment() {
 
-    internal val monet by lazy {
-        MonetCompat.getInstance()
-    }
+    internal val themeColors = ThemeColors
 
     internal val navigation by inject<Navigation>()
 

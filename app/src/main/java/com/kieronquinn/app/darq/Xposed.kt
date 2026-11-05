@@ -1,171 +1,178 @@
 package com.kieronquinn.app.darq
 
 import android.app.Activity
-import android.app.AndroidAppHelper
-import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.Log
 import android.view.View
-import com.kieronquinn.app.darq.components.settings.XposedSharedPreferences
+import com.kieronquinn.app.darq.model.xposed.EnabledAppsParser
 import com.kieronquinn.app.darq.model.xposed.ForceDarkMapping
+import com.kieronquinn.app.darq.model.xposed.XposedPrefKeys
+import com.kieronquinn.app.darq.model.xposed.XposedRules
 import com.kieronquinn.app.darq.model.xposed.XposedSettings
-import com.kieronquinn.app.darq.utils.extensions.isDarkTheme
-import de.robv.android.xposed.*
-import de.robv.android.xposed.callbacks.XC_LoadPackage
+import io.github.libxposed.api.XposedInterface
+import io.github.libxposed.api.XposedModule
+import io.github.libxposed.api.XposedModuleInterface
+import org.lsposed.hiddenapibypass.HiddenApiBypass
+import java.lang.reflect.Method
+import java.util.concurrent.atomic.AtomicBoolean
 
-
-class Xposed : IXposedHookLoadPackage {
+// NOTE: LibXposed (API 101 and 102) module entry, declared in META-INF/xposed/java_init.list.
+// NOTE: Settings arrive through the framework's remote preferences, which the app writes via XposedBridge, so no world-readable file or self-hook is involved.
+class Xposed : XposedModule() {
 
     companion object {
         private const val TAG = "DarQXposed"
-        private const val SHARED_PREFS_FILENAME = "${BuildConfig.APPLICATION_ID}_prefs"
+        private const val FORCE_DARK_PROP = "debug.hwui.force_dark"
     }
 
-    private val context by lazy {
-        AndroidAppHelper.currentApplication() as Context
-    }
-    
-    private val isDarkMode: Boolean
-        get() = Resources.getSystem().configuration.isDarkTheme
+    private val hooksInstalled = AtomicBoolean(false)
+    private val enabledAppsParser = EnabledAppsParser()
 
-    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        if(lpparam.packageName == BuildConfig.APPLICATION_ID){
-            setupSelfHooks(lpparam.classLoader)
-        }
-        XposedHelpers.findAndHookMethod("android.os.SystemProperties", null, "getBoolean", String::class.java, Boolean::class.java, object: XC_MethodHook(){
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val key = param.args[0] as? String
-                if(key == "debug.hwui.force_dark") {
-                    val settings = getXposedSettings(context)
-                    if(settings?.enabled == true && !settings.isScheduleBlocking) {
-                        param.result = isDarkMode
-                    }
-                }
-            }
-        })
-        XposedHelpers.findAndHookMethod("android.os.SystemProperties", null, "get", String::class.java, object: XC_MethodHook(){
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val key = param.args[0] as? String
-                if(key == "debug.hwui.force_dark") {
-                    val settings = getXposedSettings(context)
-                    if(settings?.enabled == true && !settings.isScheduleBlocking) {
-                        param.result = if(isDarkMode) "true" else "false"
-                    }
-                }
-            }
-        })
-        XposedHelpers.findAndHookMethod("android.os.SystemProperties", null, "get", String::class.java, String::class.java, object: XC_MethodHook(){
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val key = param.args[0] as? String
-                if(key == "debug.hwui.force_dark") {
-                    val settings = getXposedSettings(context)
-                    if(settings?.enabled == true && !settings.isScheduleBlocking) {
-                        param.result = if(isDarkMode) "true" else "false"
-                    }
-                }
-            }
-        })
-        XposedHelpers.findAndHookMethod(View::class.java, "setForceDarkAllowed", Boolean::class.java, object : XC_MethodHook() {
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                super.beforeHookedMethod(param)
-                val settings = getXposedSettings(context)
-                if(settings?.enabled == true && !settings.isScheduleBlocking){
-                    param.args[0] = true
-                }
-            }
-        })
-        XposedHelpers.findAndHookMethod(Activity::class.java, "onResume", object: XC_MethodHook(){
-            override fun afterHookedMethod(param: MethodHookParam) {
-                super.afterHookedMethod(param)
-                val settings = getXposedSettings(context)
-                if(settings?.enabled == true && !settings.isScheduleBlocking && settings.invertStatus == true){
-                    val activity = param.thisObject as? Activity ?: return
-                    if(isDarkMode) {
-                        activity.window.decorView.run {
-                            post {
-                                systemUiVisibility =
-                                    systemUiVisibility.and(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv())
-                            }
-                        }
-                    }
-                }
-            }
-        })
-        setupAggressiveDarkHook(lpparam.classLoader)
-    }
+    @Volatile
+    private var targetPackage = ""
 
-    // NOTE: HardwareRenderer.setForceDark took a boolean up to Android 14 and takes a ForceDarkType int from Android 15.
-    // NOTE: Hooking only the boolean variant threw NoSuchMethodError on Android 15 and later, so Aggressive Force Dark never applied there.
-    // NOTE: The int variant is tried first and the boolean variant is the fallback for Android 10 to 14.
-    private fun setupAggressiveDarkHook(classLoader: ClassLoader) {
-        val hook = object: XC_MethodHook(){
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val settings = getXposedSettings(context)
-                if(settings?.enabled == true && !settings.isScheduleBlocking && settings.aggressiveDark == true) {
-                    val incoming = param.args[0]
-                    param.args[0] = when(incoming) {
-                        is Int -> ForceDarkMapping.mapType(incoming, isDarkMode)
-                        else -> ForceDarkMapping.mapBoolean(isDarkMode)
-                    }
-                    if(BuildConfig.DEBUG) Log.d(TAG, "setForceDark $incoming -> ${param.args[0]} for ${context.packageName}")
-                }
-            }
-        }
+    @Volatile
+    private var cachedSettings: XposedSettings? = null
+
+    private val remotePrefs: SharedPreferences? by lazy {
         try {
-            val rendererClass = XposedHelpers.findClass("android.graphics.HardwareRenderer", classLoader)
-            val hookedTypeVariant = runCatching {
-                XposedHelpers.findAndHookMethod(rendererClass, "setForceDark", Int::class.javaPrimitiveType, hook)
-            }.isSuccess
-            if(!hookedTypeVariant) {
-                XposedHelpers.findAndHookMethod(rendererClass, "setForceDark", Boolean::class.javaPrimitiveType, hook)
-            }
-        }catch (t: Throwable){
-            Log.e(TAG, "Failed to hook HardwareRenderer.setForceDark", t)
+            getRemotePreferences(XposedPrefKeys.GROUP)
+        } catch (t: Throwable) {
+            log(Log.ERROR, TAG, "Remote preferences unavailable for $targetPackage", t)
+            null
         }
     }
 
-    private fun setupSelfHooks(classLoader: ClassLoader){
-        XposedHelpers.findAndHookMethod("com.kieronquinn.app.darq.model.xposed.XposedSelfHooks", classLoader, "isXposedModuleEnabled", object: XC_MethodReplacement(){
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                param.result = true
-                return true
-            }
-        })
-        XposedHelpers.findAndHookMethod("com.kieronquinn.app.darq.model.xposed.XposedSelfHooks", classLoader, "getXSharedPrefsPath", object: XC_MethodReplacement(){
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                val path = XSharedPreferences(BuildConfig.APPLICATION_ID, SHARED_PREFS_FILENAME).file.absolutePath
-                param.result = path
-                return path
-            }
-        })
+    // Held as a field because SharedPreferences implementations may keep listeners weakly.
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        cachedSettings = null
     }
 
-    private fun getXposedSettings(context: Context): XposedSettings? {
-        return try {
-            val xposedPreferences = XposedSharedPreferences(SHARED_PREFS_FILENAME)
-            (xposedPreferences.sharedPreferences as? XSharedPreferences)?.reload()
-            val darqEnabled = xposedPreferences.enabled
-            val autoDarkScheduleMode = xposedPreferences.autoDarkScheduleMode
-            val autoDarkManagedEnabled = xposedPreferences.autoDarkManagedEnabled
-            val isScheduleBlocking = autoDarkScheduleMode != 0 && !autoDarkManagedEnabled
-            val appSelected = xposedPreferences.enabledApps.contains(context.packageName)
-            val alwaysUseForceDark = xposedPreferences.alwaysForceDark
-            Log.d(TAG, "Enabled apps ${xposedPreferences.enabledApps.joinToString(", ")}")
-            return if(!darqEnabled || (!appSelected && !alwaysUseForceDark)){
-                XposedSettings(enabled = false, isScheduleBlocking = isScheduleBlocking).apply {
-                    Log.d(TAG, "Got XposedSettings disabled for ${context.packageName}")
+    private val isSystemDark: Boolean
+        get() = (Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+    override fun onPackageLoaded(param: XposedModuleInterface.PackageLoadedParam) {
+        // Framework hooks are process-wide, so they install once for the app and skip code packages loaded later (WebView, GMS modules).
+        if (!param.isFirstPackage) return
+        if (param.packageName == BuildConfig.APPLICATION_ID) return
+        if (!hooksInstalled.compareAndSet(false, true)) return
+        targetPackage = param.packageName
+        if (BuildConfig.DEBUG) log(Log.INFO, TAG, "Modern entry loaded in $targetPackage")
+        try {
+            remotePrefs?.registerOnSharedPreferenceChangeListener(prefsListener)
+        } catch (t: Throwable) {
+            log(Log.WARN, TAG, "Preference change listener unavailable, settings refresh on activity resume only", t)
+        }
+        installHooks()
+    }
+
+    private fun settings(): XposedSettings {
+        cachedSettings?.let { return it }
+        val prefs = remotePrefs ?: return XposedSettings(enabled = false)
+        return XposedRules.resolve(prefs, targetPackage, enabledAppsParser).also {
+            cachedSettings = it
+        }
+    }
+
+    private fun installHooks() {
+        val systemProperties = Class.forName("android.os.SystemProperties")
+
+        hookSafely("SystemProperties.getBoolean") {
+            val method = HiddenApiBypass.getDeclaredMethod(systemProperties, "getBoolean", String::class.java, java.lang.Boolean.TYPE)
+            intercept(method) { chain ->
+                if (chain.getArg(0) == FORCE_DARK_PROP && settings().isActive) isSystemDark else chain.proceed()
+            }
+        }
+
+        hookSafely("SystemProperties.get(String)") {
+            val method = HiddenApiBypass.getDeclaredMethod(systemProperties, "get", String::class.java)
+            intercept(method) { chain ->
+                if (chain.getArg(0) == FORCE_DARK_PROP && settings().isActive) isSystemDark.toString() else chain.proceed()
+            }
+        }
+
+        hookSafely("SystemProperties.get(String, String)") {
+            val method = HiddenApiBypass.getDeclaredMethod(systemProperties, "get", String::class.java, String::class.java)
+            intercept(method) { chain ->
+                if (chain.getArg(0) == FORCE_DARK_PROP && settings().isActive) isSystemDark.toString() else chain.proceed()
+            }
+        }
+
+        hookSafely("View.setForceDarkAllowed") {
+            val method = View::class.java.getDeclaredMethod("setForceDarkAllowed", java.lang.Boolean.TYPE)
+            intercept(method) { chain ->
+                if (settings().isActive) chain.proceed(arrayOf<Any?>(true)) else chain.proceed()
+            }
+        }
+
+        hookSafely("Activity.onResume") {
+            val method = Activity::class.java.getDeclaredMethod("onResume")
+            intercept(method) { chain ->
+                val result = chain.proceed()
+                // Re-resolving on resume keeps settings fresh even when the framework does not deliver preference change callbacks.
+                cachedSettings = null
+                val settings = settings()
+                if (settings.isActive && settings.invertStatus == true && isSystemDark) {
+                    (chain.thisObject as? Activity)?.clearLightStatusBar()
                 }
-            }else{
-                XposedSettings(enabled = true, isScheduleBlocking = isScheduleBlocking, aggressiveDark = xposedPreferences.xposedAggressiveDark, invertStatus = xposedPreferences.xposedInvertStatus).apply {
-                    Log.d(TAG, "Got XposedSettings enabled for ${context.packageName}")
+                result
+            }
+        }
+
+        hookSafely("HardwareRenderer.setForceDark") {
+            val renderer = Class.forName("android.graphics.HardwareRenderer")
+            val typeVariant = try {
+                HiddenApiBypass.getDeclaredMethod(renderer, "setForceDark", Integer.TYPE)
+            } catch (e: NoSuchMethodException) {
+                null
+            }
+            if (typeVariant != null) {
+                // Android 15 and later pass a ForceDarkType int.
+                intercept(typeVariant) { chain ->
+                    val settings = settings()
+                    if (settings.isActive && settings.aggressiveDark == true) {
+                        chain.proceed(arrayOf<Any?>(ForceDarkMapping.mapType(chain.getArg(0) as Int, isSystemDark)))
+                    } else {
+                        chain.proceed()
+                    }
+                }
+            } else {
+                // Android 10 to 14 pass a boolean.
+                val booleanVariant = HiddenApiBypass.getDeclaredMethod(renderer, "setForceDark", java.lang.Boolean.TYPE)
+                intercept(booleanVariant) { chain ->
+                    val settings = settings()
+                    if (settings.isActive && settings.aggressiveDark == true) {
+                        chain.proceed(arrayOf<Any?>(ForceDarkMapping.mapBoolean(isSystemDark)))
+                    } else {
+                        chain.proceed()
+                    }
                 }
             }
-        }catch (e: Exception){
-            //Don't crash the app
-            if(BuildConfig.DEBUG) {
-                Log.e(TAG, "Failed to get XposedSettings for ${context.packageName}", e)
-            }
-            null
+        }
+    }
+
+    private fun intercept(method: Method, hooker: XposedInterface.Hooker) {
+        hook(method)
+            .setExceptionMode(XposedInterface.ExceptionMode.PROTECTIVE)
+            .intercept(hooker)
+    }
+
+    private inline fun hookSafely(name: String, block: () -> Unit) {
+        try {
+            block()
+        } catch (t: Throwable) {
+            log(Log.WARN, TAG, "Skipped hook $name in $targetPackage", t)
+        }
+    }
+
+    // Matches the legacy module, which cleared the flag through systemUiVisibility so the app's own flag handling keeps working.
+    @Suppress("DEPRECATION")
+    private fun Activity.clearLightStatusBar() {
+        val decorView = window?.decorView ?: return
+        decorView.post {
+            decorView.systemUiVisibility = decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
     }
 

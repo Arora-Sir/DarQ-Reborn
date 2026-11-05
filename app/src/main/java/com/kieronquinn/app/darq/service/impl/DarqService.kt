@@ -65,9 +65,8 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
         ServiceLifecycleDispatcher(this)
     }
 
-    override fun getLifecycle(): Lifecycle {
-        return mDispatcher.lifecycle
-    }
+    override val lifecycle: Lifecycle
+        get() = mDispatcher.lifecycle
 
     //Whether to send `null` when an app is closed and no new one is opened (causes more incorrect Force Dark changes)
     private var sendAppCloses = false

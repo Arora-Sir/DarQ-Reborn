@@ -1,8 +1,8 @@
 package com.kieronquinn.app.darq.ui.screens.settings
 
 import android.content.Context
+import com.kieronquinn.app.darq.utils.Toasts
 import android.os.Build
-import android.widget.Toast
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +22,7 @@ abstract class SettingsViewModel: ViewModel() {
     abstract val developerOptionsVisible: Flow<Boolean>
 
     abstract fun onAdvancedOptionsClicked()
+    abstract fun onAppearanceClicked()
     abstract fun onXposedClicked()
     abstract fun onBackupRestoreClicked()
     abstract fun onAppWhitelistClicked()
@@ -75,6 +76,12 @@ class SettingsViewModelImpl(
         }
     }
 
+    override fun onAppearanceClicked() {
+        viewModelScope.launch {
+            navigation.navigate(SettingsFragmentDirections.actionSettingsFragmentToSettingsAppearanceFragment())
+        }
+    }
+
     override fun onDeveloperOptionsClicked() {
         viewModelScope.launch {
             navigation.navigate(SettingsFragmentDirections.actionSettingsFragmentToSettingsDeveloperOptionsFragment())
@@ -119,7 +126,7 @@ class SettingsViewModelImpl(
     override fun onCheckForUpdatesClicked(context: Context, sharedViewModel: ContainerSharedViewModel) {
         Log.d("DarQUpdate", "onCheckForUpdatesClicked: User clicked check for updates")
         viewModelScope.launch {
-            Toast.makeText(context, R.string.checking_for_updates, Toast.LENGTH_SHORT).show()
+            Toasts.show(context, R.string.checking_for_updates)
             try {
                 Log.d("DarQUpdate", "onCheckForUpdatesClicked: Calling updateChecker.getLatestRelease().first()")
                 val update = updateChecker.getLatestRelease().first()
@@ -129,11 +136,11 @@ class SettingsViewModelImpl(
                     sharedViewModel.setAvailableUpdate(update)
                 } else {
                     Log.d("DarQUpdate", "onCheckForUpdatesClicked: No update found. App is up to date.")
-                    Toast.makeText(context, R.string.up_to_date, Toast.LENGTH_SHORT).show()
+                    Toasts.show(context, R.string.up_to_date)
                 }
             } catch (e: Exception) {
                 Log.e("DarQUpdate", "onCheckForUpdatesClicked: Exception occurred while checking for updates", e)
-                Toast.makeText(context, R.string.check_updates_failed, Toast.LENGTH_SHORT).show()
+                Toasts.show(context, R.string.check_updates_failed)
             }
         }
     }

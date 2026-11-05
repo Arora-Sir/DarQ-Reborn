@@ -25,8 +25,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">开发与维护：&lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;。 <br/><br/>项目源码已在 &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt; 开源。</string>
     <string name="item_developer_options_title">开发者选项</string>
-    <string name="item_developer_options_monet_color_picker_title">动态颜色选择器</string>
-    <string name="item_developer_options_monet_color_picker_content">从壁纸中选取一种颜色</string>
     <string name="item_developer_options_kill_service_title">关闭重复的服务</string>
     <string name="item_developer_options_kill_service_content">关闭所有重复的 DarQ 服务。按理来讲这个选项是不必要的，但是可能会在 Shizuku 和 root 模式之间切换时用到。</string>
     <string name="item_developer_options_kill_service_toast_success">成功</string>
@@ -51,8 +49,6 @@
     <string name="item_xposed_aggressive_dark_content">当开启深色模式时，覆盖应用转为亮色的行为。这可能会在一些软件中出现颜色上的问题。</string>
     <string name="item_xposed_invert_status_bar_fix_content">尝试在一些强制深色应用中禁用装谈来反色，修复黑底黑图标。</string>
     <string name="item_xposed_info_title">Xposed 注意事项</string>
-    <string name="item_xposed_info_content">如果您正在使用 Edxposed 或者 lsposed 的白名单模式，和在 DarQ 中相同，您必须在 Xposed 管理器中启用所有您想要更改的软件。\n软件需要重启才能应用您更改过的设置。\n如果改变设置或者新选择了强制深色软件之后没有见效，那么请尝试重启，启动 DarQ，然后打开目标应用。\n<b>警告：</b>如果您卸载了 Xposed 或者启用/禁用了  DarQ 模块，您的 DarQ 设置可能会由于 Xposed 的内部设置 hook 而被重置。在此之前，请使用备份与恢复功能来保存您的设置。</string>
-    <string name="color_picker_unavailable">动态颜色选择器对当前选取的壁纸不可用</string>
     <string name="loading_service_connect">正在连接服务…</string>
     <string name="snackbar_syncing_text">正在将更改同步至服务…</string>
     <string name="snackbar_syncing_complete_text">已将更改同步至服务。</string>
@@ -97,10 +93,8 @@
     <string name="dialog_location_permission_text">允许 <b>DarQ</b> 使用您的定位来获取日出日落时间吗？</string>
     <string name="dialog_location_permission_use_location">使用定位</string>
     <string name="dialog_location_permission_use_timezone">使用时区 \n<small>（精准度低）</small></string>
-    <string name="chip_donate">请我喝杯咖啡</string>
     <string name="chip_twitter">在 Twitter 上关注作者</string>
     <string name="chip_github">GitHub</string>
-    <string name="chip_xda">XDA 上的帖子</string>
     <string name="menu_open_source_libraries">开源库</string>
     <string name="bottom_sheet_update_available_title">更新可用</string>
     <string name="bottom_sheet_update_available_positive">下载</string>
@@ -114,9 +108,181 @@
     <string name="item_advanced_group_updates_title">更新</string>
     <string name="item_advanced_group_theme_title">主题选项</string>
     <string name="item_advanced_group_behaviour_title">应用行为</string>
-    <string name="donation_dialog_title">请我喝杯咖啡</string>
     <string name="donation_dialog_upi_title">使用 UPI 支付</string>
     <string name="donation_dialog_upi_summary">使用 Google Pay, PhonePe, Paytm, BHIM 等支付（印度）</string>
     <string name="donation_dialog_global_title">PayPal / Ko-fi</string>
     <string name="donation_dialog_global_summary">使用全球借记卡/信用卡或 PayPal 支付</string>
+
+    <!-- 3.2.0, machine translated -->
+    <string name="item_xposed_request_scope_title">将所选应用添加到 LSPosed 作用域</string>
+    <string name="item_xposed_request_scope_content">请求 LSPosed 或 Vector 将你在 DarQ 中选择的所有应用添加到模块作用域</string>
+    <string name="xposed_scope_approved">已将 %1$s 添加到 LSPosed 作用域</string>
+    <string name="xposed_scope_approved_count">已将 %1$d 个应用添加到 LSPosed 作用域</string>
+    <string name="xposed_scope_failed">LSPosed 作用域请求失败：%1$s</string>
+    <string name="xposed_scope_already">所有所选应用已在 LSPosed 作用域中</string>
+    <string name="xposed_scope_unavailable">需要 LSPosed 2.x 或 Vector，并启用 DarQ 模块</string>
+    <string name="chip_credits">致谢</string>
+    <string name="chip_donate">支持开发</string>
+    <string name="chip_socials">开发者</string>
+    <string name="app_picker_clear_search">清除搜索</string>
+    <string name="social_developer_name">Mohit Arora</string>
+    <string name="social_developer_role">系统架构师与移动工程师</string>
+    <string name="safe_run_failed">出了点问题。错误已保存，将包含在下一份报告中。</string>
+    <string name="link_no_browser">找不到可打开此链接的浏览器</string>
+    <string name="item_support_content">自愿支持，选择权始终在你</string>
+    <string name="support_intro">DarQ Reborn 免费且开源。支持是自愿的，选择权始终在你。</string>
+    <string name="support_upi_chooser">通过 UPI 支持</string>
+    <string name="support_upi_none">未找到 UPI 应用。UPI ID 已复制到剪贴板。</string>
+    <string name="support_upi_copied">已复制 UPI ID：%1$s</string>
+    <string name="support_copy_upi_title">复制 UPI ID</string>
+    <string name="support_copy_upi_summary">mohit1998arora@yescred</string>
+    <string name="support_sponsors_title">GitHub Sponsors</string>
+    <string name="support_sponsors_summary">通过 GitHub 按月或一次性支持</string>
+    <string name="donation_dialog_title">支持开发</string>
+    <string name="credits_title">致谢</string>
+    <string name="credits_intro">DarQ Reborn 延续了原版 DarQ，并建立在这些开源项目的成果之上。</string>
+    <string name="credits_upstream_title">Kieron Quinn 的 DarQ</string>
+    <string name="credits_upstream_summary">本应用派生自的原始项目</string>
+    <string name="credits_author_title">Kieron Quinn</string>
+    <string name="credits_author_summary">DarQ 原作者</string>
+    <string name="credits_shizuku_title">Shizuku</string>
+    <string name="credits_shizuku_summary">Rikka Apps，无需 root 即可以系统权限运行 DarQ</string>
+    <string name="credits_xposed_title">LSPosed 和 LibXposed</string>
+    <string name="credits_xposed_summary">DarQ 所依赖的 Xposed 框架</string>
+    <string name="credits_libsu_title">libsu</string>
+    <string name="credits_libsu_summary">topjohnwu，用于运行 root 服务</string>
+    <string name="credits_contributors_title">贡献者</string>
+    <string name="credits_contributors_summary">所有在 GitHub 上提交修复或想法的人</string>
+    <string name="credits_licences_title">开源许可</string>
+    <string name="credits_licences_summary">本应用内置的库</string>
+    <string name="item_obtainium_title">使用 Obtainium 跟踪</string>
+    <string name="item_obtainium_content">一键将 DarQ 添加到 Obtainium，并获取新版本通知</string>
+    <string name="bottom_sheet_update_obtainium">使用 Obtainium 跟踪</string>
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">连接中</string>
+    <string name="status_label_not_connected">未连接</string>
+    <string name="status_description">状态：%1$s</string>
+    <string name="status_title_shizuku">Shizuku 已连接</string>
+    <string name="status_title_root">root 已连接</string>
+    <string name="status_title_connecting">正在连接服务</string>
+    <string name="status_title_none">服务未连接</string>
+    <string name="status_content_none_selected">尚未选择应用</string>
+    <string name="status_content_xposed">%1$s，Xposed 模块已启用</string>
+    <string name="status_content_not_connected">请打开 Shizuku 或授予 root，然后重新打开 DarQ。点按获取帮助。</string>
+    <string name="item_appearance_title">外观</string>
+    <string name="item_appearance_content">主题、强调色、纯黑和图标</string>
+    <string name="appearance_theme_title">主题</string>
+    <string name="appearance_theme_system">跟随系统</string>
+    <string name="appearance_theme_system_summary">与系统深色模式设置保持一致</string>
+    <string name="appearance_theme_light">浅色</string>
+    <string name="appearance_theme_light_summary">始终使用浅色主题</string>
+    <string name="appearance_theme_dark">深色</string>
+    <string name="appearance_theme_dark_summary">始终使用深色主题</string>
+    <string name="appearance_pure_black_title">纯黑</string>
+    <string name="appearance_pure_black_content">在深色模式下使用真正的黑色背景，可在 AMOLED 屏幕上省电</string>
+    <string name="appearance_pure_black_lift_title">表面层次</string>
+    <string name="appearance_pure_black_lift_summary">表面层次：%1$s。点按可调整。</string>
+    <string name="appearance_pure_black_lift_hint">将纯黑下的卡片、输入框和分区从平面调到凸起。页面本身保持黑色。</string>
+    <string name="appearance_pure_black_lift_sample_section">分区</string>
+    <string name="appearance_pure_black_lift_sample_field">输入框</string>
+    <string name="appearance_pure_black_lift_sample_selected">已选项目</string>
+    <string name="appearance_pure_black_lift_level">第 %1$d 级，共 10 级</string>
+    <string name="appearance_pure_black_lift_level_recommended">第 %1$d 级，共 10 级，推荐</string>
+    <string name="appearance_pure_black_lift_reset">重置</string>
+    <string name="appearance_accent_title">强调色</string>
+    <string name="appearance_accent_title_chosen">强调色：%1$s</string>
+    <string name="appearance_accent_contrast">在黑色上的对比度为 %1$.1f:1，在卡片上为 %2$.1f:1。</string>
+    <string name="appearance_accent_low_contrast">此颜色在深色表面上不易看清。</string>
+    <string name="appearance_accent_reset">重置</string>
+    <string name="appearance_accent_wallpaper">壁纸</string>
+    <string name="appearance_accent_custom_value">自定义颜色 %1$s</string>
+    <string name="appearance_accent_custom_summary">壁纸颜色</string>
+    <string name="appearance_accent_custom_title">自定义颜色</string>
+    <string name="appearance_accent_custom_pick">自定义</string>
+    <string name="appearance_accent_hex">十六进制颜色</string>
+    <string name="appearance_accent_hex_error">请输入六位十六进制数字，例如 #0072DE</string>
+    <string name="appearance_accent_light">浅色</string>
+    <string name="appearance_accent_dark">深色</string>
+    <string name="appearance_accent_sample_title">深色模式</string>
+    <string name="appearance_accent_sample_button">开启</string>
+    <string name="appearance_accent_use_color">使用此颜色</string>
+    <string name="appearance_accent_apply">应用</string>
+    <string name="appearance_accent_area_description">饱和度和亮度</string>
+    <string name="appearance_accent_hue_description">色相</string>
+    <string name="appearance_accent_note_dynamic">Android 会根据此颜色生成完整的配色方案。</string>
+    <string name="appearance_accent_fallback">Android 10 和 11 使用与此颜色最接近的预设</string>
+    <string name="appearance_tinted_icons_title">着色图标</string>
+    <string name="appearance_language_title">语言</string>
+    <string name="appearance_language_system">跟随系统</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
+    <string name="appearance_tinted_icons_content">使用强调色为设置图标着色，而不是经典的多彩图标</string>
+    <string name="item_report_issue_title">报告问题</string>
+    <string name="item_report_issue_content">附带诊断日志报告错误，或在 GitHub 上提出功能建议</string>
+    <string name="report_issue_bug">报告问题</string>
+    <string name="report_issue_feature">建议新功能</string>
+    <string name="report_issue_include_log">包含诊断日志</string>
+    <string name="report_issue_include_log_hint">发送前你可以先查看。你的应用和位置信息已被移除。</string>
+    <string name="report_issue_no_log_title">无需日志</string>
+    <string name="report_issue_no_log_hint">日志仅会添加到错误报告中。</string>
+    <string name="report_issue_continue">继续</string>
+    <string name="diagnostics_crash_title">DarQ 意外关闭</string>
+    <string name="diagnostics_crash_content">崩溃报告已保存在此设备上。除非你选择发送，否则不会发送任何内容。</string>
+    <string name="diagnostics_crash_review">查看报告</string>
+    <string name="diagnostics_crash_not_now">暂不</string>
+    <string name="diagnostics_report_title">DarQ 诊断日志</string>
+    <string name="diagnostics_preview_trimmed">[继续时还会包含另外 %1$d 个字符的日志内容，处理方式相同]</string>
+    <string name="diagnostics_report_github">前往 GitHub</string>
+    <string name="diagnostics_report_more">更多选项</string>
+    <string name="diagnostics_summary_note">DarQ 已复制完整日志。请粘贴到此行下方。</string>
+    <string name="diagnostics_report_close">关闭</string>
+    <string name="diagnostics_report_summary">摘要</string>
+    <string name="diagnostics_report_last_crash">最近一次崩溃</string>
+    <string name="diagnostics_report_handled">已处理的错误</string>
+    <string name="diagnostics_report_none">无</string>
+    <string name="diagnostics_report_log_hint">继续时会包含完整的已处理日志。你的应用会被替换为短代码，位置信息已被移除。</string>
+    <string name="diagnostics_report_show_log">显示完整日志</string>
+    <string name="diagnostics_report_hide_log">隐藏完整日志</string>
+    <string name="report_issue_what_happened">发生了什么？</string>
+    <string name="report_issue_steps">复现步骤</string>
+    <string name="report_issue_problem">你希望 DarQ 做什么？</string>
+    <string name="report_issue_solution">它应该如何工作？（可选）</string>
+    <string name="diagnostics_send_title">发送日志</string>
+    <string name="diagnostics_copied_form">已复制完整日志。请粘贴到 Relevant log output 末尾。</string>
+    <string name="diagnostics_copied_comment">已复制日志。请打开该问题并粘贴到评论中。</string>
+    <string name="diagnostics_copied">日志已复制到剪贴板</string>
+    <string name="diagnostics_saved">日志已保存到“下载”</string>
+    <string name="diagnostics_save_failed">无法将日志保存到“下载”</string>
+    <string-array name="appearance_accent_presets">
+        <item>蓝色</item>
+        <item>青色</item>
+        <item>绿色</item>
+        <item>紫色</item>
+        <item>橙色</item>
+        <item>玫红</item>
+        <item>琥珀色</item>
+        <item>单色</item>
+    </string-array>
+    <string-array name="diagnostics_send_options">
+        <item>在 GitHub 上提交错误报告</item>
+        <item>添加到现有问题</item>
+        <item>保存到“下载”</item>
+        <item>分享</item>
+        <item>复制到剪贴板</item>
+    </string-array>
+    <string name="diagnostics_send_github_summary">在浏览器中预填新的 GitHub 问题报告</string>
+    <string name="diagnostics_send_comment_summary">复制格式化评论并打开问题列表</string>
+    <string name="diagnostics_send_save_summary">将诊断日志保存到本地存储</string>
+    <string name="diagnostics_send_share_summary">通过系统分享面板发送</string>
+    <string name="diagnostics_send_copy_summary">复制完整诊断文本到剪贴板</string>
+    <plurals name="status_content_apps">
+        <item quantity="other">已将 %d 个应用设为深色</item>
+    </plurals>
+
 </resources>

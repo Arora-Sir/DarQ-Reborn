@@ -2,9 +2,11 @@ package com.kieronquinn.app.darq.components.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.kieronquinn.app.darq.components.theme.AppLanguage
 import android.content.SharedPreferences
 import android.util.Log
 import com.kieronquinn.app.darq.BuildConfig
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
 import com.kieronquinn.app.darq.utils.extensions.ReadWriteProperty
@@ -33,7 +35,11 @@ import kotlin.reflect.KProperty
 //and renaming it over the old one, so the permission has to be re-applied after the replacement
 //has actually happened. apply() defers that write and would let the chmod race ahead of it.
 @SuppressLint("ApplySharedPref")
-class AppSharedPreferences(context: Context): DarqSharedPreferences() {
+class AppSharedPreferences(private val context: Context): DarqSharedPreferences() {
+
+    override var languageTag: String?
+        get() = AppLanguage.tag(context)
+        set(value) = AppLanguage.set(context, value.orEmpty())
 
     override val sharedPreferences: SharedPreferences by lazy {
         val prefsFile = "${BuildConfig.APPLICATION_ID}_prefs"
@@ -129,6 +135,8 @@ class AppSharedPreferences(context: Context): DarqSharedPreferences() {
         //The revision commit rewrites the file, so it runs before the permission is re-applied
         recordSnapshot()
         makeWorldReadable()
+        //The LibXposed entry reads the framework's remote preferences instead of this file
+        XposedBridge.mirror(key)
         val ipcSetting = getIPCSettingForKey(key) ?: return
         GlobalScope.launch(Dispatchers.IO) {
             _changed.emit(ipcSetting)

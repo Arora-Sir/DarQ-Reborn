@@ -55,8 +55,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">Розробляється та підтримується &lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;. <br/><br/>Вихідний код доступний на &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt;.</string>
     <string name="item_developer_options_title">Параметри розробника</string>
-    <string name="item_developer_options_monet_color_picker_title">Вибір кольору Monet</string>
-    <string name="item_developer_options_monet_color_picker_content">Обрати колір із вашого фонового зображення</string>
     <string name="item_developer_options_kill_service_title">Завершити дублікати служб</string>
     <string name="item_developer_options_kill_service_content">Завершує будь-які дублікати служб DarQ. Зазвичай це не потрібно завдяки способу керування службою, але може знадобитись при перемиканні між режимами Shizuku та root.</string>
     <string name="item_developer_options_kill_service_toast_success">Успішно</string>
@@ -81,8 +79,6 @@
     <string name="item_xposed_invert_status_bar_fix_title">Виправити інверсію панелі стану</string>
     <string name="item_xposed_invert_status_bar_fix_content">Спроба вимкнути інверсію панелі стану в додатках з примусовою темною темою, виправляючи темні іконки на темному фоні</string>
     <string name="item_xposed_info_title">Примітки щодо Xposed</string>
-    <string name="item_xposed_info_content">Якщо ви використовуєте EdXposed у режимі білого списку додатків, або LSPosed, вам також потрібно увімкнути всі потрібні додатки в менеджері Xposed, а також у DarQ.\nПісля зміни налаштувань додатки потрібно перезапустити, щоб зміни набули чинності.\nЯкщо налаштування або новообраний додаток з примусовою темною темою не застосовується, спробуйте перезавантажити пристрій, запустити DarQ, а потім обраний додаток.\n<b>Увага:</b> якщо ви видалите Xposed або увімкнете/вимкнете модуль DarQ, ваші налаштування DarQ можуть скинутись через внутрішні хуки налаштувань Xposed. Використовуйте функцію резервного копіювання/відновлення, щоб зберегти налаштування перед цим.</string>
-    <string name="color_picker_unavailable">Вибір кольору Monet недоступний для поточно обраного фонового зображення</string>
     <string name="loading_service_connect">Підключення до служби…</string>
     <string name="snackbar_syncing_text">Синхронізація змін зі службою…</string>
     <string name="snackbar_syncing_complete_text">Зміни синхронізовано зі службою.</string>
@@ -127,11 +123,8 @@
     <string name="dialog_location_permission_text">Дозволити <b>DarQ</b> використовувати ваше місцезнаходження для отримання часу сходу та заходу сонця?</string>
     <string name="dialog_location_permission_use_location">Використати місцезнаходження</string>
     <string name="dialog_location_permission_use_timezone">Використати часовий пояс\n<small>(менш точно)</small></string>
-    <string name="chip_donate">Пригостити кавою</string>
     <string name="chip_twitter">X</string>
     <string name="chip_github">GitHub</string>
-    <string name="chip_socials">Соцмережі</string>
-    <string name="chip_xda">Тема на XDA</string>
     <string name="menu_open_source_libraries">Бібліотеки з відкритим кодом</string>
     <string name="bottom_sheet_update_available_title">Доступне оновлення</string>
     <string name="bottom_sheet_update_available_positive">Завантажити</string>
@@ -153,13 +146,11 @@
     <string name="item_boot_wait_shizuku_content">Очікує запуску Shizuku під час завантаження перед спробою підключення, уникаючи сповіщень про помилку запуску.</string>
     <string name="item_check_for_prereleases_title">Перевіряти попередні релізи</string>
     <string name="item_check_for_prereleases_content">Враховувати бета- та попередні версії під час перевірки оновлень.</string>
-    <string name="donation_dialog_title">Пригостити кавою</string>
     <string name="donation_dialog_upi_title">Оплата через UPI</string>
     <string name="donation_dialog_upi_summary">Оплата через Google Pay, PhonePe, Paytm, BHIM тощо (Індія)</string>
     <string name="donation_dialog_global_title">PayPal</string>
     <string name="donation_dialog_global_summary">Оплата глобальними кредитними/дебетовими картками або через PayPal</string>
 
-    <string name="social_links_dialog_title">Профілі розробника</string>
     <string name="social_website_title">Особистий сайт</string>
     <string name="social_website_summary">mohitarora.me</string>
     <string name="social_github_profile_title">Профіль GitHub</string>
@@ -174,5 +165,181 @@
     <string name="social_instagram_summary">instagram.com/arora.sir</string>
     <string name="social_reddit_title">Reddit</string>
     <string name="social_reddit_summary">reddit.com/user/AroraSir</string>
+
+
+    <!-- 3.2.0, machine translated -->
+    <string name="item_xposed_request_scope_title">Додати вибрані додатки до області дії LSPosed</string>
+    <string name="item_xposed_request_scope_content">Попросити LSPosed або Vector додати до області дії модуля всі додатки, які ви вибрали в DarQ</string>
+    <string name="xposed_scope_approved">%1$s додано до області дії LSPosed</string>
+    <string name="xposed_scope_approved_count">Додатків додано до області дії LSPosed: %1$d</string>
+    <string name="xposed_scope_failed">Не вдалося надіслати запит до LSPosed: %1$s</string>
+    <string name="xposed_scope_already">Усі вибрані додатки вже є в області дії LSPosed</string>
+    <string name="xposed_scope_unavailable">Потрібен LSPosed 2.x або Vector з увімкненим модулем DarQ</string>
+    <string name="chip_credits">Подяки</string>
+    <string name="chip_donate">Підтримати розробку</string>
+    <string name="chip_socials">Розробник</string>
+    <string name="app_picker_clear_search">Очистити пошук</string>
+    <string name="social_developer_name">Mohit Arora</string>
+    <string name="social_developer_role">Системний архітектор і мобільний інженер</string>
+    <string name="safe_run_failed">Щось пішло не так. Помилку збережено для наступного звіту.</string>
+    <string name="link_no_browser">Не знайдено браузер для відкриття цього посилання</string>
+    <string name="item_support_content">Необов\'язково, вибір завжди за вами</string>
+    <string name="support_intro">DarQ Reborn безкоштовний і з відкритим кодом. Підтримка добровільна, і вибір завжди за вами.</string>
+    <string name="support_upi_chooser">Підтримати через UPI</string>
+    <string name="support_upi_none">Додаток UPI не знайдено. UPI ID скопійовано в буфер обміну.</string>
+    <string name="support_upi_copied">UPI ID скопійовано: %1$s</string>
+    <string name="support_copy_upi_title">Копіювати UPI ID</string>
+    <string name="support_copy_upi_summary">mohit1998arora@yescred</string>
+    <string name="support_sponsors_title">GitHub Sponsors</string>
+    <string name="support_sponsors_summary">Підтримка щомісяця або одноразово через GitHub</string>
+    <string name="donation_dialog_title">Підтримати розробку</string>
+    <string name="credits_title">Подяки</string>
+    <string name="credits_intro">DarQ Reborn продовжує оригінальний DarQ і спирається на роботу цих проєктів з відкритим кодом.</string>
+    <string name="credits_upstream_title">DarQ від Kieron Quinn</string>
+    <string name="credits_upstream_summary">Оригінальний проєкт, від якого створено цей додаток</string>
+    <string name="credits_author_title">Kieron Quinn</string>
+    <string name="credits_author_summary">Автор оригінального DarQ</string>
+    <string name="credits_shizuku_title">Shizuku</string>
+    <string name="credits_shizuku_summary">Rikka Apps, запускає DarQ із системним доступом без root</string>
+    <string name="credits_xposed_title">LSPosed і LibXposed</string>
+    <string name="credits_xposed_summary">Фреймворки Xposed, через які працює DarQ</string>
+    <string name="credits_libsu_title">libsu</string>
+    <string name="credits_libsu_summary">topjohnwu, запускає сервіс root</string>
+    <string name="credits_contributors_title">Учасники</string>
+    <string name="credits_contributors_summary">Усі, хто надіслав виправлення або ідею на GitHub</string>
+    <string name="credits_licences_title">Ліцензії відкритого коду</string>
+    <string name="credits_licences_summary">Бібліотеки, що входять до цього додатка</string>
+    <string name="item_obtainium_title">Стежити через Obtainium</string>
+    <string name="item_obtainium_content">Додайте DarQ до Obtainium одним дотиком і отримуйте сповіщення про нові випуски</string>
+    <string name="bottom_sheet_update_obtainium">Стежити через Obtainium</string>
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">З&#8217;єднання</string>
+    <string name="status_label_not_connected">Не підключено</string>
+    <string name="status_description">Стан: %1$s</string>
+    <string name="status_title_shizuku">Shizuku підключено</string>
+    <string name="status_title_root">Root підключено</string>
+    <string name="status_title_connecting">Підключення до сервісу</string>
+    <string name="status_title_none">Сервіс не підключено</string>
+    <string name="status_content_none_selected">Додатки ще не вибрано</string>
+    <string name="status_content_xposed">%1$s, модуль Xposed активний</string>
+    <string name="status_content_not_connected">Відкрийте Shizuku або надайте root, потім знову відкрийте DarQ. Торкніться, щоб отримати допомогу.</string>
+    <string name="item_appearance_title">Вигляд</string>
+    <string name="item_appearance_content">Тема, колір акценту, чорний фон і піктограми</string>
+    <string name="appearance_theme_title">Тема</string>
+    <string name="appearance_theme_system">Як у системі</string>
+    <string name="appearance_theme_system_summary">Відповідає налаштуванням системи</string>
+    <string name="appearance_theme_light">Світла</string>
+    <string name="appearance_theme_light_summary">Завжди використовувати світлу тему</string>
+    <string name="appearance_theme_dark">Темна</string>
+    <string name="appearance_theme_dark_summary">Завжди використовувати темну тему</string>
+    <string name="appearance_pure_black_title">Чистий чорний</string>
+    <string name="appearance_pure_black_content">Використовує справжній чорний фон у темному режимі, що заощаджує заряд на екранах AMOLED</string>
+    <string name="appearance_pure_black_lift_title">Підйом поверхонь</string>
+    <string name="appearance_pure_black_lift_summary">Підйом поверхонь: %1$s. Торкніться, щоб змінити.</string>
+    <string name="appearance_pure_black_lift_hint">Піднімає картки, поля й розділи чистого чорного від пласких до піднятих. Сторінка лишається чорною.</string>
+    <string name="appearance_pure_black_lift_sample_section">Розділ</string>
+    <string name="appearance_pure_black_lift_sample_field">Поле</string>
+    <string name="appearance_pure_black_lift_sample_selected">Вибраний елемент</string>
+    <string name="appearance_pure_black_lift_level">Рівень %1$d з 10</string>
+    <string name="appearance_pure_black_lift_level_recommended">Рівень %1$d з 10, рекомендований</string>
+    <string name="appearance_pure_black_lift_reset">Скинути</string>
+    <string name="appearance_accent_title">Колір акценту</string>
+    <string name="appearance_accent_title_chosen">Колір акценту: %1$s</string>
+    <string name="appearance_accent_contrast">Контраст %1$.1f:1 на чорному, %2$.1f:1 на картках.</string>
+    <string name="appearance_accent_low_contrast">Цей колір погано видно на темних поверхнях.</string>
+    <string name="appearance_accent_reset">Скинути</string>
+    <string name="appearance_accent_wallpaper">Шпалери</string>
+    <string name="appearance_accent_custom_value">Власний колір %1$s</string>
+    <string name="appearance_accent_custom_summary">Колір шпалер</string>
+    <string name="appearance_accent_custom_title">Власний колір</string>
+    <string name="appearance_accent_custom_pick">Власний</string>
+    <string name="appearance_accent_hex">Колір у форматі hex</string>
+    <string name="appearance_accent_hex_error">Введіть шість шістнадцяткових цифр, наприклад #0072DE</string>
+    <string name="appearance_accent_light">Світла</string>
+    <string name="appearance_accent_dark">Темна</string>
+    <string name="appearance_accent_sample_title">Темний режим</string>
+    <string name="appearance_accent_sample_button">Увімкнути</string>
+    <string name="appearance_accent_use_color">Використати цей колір</string>
+    <string name="appearance_accent_apply">Застосувати</string>
+    <string name="appearance_accent_area_description">Насиченість і яскравість</string>
+    <string name="appearance_accent_hue_description">Відтінок</string>
+    <string name="appearance_accent_note_dynamic">Android створює повну колірну схему на основі цього кольору.</string>
+    <string name="appearance_accent_fallback">Android 10 і 11 використовують готовий колір, найближчий до цього</string>
+    <string name="appearance_tinted_icons_title">Кольорові піктограми</string>
+    <string name="appearance_language_title">Мова</string>
+    <string name="appearance_language_system">Системна</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
+    <string name="appearance_tinted_icons_content">Фарбує піктограми налаштувань у колір акценту замість класичного різнокольорового набору</string>
+    <string name="item_report_issue_title">Повідомити про проблему</string>
+    <string name="item_report_issue_content">Повідомте про помилку з діагностичним журналом або запропонуйте функцію на GitHub</string>
+    <string name="report_issue_bug">Повідомити про помилку</string>
+    <string name="report_issue_feature">Запропонувати функцію</string>
+    <string name="report_issue_include_log">Додати діагностичний журнал</string>
+    <string name="report_issue_include_log_hint">Ви перегляньте його перед надсиланням. Ваші додатки та місцезнаходження видалено.</string>
+    <string name="report_issue_no_log_title">Журнал не потрібен</string>
+    <string name="report_issue_no_log_hint">Журнал додається лише до звітів про помилки.</string>
+    <string name="report_issue_continue">Продовжити</string>
+    <string name="diagnostics_crash_title">DarQ несподівано закрився</string>
+    <string name="diagnostics_crash_content">Звіт про збій збережено на цьому пристрої. Нічого не надсилається, доки ви самі цього не оберете.</string>
+    <string name="diagnostics_crash_review">Переглянути звіт</string>
+    <string name="diagnostics_crash_not_now">Не зараз</string>
+    <string name="diagnostics_report_title">Діагностичний журнал DarQ</string>
+    <string name="diagnostics_preview_trimmed">[Ще %1$d символів рядків журналу, оброблених так само, буде додано, коли ви продовжите]</string>
+    <string name="diagnostics_report_github">Перейти до GitHub</string>
+    <string name="diagnostics_report_more">Інші варіанти</string>
+    <string name="diagnostics_summary_note">DarQ скопіював повний журнал. Вставте його під цим рядком.</string>
+    <string name="diagnostics_report_close">Закрити</string>
+    <string name="diagnostics_report_summary">Підсумок</string>
+    <string name="diagnostics_report_last_crash">Останній збій</string>
+    <string name="diagnostics_report_handled">Оброблені помилки</string>
+    <string name="diagnostics_report_none">Немає</string>
+    <string name="diagnostics_report_log_hint">Повний оброблений журнал буде додано, коли ви продовжите. Ваші додатки замінено короткими кодами, а місцезнаходження видалено.</string>
+    <string name="diagnostics_report_show_log">Показати повний журнал</string>
+    <string name="diagnostics_report_hide_log">Сховати повний журнал</string>
+    <string name="report_issue_what_happened">Що сталося?</string>
+    <string name="report_issue_steps">Кроки для відтворення</string>
+    <string name="report_issue_problem">Що DarQ мав би робити?</string>
+    <string name="report_issue_solution">Як це має працювати? (необов\'язково)</string>
+    <string name="diagnostics_send_title">Надіслати журнал</string>
+    <string name="diagnostics_copied_form">Повний журнал скопійовано. Вставте його в кінці поля Relevant log output.</string>
+    <string name="diagnostics_copied_comment">Журнал скопійовано. Відкрийте звернення та вставте його в коментар.</string>
+    <string name="diagnostics_copied">Журнал скопійовано в буфер обміну</string>
+    <string name="diagnostics_saved">Журнал збережено в Завантаження</string>
+    <string name="diagnostics_save_failed">Не вдалося зберегти журнал у Завантаження</string>
+    <string-array name="appearance_accent_presets">
+        <item>Синій</item>
+        <item>Бірюзовий</item>
+        <item>Зелений</item>
+        <item>Фіолетовий</item>
+        <item>Помаранчевий</item>
+        <item>Рожевий</item>
+        <item>Бурштиновий</item>
+        <item>Монохромний</item>
+    </string-array>
+    <string-array name="diagnostics_send_options">
+        <item>Створити звіт про помилку на GitHub</item>
+        <item>Додати до наявного звернення</item>
+        <item>Зберегти в Завантаження</item>
+        <item>Поділитися</item>
+        <item>Копіювати в буфер обміну</item>
+    </string-array>
+    <string name="diagnostics_send_github_summary">Заповнює новий звіт про помилку на GitHub у браузері</string>
+    <string name="diagnostics_send_comment_summary">Копіює коментар та відкриває список проблем</string>
+    <string name="diagnostics_send_save_summary">Зберігає журнал діагностики у локальне сховище</string>
+    <string name="diagnostics_send_share_summary">Надіслати через системне меню поширення</string>
+    <string name="diagnostics_send_copy_summary">Копіює повний текст діагностики в буфер обміну</string>
+    <plurals name="status_content_apps">
+        <item quantity="one">%d додаток затемнено</item>
+        <item quantity="few">%d додатки затемнено</item>
+        <item quantity="many">%d додатків затемнено</item>
+        <item quantity="other">%d додатка затемнено</item>
+    </plurals>
 
 </resources>

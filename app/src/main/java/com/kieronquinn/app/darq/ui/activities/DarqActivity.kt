@@ -3,21 +3,23 @@ package com.kieronquinn.app.darq.ui.activities
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import com.kieronquinn.app.darq.components.theme.AppLanguage
 import android.content.pm.PackageManager
 import android.os.Build
+import java.util.Locale
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.view.menu.ListMenuItemView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import com.kieronquinn.app.darq.R
-import com.kieronquinn.monetcompat.app.MonetCompatActivity
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
+import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsDialogs
+import com.kieronquinn.app.darq.components.theme.ThemeManager
+import org.koin.android.ext.android.inject
 
-class DarqActivity: MonetCompatActivity() {
+class DarqActivity: AppCompatActivity() {
 
     companion object {
         const val EXTRA_OPEN_ADVANCED_SETTINGS = "open_advanced_settings"
@@ -29,18 +31,77 @@ class DarqActivity: MonetCompatActivity() {
         // Permission request handled
     }
 
+    private val settings by inject<DarqSharedPreferences>()
+    private var appliedTheme: String? = null
+    private var appliedLanguage = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        appliedTheme = ThemeManager.apply(this, settings)
+        appliedLanguage = AppLanguage.tag(this)
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setUseLightStatusNav(false)
-        lifecycleScope.launchWhenResumed {
-            monet.awaitMonetReady()
-            setContentView(R.layout.activity_darq)
-            val lightStatusNav = resources.getBoolean(R.bool.lightStatusNav)
-            setUseLightStatusNav(lightStatusNav)
+        setContentView(R.layout.activity_darq)
+        setUseLightStatusNav(resources.getBoolean(R.bool.lightStatusNav))
+        if(savedInstanceState == null){
+            DiagnosticsDialogs.offerPendingReport(this)
         }
 
         askNotificationPermission()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguage.wrap(newBase))
+    }
+
+    //Recreating the activity shows a black frame while the system builds a new window, so the language is swapped in place and every screen is rebuilt inside the same window
+    fun applyLanguageInPlace() {
+        appliedLanguage = AppLanguage.tag(this)
+        val locale = AppLanguage.effectiveLocale(this)
+        Locale.setDefault(locale)
+        for(res in listOf(resources, applicationContext.resources)){
+            val config = Configuration(res.configuration)
+            config.setLocale(locale)
+            res.updateConfiguration(config, res.displayMetrics)
+        }
+        //The old container hands its saved state to the new one, so every screen of the back stack is rebuilt in the same transaction and the user stays where they were
+        val old = supportFragmentManager.findFragmentById(R.id.container_fragment)
+        val container = com.kieronquinn.app.darq.ui.screens.container.ContainerFragment()
+        old?.let { container.setInitialSavedState(supportFragmentManager.saveFragmentInstanceState(it)) }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container_fragment, container)
+            .commitNowAllowingStateLoss()
+    }
+
+    //A restore can change the stored language while the screens are showing the old one
+    fun applyLanguageIfChanged() {
+        if(AppLanguage.tag(this) != appliedLanguage) applyLanguageInPlace()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        AppLanguage.adoptSystemChoice(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        //The OS locale follows only once the screen is gone, so no relayout shows
+        AppLanguage.syncToSystem(this)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        AppLanguage.enforce(this, "onConfigurationChanged")
+        //A locale change made by the system while a language is chosen in the app is ignored, the wrapped context already shows it. With System default the screen has to reload.
+        if(AppLanguage.tag(this).isEmpty()) applyLanguageInPlace()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppLanguage.enforce(this, "onResume")
+        //An accent or pure black change made elsewhere (a restore, another task) only shows after the theme is applied again
+        if(ThemeManager.signature(settings) != appliedTheme){
+            recreate()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -54,26 +115,6 @@ class DarqActivity: MonetCompatActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    }
-
-    /**
-     *  Applies Monet to the overflow menu's checkbox
-     */
-    override fun onCreateView(
-        parent: View?,
-        name: String,
-        context: Context,
-        attrs: AttributeSet
-    ): View? {
-        if (applyBackgroundColorToMenu && name == ListMenuItemView::class.java.name) {
-            //Toolbar dropdown menu list item
-            (parent?.parent as? View)?.run {
-                post {
-                    applyMonetRecursively()
-                }
-            }
-        }
-        return super.onCreateView(parent, name, context, attrs)
     }
 
     private fun setUseLightStatusNav(enabled: Boolean){

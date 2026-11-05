@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: Surface lift in the layout of Super Artemis: an icon, the title and a hint, a small black page with a section, a field and a selected item in the greys of the chosen step, the position and the dot slider. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/padding_24"
+    android:paddingTop="@dimen/padding_24"
+    android:paddingEnd="@dimen/padding_24"
+    android:paddingBottom="@dimen/padding_8">
+
+    <ImageView
+        android:id="@+id/surface_lift_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_horizontal"
+        android:importantForAccessibility="no"
+        android:padding="8dp" />
+
+    <TextView
+        android:id="@+id/surface_lift_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:gravity="center"
+        android:text="@string/appearance_pure_black_lift_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+        android:textColor="?android:textColorPrimary" />
+
+    <TextView
+        android:id="@+id/surface_lift_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_8"
+        android:gravity="center"
+        android:text="@string/appearance_pure_black_lift_hint"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+        android:textColor="?android:textColorSecondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:background="@android:color/black"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:id="@+id/surface_lift_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/appearance_pure_black_lift_sample_section"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/surface_lift_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="10dp"
+                android:text="@string/appearance_pure_black_lift_sample_field"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/surface_lift_highest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="10dp"
+                android:text="@string/appearance_pure_black_lift_sample_selected"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                android:textColor="?android:textColorPrimary" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- NOTE: The position line has a fixed height so nothing below it moves between the short and the long label. -->
+    <TextView
+        android:id="@+id/surface_lift_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:gravity="center"
+        android:minHeight="28dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+        android:textColor="?android:textColorPrimary"
+        tools:text="Level 5 of 10, recommended" />
+
+    <com.kieronquinn.app.darq.ui.utils.LiftSlider
+        android:id="@+id/surface_lift_slider"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/padding_8"
+        android:contentDescription="@string/appearance_pure_black_lift_title" />
+
+</LinearLayout>

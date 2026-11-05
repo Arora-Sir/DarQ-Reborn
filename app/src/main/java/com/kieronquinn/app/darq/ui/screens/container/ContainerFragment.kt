@@ -26,12 +26,15 @@ import com.kieronquinn.app.darq.service.autodark.DarqAutoDarkForegroundService
 import com.kieronquinn.app.darq.ui.activities.DarqActivity
 import com.kieronquinn.app.darq.ui.base.*
 import com.kieronquinn.app.darq.utils.extensions.*
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import rikka.shizuku.Shizuku
 import kotlin.math.roundToInt
+
+private const val STATE_TITLE = "container_title"
+private const val STATE_BACK = "container_back"
+private const val STATE_STATUS = "container_status_visible"
 
 class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContainerBinding::inflate) {
 
@@ -57,7 +60,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         super.onViewCreated(view, savedInstanceState)
         setupBackground()
         setupInsets()
-        setupToolbar()
+        setupToolbar(savedInstanceState)
         setupFragmentListener()
         setupNavigation()
         setupLoading()
@@ -73,12 +76,30 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     }
 
     private fun setupBackground(){
-        val backgroundColor = monet.getBackgroundColor(requireContext())
+        val backgroundColor = themeColors.getBackgroundColor(requireContext())
         binding.root.setBackgroundColor(backgroundColor)
         binding.appBar.setBackgroundColor(android.graphics.Color.TRANSPARENT)
     }
 
+    // NOTE: The app bar is sized with the status bar height from the very first layout, so the title never jumps down when the insets arrive.
+    private fun applyInitialAppBarSize(){
+        val statusBarHeight = resources.getIdentifier("status_bar_height", "dimen", "android").let {
+            if(it > 0) resources.getDimensionPixelSize(it) else 0
+        }
+        val appBarHeight = resources.getDimension(R.dimen.app_bar_height)
+        binding.collapsingToolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
+            height = (appBarHeight + statusBarHeight + barExtra).roundToInt()
+        }
+        getToolbarHeight()?.let { toolbarHeight ->
+            binding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
+                height = toolbarHeight + statusBarHeight + barExtra
+            }
+            binding.toolbar.updatePadding(top = statusBarHeight)
+        }
+    }
+
     private fun setupInsets(){
+        applyInitialAppBarSize()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(left = navigationInsets.left, right = navigationInsets.right)
@@ -87,7 +108,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         ViewCompat.setOnApplyWindowInsetsListener(binding.collapsingToolbar){ view, insets ->
             view.updateLayoutParams<AppBarLayout.LayoutParams> {
                 val appBarHeight = view.context.resources.getDimension(R.dimen.app_bar_height)
-                height = (appBarHeight + insets.getInsets(WindowInsetsCompat.Type.statusBars()).top).roundToInt()
+                height = (appBarHeight + insets.getInsets(WindowInsetsCompat.Type.statusBars()).top + barExtra).roundToInt()
             }
             insets
         }
@@ -97,7 +118,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                 val overflowPadding = resources.getDimension(R.dimen.padding_8)
                 val topInset = statusInsets.top
                 view.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
-                    height = it + topInset
+                    height = it + topInset + barExtra
                 }
                 view.updatePadding(left = statusInsets.left, top = topInset, right = statusInsets.right + overflowPadding.toInt())
             }
@@ -112,10 +133,25 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         }else null
     }
 
-    private fun setupToolbar(){
+    // NOTE: A recreate (Pure black, accent) restores the title that was on screen, so the app name never shows for a few frames.
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(view != null) {
+            outState.putString(STATE_TITLE, binding.toolbar.title?.toString())
+            outState.putBoolean(STATE_BACK, binding.toolbar.navigationIcon != null)
+            outState.putBoolean(STATE_STATUS, statusVisible)
+        }
+    }
+
+    private fun setupToolbar(savedInstanceState: Bundle?){
         with(binding){
-            collapsingToolbar.title = getString(R.string.app_name)
-            appBar.setExpanded(!requireContext().isLandscape && getTopFragment() is AutoExpandOnRotate)
+            toolbar.title = savedInstanceState?.getString(STATE_TITLE) ?: getString(R.string.app_name)
+            statusVisible = savedInstanceState?.getBoolean(STATE_STATUS, true) ?: true
+            if(savedInstanceState?.getBoolean(STATE_BACK) == true) {
+                toolbar.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_back)
+            }
+            //Always start expanded and without animation, the top fragment then restores its own saved state, so the large title is there from the first frame
+            appBar.setExpanded(!requireContext().isLandscape, false)
             appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
                 val currentDestClass = (navController.currentDestination as? androidx.navigation.fragment.FragmentNavigator.Destination)?.className
                 if (currentDestClass != null) {
@@ -127,11 +163,11 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                     navigation.navigateBack()
                 }
             }
-            collapsingToolbar.setBackgroundColor(monet.getBackgroundColor(requireContext()))
-            collapsingToolbar.setContentScrimColor(monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext()))
+            collapsingToolbar.setBackgroundColor(themeColors.getBackgroundColor(requireContext()))
+            collapsingToolbar.setContentScrimColor(themeColors.getBackgroundColorSecondary(requireContext()))
             collapsingToolbar.setExpandedTitleTypeface(ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium))
             collapsingToolbar.setCollapsedTitleTypeface(ResourcesCompat.getFont(requireContext(), R.font.google_sans_text_medium))
-            toolbar.overflowIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.toolbar_overflow))
+            toolbar.overflowIcon?.setTint(themeColors.getOnSurfaceColor(requireContext()))
         }
     }
 
@@ -178,9 +214,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
             view.updatePadding(bottom = bottomInsets)
             insets
         }
-        val background = monet.getBackgroundColorSecondary(requireContext()) ?: monet.getBackgroundColor(requireContext())
+        val background = themeColors.getBackgroundColorSecondary(requireContext())
         binding.snackbar.backgroundTintList = ColorStateList.valueOf(background)
-        binding.snackbarRoot.snackbarProgress.applyMonet()
         lifecycleScope.launchWhenResumed {
             launch {
                 sharedViewModel.showSnackbar.collect {
@@ -227,6 +262,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     }
 
     private fun onTopFragmentChanged(topFragment: Fragment){
+        statusVisible = topFragment is com.kieronquinn.app.darq.ui.screens.settings.SettingsFragment
+        applyStatus()
         val backIcon = if(topFragment is BackAvailable){
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_back)
         } else null
@@ -243,6 +280,96 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
         }
         val isExpanded = fragmentExpandedState[topFragment::class.java.name] ?: (topFragment is AutoExpandOnRotate)
         binding.appBar.setExpanded(isExpanded, false)
+    }
+
+    enum class StatusLevel { PENDING, OK, ERROR }
+
+    data class ServiceStatus(val label: String, val level: StatusLevel)
+
+    private var serviceStatus: ServiceStatus? = null
+    private var statusOnClick: (() -> Unit)? = null
+    private var statusVisible = true
+    private var shownDotColor: Int? = null
+
+    // NOTE: The home screen reports the service status here. It shows as a dot and one word at the end of the title bar, and only on the home screen.
+    // NOTE: The first call draws without animation, later changes fade the dot color in 150 ms and move nothing else.
+    fun setServiceStatus(status: ServiceStatus?, onClick: (() -> Unit)? = null) {
+        serviceStatus = status
+        statusOnClick = onClick
+        if(view != null) applyStatus()
+    }
+
+    private fun dotColor(level: StatusLevel): Int = when(level){
+        StatusLevel.OK -> ContextCompat.getColor(requireContext(), R.color.status_dot_ok)
+        StatusLevel.ERROR -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorError)
+        StatusLevel.PENDING -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorOutline)
+    }
+
+    //Extra bar height for the status subtitle at large fonts, added to every bar height computed from the insets
+    private var barExtra = 0
+
+    private fun setBarExtra(extra: Int) {
+        if(barExtra == extra || view == null) return
+        barExtra = extra
+        val statusTop = ViewCompat.getRootWindowInsets(binding.root)?.getInsets(WindowInsetsCompat.Type.statusBars())?.top
+            ?: resources.getIdentifier("status_bar_height", "dimen", "android").let { if(it > 0) resources.getDimensionPixelSize(it) else 0 }
+        binding.collapsingToolbar.updateLayoutParams<AppBarLayout.LayoutParams> {
+            height = (resources.getDimension(R.dimen.app_bar_height) + statusTop + barExtra).roundToInt()
+        }
+        getToolbarHeight()?.let { toolbarHeight ->
+            binding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
+                height = toolbarHeight + statusTop + barExtra
+            }
+        }
+    }
+
+    // NOTE: With a large system font the word would squeeze the title, so it moves under the title as the toolbar subtitle.
+    private fun applyStatus() = with(binding) {
+        val status = serviceStatus
+        if(!statusVisible || status == null){
+            statusContainer.isVisible = false
+            toolbar.subtitle = null
+            setBarExtra(0)
+            return@with
+        }
+        val color = dotColor(status.level)
+        val largeFont = resources.configuration.fontScale > 1.15f
+        statusContainer.contentDescription = getString(R.string.status_description, status.label)
+        if(largeFont){
+            statusContainer.isVisible = false
+            //The subtitle needs its own line, so the bar grows by one scaled line instead of clipping it
+            setBarExtra(android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics).toInt())
+            toolbar.subtitle = android.text.SpannableString("● ${status.label}").apply {
+                setSpan(android.text.style.ForegroundColorSpan(color), 0, 1, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }else{
+            toolbar.subtitle = null
+            setBarExtra(0)
+            statusContainer.isVisible = true
+            statusLabel.text = status.label
+            statusLabel.setTextColor(
+                if(status.level == StatusLevel.ERROR) color else com.google.android.material.color.MaterialColors.getColor(statusLabel, com.google.android.material.R.attr.colorOnSurfaceVariant)
+            )
+            val dot = statusDot.background.mutate()
+            val from = shownDotColor
+            if(from == null || from == color){
+                dot.setTint(color)
+            }else{
+                android.animation.ValueAnimator.ofArgb(from, color).apply {
+                    duration = 150
+                    addUpdateListener { dot.setTint(it.animatedValue as Int) }
+                }.start()
+            }
+            shownDotColor = color
+            val onClick = statusOnClick
+            if(status.level == StatusLevel.ERROR && onClick != null){
+                statusContainer.setOnClickListener { onClick.invoke() }
+                statusContainer.isClickable = true
+            }else{
+                statusContainer.setOnClickListener(null)
+                statusContainer.isClickable = false
+            }
+        }
     }
 
     private fun setupMenu(menuProvider: ProvidesOverflow?){
@@ -283,6 +410,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
     private var snackbarAnimation: Animation? = null
 
     private fun setSnackbarVisibility(visible: Boolean){
+        //A rebuilt screen starts with the snackbar gone, and sliding it out from there flashes it on screen for a moment
+        if(!visible && !binding.snackbarContainer.isVisible && snackbarAnimation == null) return
         snackbarAnimation?.cancel()
         snackbarAnimation = if(visible) binding.snackbarContainer.slideIn {  }
         else binding.snackbarContainer.slideOut {  }
@@ -323,6 +452,8 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
                     binding.snackbarRoot.snackbarAction.isVisible = true
                 }
             }
+            //NotSyncing leaves the snackbar as it is
+            else -> {}
         }
     }
 

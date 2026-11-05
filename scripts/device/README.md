@@ -41,9 +41,16 @@ uv run --with pillow python scripts/device/e2e_xposed.py --serial emulator-5572 
 uv run --with pillow python scripts/device/e2e_xposed.py --serial emulator-5572 --framework vector --apk app/build/outputs/apk/debug/app-debug.apk --label candidate
 ```
 
+The whole matrix (phone and tablet in parallel, then every fleet emulator one at a time, rooted ones with both the Xposed suite and plain root mode) runs with one command and writes a summary to `.e2e/<timestamp>-matrix.md`:
+
+```bash
+uv run --with pillow python scripts/device/run_matrix.py
+uv run --with pillow python scripts/device/run_matrix.py --targets a10 a16root --skip-physical
+```
+
 ## Fixtures
 
-`testing/forcedark-probe` is a debug-only app with a full-screen white panel. `ProbeActivity` uses a light theme that leaves `forceDarkAllowed` unset, so it turns dark only when force dark reaches it. `OptOutProbeActivity` uses a theme not flagged as light (`isLightTheme=false`), so the system skips force dark and only Aggressive Force Dark in Xposed mode can darken it. Screenshot luminance of the panel is the pass or fail oracle, and the probe logs the `debug.hwui.force_dark` value and the night mode it saw under the `DarqProbe` tag.
+`testing/forcedark-probe` is a fixture app with a full-screen white panel, also published with releases as `DarQ-Probe.<version>.apk`. `ProbeActivity` uses a light theme that leaves `forceDarkAllowed` unset, so it turns dark only when force dark reaches it. `OptOutProbeActivity` uses a theme not flagged as light (`isLightTheme=false`), so the system skips force dark and only Aggressive Force Dark in Xposed mode can darken it. Screenshot luminance of the panel is the pass or fail oracle, and the probe logs the `debug.hwui.force_dark` value and the night mode it saw under the `DarqProbe` tag.
 
 ## Suites
 
@@ -51,4 +58,6 @@ uv run --with pillow python scripts/device/e2e_xposed.py --serial emulator-5572 
 
 `e2e_xposed.py` covers the Xposed module: module and scope setup through the Vector CLI or the LSPosed database, the self-hook, the SystemProperties hook, Aggressive Force Dark on an opted-out app, clearing a stale global force dark value, the settings snapshot surviving the LSPosed preferences redirect going away, and the hook failure log.
 
-Reports and screenshots land in `build/e2e/<timestamp>/`.
+`e2e_diagnostics.py` covers the crash report flow on emulators with a debug build: a test crash through the debug-only receiver, the prompt on the next launch, the redacted preview (a planted app name must appear only as a hash), the prefilled GitHub bug form opening in the browser, the prompt appearing only once, and Report an issue offering the log ticked by default.
+
+Reports and screenshots land in `.e2e/<timestamp>/` (git-ignored, and outside `build/` so `gradlew clean` keeps them).

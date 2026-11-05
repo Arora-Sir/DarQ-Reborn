@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollIndicators="top|bottom">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/padding_24"
+        android:paddingEnd="@dimen/padding_24"
+        android:paddingTop="@dimen/padding_8">
+
+        <RadioGroup
+            android:id="@+id/report_issue_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/report_issue_bug">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/report_issue_bug"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/report_issue_bug" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/report_issue_feature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/report_issue_feature" />
+
+        </RadioGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/report_issue_first_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:hint="@string/report_issue_what_happened"
+            app:counterEnabled="true"
+            app:counterMaxLength="1500">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/report_issue_first"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="1500"
+                android:maxLines="5"
+                android:minLines="3" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/report_issue_second_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:hint="@string/report_issue_steps"
+            app:counterEnabled="true"
+            app:counterMaxLength="1500">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/report_issue_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="1500"
+                android:maxLines="5"
+                android:minLines="3" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/report_issue_include_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="@string/report_issue_include_log" />
+
+        <TextView
+            android:id="@+id/report_issue_log_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="32dp"
+            android:paddingBottom="@dimen/padding_8"
+            android:text="@string/report_issue_include_log_hint"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+            android:textColor="?android:textColorSecondary" />
+
+    </LinearLayout>
+</ScrollView>

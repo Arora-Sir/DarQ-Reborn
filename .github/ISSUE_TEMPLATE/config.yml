@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Frequently asked questions
+    url: https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md
+    about: Setup help for Shizuku, root and Xposed, and answers to common problems.
+  - name: Ask a Question
+    url: https://github.com/Arora-Sir/DarQ-Reborn/discussions
+    about: Ask questions, get help, or chat with the community.
+  - name: Security Vulnerability
+    url: https://github.com/Arora-Sir/DarQ-Reborn/security/advisories/new
+    about: Report security concerns privately.

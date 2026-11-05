@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	package="com.kieronquinn.app.darq">
+	xmlns:tools="http://schemas.android.com/tools">
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -21,19 +20,48 @@
 	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 	<uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
+	<!-- NOTE: Lets DarQ find the default browser, so GitHub issue forms open there instead of in the GitHub app. -->
+	<!-- NOTE: Lets DarQ see which UPI apps are installed (Android 11 and later), so the support button can offer a chooser or copy the UPI ID. -->
+	<queries>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<category android:name="android.intent.category.BROWSABLE" />
+			<data android:scheme="https" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="upi" />
+		</intent>
+	</queries>
+
 	<application
 		android:name=".DarqApplication"
+		android:description="@string/xposed_desc"
 		android:allowBackup="true"
+		android:fullBackupContent="@xml/backup_rules"
+		android:dataExtractionRules="@xml/data_extraction_rules"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:roundIcon="@mipmap/ic_launcher"
 		android:supportsRtl="true"
+		android:enableOnBackInvokedCallback="true"
+		android:localeConfig="@xml/locales_config"
 		tools:ignore="GoogleAppIndexingWarning">
+
+		<service
+			android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+			android:enabled="false"
+			android:exported="false">
+			<meta-data
+				android:name="autoStoreLocales"
+				android:value="true" />
+		</service>
 
 		<activity
 			android:name="com.kieronquinn.app.darq.ui.activities.DarqActivity"
 			android:theme="@style/AppTheme"
 			android:launchMode="singleTask"
+			android:configChanges="locale|layoutDirection"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -104,6 +132,12 @@
 				android:resource="@xml/provider_paths"/>
 		</provider>
 
+		<provider
+			android:name="com.kieronquinn.app.darq.components.diagnostics.DiagnosticsFileProvider"
+			android:authorities="${applicationId}.diagnostics"
+			android:exported="false"
+			android:grantUriPermissions="true" />
+
 		<meta-data
 			android:name="xposedmodule"
 			android:value="true" />
@@ -116,6 +150,18 @@
 		<meta-data
 			android:name="xposedsharedprefs"
 			android:value="true" />
+
+		<!-- NOTE: The libxposed service library ships an exported provider that accepts a framework binder from any caller. -->
+		<!-- NOTE: It is replaced by DarqSecureXposedProvider, which only accepts the binder from root or the system UID. -->
+		<provider
+			android:name="io.github.libxposed.service.XposedProvider"
+			android:authorities="${applicationId}.XposedService"
+			tools:node="remove" />
+		<provider
+			android:name="io.github.libxposed.service.DarqSecureXposedProvider"
+			android:authorities="${applicationId}.XposedService"
+			android:exported="true"
+			tools:ignore="ExportedContentProvider" />
 
 		<receiver
 			android:name=".receivers.TimeChangeReceiver"

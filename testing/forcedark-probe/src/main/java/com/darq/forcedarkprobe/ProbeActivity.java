@@ -19,12 +19,28 @@ public class ProbeActivity extends Activity {
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.WHITE);
         TextView label = new TextView(this);
-        label.setText(getClass().getSimpleName());
+        label.setText(labelText());
         label.setTextColor(Color.BLACK);
-        label.setTextSize(28f);
+        label.setTextSize(getClass() == ProbeActivity.class ? 20f : 28f);
+        label.setPadding(48, 48, 48, 48);
         label.setGravity(Gravity.CENTER);
         root.addView(label, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
+    }
+
+    // NOTE: The plain probe explains itself, because people install it from a release to check that DarQ works. The opt-out variant keeps its class name, which the device suites read.
+    private CharSequence labelText() {
+        if (getClass() != ProbeActivity.class) {
+            return getClass().getSimpleName();
+        }
+        String lineBreak = System.lineSeparator();
+        String gap = lineBreak + lineBreak;
+        return "DarQ Probe" + gap
+                + "This page is white on purpose." + gap
+                + "1. Open DarQ and select DarQ Probe in the app list." + lineBreak
+                + "2. Turn on Enable DarQ." + lineBreak
+                + "3. Close this app and open it again." + gap
+                + "If this page is now dark, DarQ works on your device. If it stays white, open Report an issue in DarQ.";
     }
 
     @Override

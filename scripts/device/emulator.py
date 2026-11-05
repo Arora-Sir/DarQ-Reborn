@@ -67,7 +67,7 @@ def up(name: str, port: int, window: bool) -> str:
     args = [str(SDK / "emulator/emulator.exe"), "-avd", name, "-port", str(port), "-no-snapshot", "-no-audio", "-no-boot-anim"]
     if not window:
         args += ["-no-window", "-gpu", "swiftshader_indirect"]
-    log_path = ROOT / "build" / "e2e" / f"{name}-emulator.log"
+    log_path = ROOT / ".e2e" / f"{name}-emulator.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     # DETACHED_PROCESS silently kills the emulator on Windows, so it runs in its own process group with a log file instead.
     flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0)

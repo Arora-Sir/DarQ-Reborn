@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    tools:layout_gravity="bottom">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_20"
+        android:paddingTop="@dimen/padding_12"
+        android:paddingEnd="@dimen/padding_20"
+        android:paddingBottom="@dimen/padding_20">
+
+        <!-- Top Drag Handle -->
+        <View
+            android:id="@+id/bottom_sheet_drag_handle"
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:alpha="0.4"
+            android:background="@drawable/bottom_sheet_drag_handle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title Header -->
+        <TextView
+            android:id="@+id/report_intake_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_16"
+            android:text="@string/item_report_issue_title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large.Darq"
+            android:textColor="?android:textColorPrimary"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_drag_handle" />
+
+        <!-- Segmented Type Selector -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/report_issue_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_16"
+            app:checkedButton="@id/report_issue_bug"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/report_intake_title"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/report_issue_bug"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/google_sans_text_medium"
+                android:singleLine="true"
+                android:text="@string/report_issue_bug"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                app:cornerRadius="16dp"
+                app:strokeWidth="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/report_issue_feature"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/google_sans_text_medium"
+                android:singleLine="true"
+                android:text="@string/report_issue_feature"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                app:cornerRadius="16dp"
+                app:strokeWidth="0dp" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- First Field (What happened? / Problem) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/report_issue_first_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_12"
+            android:hint="@string/report_issue_what_happened"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="1500"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/report_issue_type">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/report_issue_first"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="1500"
+                android:maxLines="4"
+                android:minLines="2"
+                android:textColor="?android:textColorPrimary" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Second Field (Steps to reproduce / Solution) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/report_issue_second_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_8"
+            android:hint="@string/report_issue_steps"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="1500"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/report_issue_first_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/report_issue_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="1500"
+                android:maxLines="4"
+                android:minLines="2"
+                android:textColor="?android:textColorPrimary" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Diagnostic Log Option Card -->
+        <LinearLayout
+            android:id="@+id/report_card_log_option"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_12"
+            android:background="@drawable/button_background_backup_restore"
+            android:foreground="@drawable/rounded_ripple_36"
+            android:gravity="center_vertical"
+            android:minHeight="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingTop="@dimen/padding_12"
+            android:paddingEnd="@dimen/padding_16"
+            android:paddingBottom="@dimen/padding_12"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/report_issue_second_layout">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/report_issue_log_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/report_issue_include_log"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/report_issue_log_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/report_issue_include_log_hint"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small.Darq"
+                    android:textColor="?android:textColorSecondary" />
+
+            </LinearLayout>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/report_issue_include_log"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_12"
+                android:checked="true"
+                android:clickable="false"
+                android:focusable="false" />
+
+        </LinearLayout>
+
+        <!-- Symmetrical Bottom Action Bar -->
+        <LinearLayout
+            android:id="@+id/report_action_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_20"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/report_card_log_option">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/report_issue_cancel"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/google_sans_text_medium"
+                android:text="@android:string/cancel"
+                android:textAllCaps="false"
+                app:cornerRadius="24dp" />
+
+            <View
+                android:layout_width="@dimen/padding_12"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/report_issue_continue"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/google_sans_text_medium"
+                android:text="@string/report_issue_continue"
+                android:textAllCaps="false"
+                app:cornerRadius="24dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest an idea or improvement for DarQ Reborn
+title: "[Feature]: "
+labels: ["type: feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like DarQ to do?
+      description: Describe the problem it solves or the use case.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: How should it work?
+      description: Optional. Describe the behavior or screen you have in mind.
+
+  - type: input
+    id: mode
+    attributes:
+      label: How you run DarQ
+      description: Shizuku, Root, or Xposed. Optional, but helps if the idea only applies to one mode.

@@ -1,6 +1,8 @@
 package com.kieronquinn.app.darq.ui.screens.settings.apppicker
 
 import android.content.res.ColorStateList
+import com.kieronquinn.app.darq.utils.Toasts
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,11 +21,9 @@ import com.kieronquinn.app.darq.ui.base.BoundFragment
 import com.kieronquinn.app.darq.ui.base.ProvidesOverflow
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.ui.utils.TransitionUtils
-import com.kieronquinn.app.darq.utils.extensions.applyMonetToFastScroller
+import com.kieronquinn.app.darq.utils.extensions.applyThemeToFastScroller
 import com.kieronquinn.app.darq.utils.extensions.expandAppBar
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
-import com.kieronquinn.monetcompat.extensions.views.enableStretchOverscroll
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -65,14 +65,13 @@ class SettingsAppPickerFragment :
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setLoadingState(loading = true, isEmpty = false)
         setupRecyclerView()
+        handleLoadState(viewModel.loadState.value)
         setupViewModel()
         setupSearch()
         setupSnackbarPadding()
@@ -87,8 +86,7 @@ class SettingsAppPickerFragment :
                 updatePadding(left = requiredInsets.left, right = requiredInsets.right, bottom = requiredInsets.bottom)
                 insets
             }
-            enableStretchOverscroll()
-            applyMonetToFastScroller()
+            applyThemeToFastScroller()
         }
     }
 
@@ -118,6 +116,8 @@ class SettingsAppPickerFragment :
         )
         if (loadState is SettingsAppPickerViewModel.LoadState.Loaded) {
             adapter.setItems(loadState.apps)
+            //An empty result with a search term offers a way back to the full list
+            binding.appPickerEmptyClear.isVisible = loadState.apps.isEmpty() && viewModel.getSearchTerm().isNotEmpty()
         }
     }
 
@@ -129,8 +129,8 @@ class SettingsAppPickerFragment :
 
     private fun setupSearch() {
         with(binding.appPickerSearch) {
-            val background = monet.getBackgroundColor(requireContext())
-            val secondaryBackground = monet.getBackgroundColorSecondary(requireContext()) ?: background
+            val background = themeColors.getBackgroundColor(requireContext())
+            val secondaryBackground = themeColors.getBackgroundColorSecondary(requireContext()) ?: background
             root.setBackgroundColor(background)
             searchBox.backgroundTintList = ColorStateList.valueOf(secondaryBackground)
             searchBox.text.run {
@@ -149,6 +149,9 @@ class SettingsAppPickerFragment :
                 searchBox.text.clear()
             }
         }
+        binding.appPickerEmptyClear.setOnClickListener {
+            binding.appPickerSearch.searchBox.text.clear()
+        }
     }
 
     override fun onResume() {
@@ -164,6 +167,17 @@ class SettingsAppPickerFragment :
     private fun onPackageEnabledChanged(appPickerItem: AppPickerItem.App){
         viewModel.onPackageEnabledChanged(appPickerItem)
         sharedViewModel.queueIPCSync(appPickerItem.toIPCSetting())
+        //On LSPosed 2.x and Vector the app can be added to the module scope directly, so users do not have to do it in the manager
+        if(appPickerItem.enabled && XposedBridge.isActiveNow){
+            XposedBridge.requestScope(listOf(appPickerItem.packageName)) { result ->
+                val context = context ?: return@requestScope
+                when(result){
+                    is XposedBridge.ScopeResult.Approved -> Toasts.show(context, getString(R.string.xposed_scope_approved, appPickerItem.label))
+                    is XposedBridge.ScopeResult.Failed -> Toasts.show(context, getString(R.string.xposed_scope_failed, result.message), long = true)
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun setupSnackbarPadding(){

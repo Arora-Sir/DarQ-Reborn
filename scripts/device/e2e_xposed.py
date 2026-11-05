@@ -122,7 +122,7 @@ def main() -> int:
     parser.add_argument("--fresh", action="store_true", help="Uninstall DarQ first (use for the baseline run)")
     args = parser.parse_args()
 
-    out_dir = ROOT / "build/e2e" / datetime.now().strftime(f"%Y%m%d-%H%M%S-xposed-{args.framework}-{args.label}")
+    out_dir = ROOT / ".e2e" / datetime.now().strftime(f"%Y%m%d-%H%M%S-xposed-{args.framework}-{args.label}")
     out_dir.mkdir(parents=True, exist_ok=True)
     report = Report(out_dir)
     dev = Device(args.serial)

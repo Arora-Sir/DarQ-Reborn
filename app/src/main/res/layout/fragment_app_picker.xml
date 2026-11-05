@@ -83,6 +83,18 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium.Darq"
             android:textColor="?android:textColorPrimary" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/app_picker_empty_clear"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_16"
+            android:fontFamily="@font/google_sans_text_medium"
+            android:minHeight="48dp"
+            android:text="@string/app_picker_clear_search"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </FrameLayout>

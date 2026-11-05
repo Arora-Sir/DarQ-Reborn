@@ -1,19 +1,16 @@
 package com.kieronquinn.app.darq.ui.screens.settings.developer
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kieronquinn.app.darq.R
 import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 abstract class SettingsDeveloperOptionsViewModel: ViewModel() {
 
     abstract fun getServiceInfo(sharedViewModel: ContainerSharedViewModel): Flow<Pair<Int, String?>>
-    abstract fun onMonetColorPickerClicked()
 
 }
 
@@ -42,12 +39,6 @@ class SettingsDeveloperOptionsViewModelImpl(private val navigation: Navigation):
             }
         }
         return null
-    }
-
-    override fun onMonetColorPickerClicked() {
-        viewModelScope.launch {
-            navigation.navigate(SettingsDeveloperOptionsFragmentDirections.actionSettingsDeveloperOptionsFragmentToColorPickerBottomSheetFragment())
-        }
     }
 
 }

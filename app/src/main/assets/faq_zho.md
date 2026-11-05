@@ -124,6 +124,10 @@ DarQ 使用了一个只能用特权指令才能调用的隐藏的 API（`IActivi
 
 经过测试，领英、Facebook 还有 Google Opinion Rewards 在开启强制深色时表现不错。挺多别的也都行，主要看您去试试哪些有效。
 
+### DarQ 支持哪些 Xposed 管理器？
+
+DarQ 支持 LSPosed 1.9.2（最后一个官方版本）、其持续维护的分支以及 Vector。它们都通过经典的 Xposed 模块格式加载 DarQ，因此无需更换管理器。LSPosed 2.x 使用的新 LibXposed 格式已经内置，会在不再影响 LSPosed 1.9.2 之后的版本中启用。
+
 ### 强制深色在没有 Xposed 的时候能用到所有软件上吗？
 
 不能。软件能在代码里禁用强制深色，所以 Xposed 是绕过的唯一方式。

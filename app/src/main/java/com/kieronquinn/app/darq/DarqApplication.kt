@@ -16,6 +16,8 @@ import com.kieronquinn.app.darq.components.navigation.Navigation
 import com.kieronquinn.app.darq.components.navigation.NavigationImpl
 import com.kieronquinn.app.darq.components.settings.AppSharedPreferences
 import com.kieronquinn.app.darq.components.settings.DarqSharedPreferences
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
+import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.providers.DarqServiceConnectionProvider
 import com.kieronquinn.app.darq.providers.blur.BlurProvider
 import com.kieronquinn.app.darq.ui.screens.bottomsheets.backuprestore.BackupRestoreBottomSheetViewModel
@@ -37,7 +39,10 @@ import com.kieronquinn.app.darq.ui.screens.settings.apppicker.SettingsAppPickerV
 import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperOptionsViewModel
 import com.kieronquinn.app.darq.ui.screens.settings.developer.SettingsDeveloperOptionsViewModelImpl
 import com.kieronquinn.app.darq.utils.AppIconRequestHandler
-import com.kieronquinn.monetcompat.core.MonetCompat
+import com.kieronquinn.app.darq.components.theme.ThemeManager
+import com.kieronquinn.app.darq.components.diagnostics.CrashReporter
+import com.kieronquinn.app.darq.components.diagnostics.DiagnosticsHeader
+import com.kieronquinn.app.darq.components.apps.InstalledAppsRepository
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -67,6 +72,8 @@ class DarqApplication : Application() {
         single<DarqSharedPreferences> { AppSharedPreferences(get()) }
         single<Navigation> { NavigationImpl() }
         single { UpdateChecker(get()) }
+        single { DiagnosticsHeader(get(), get()) }
+        single { InstalledAppsRepository(get()) }
     }
 
     private val viewModelsModule = module {
@@ -85,8 +92,17 @@ class DarqApplication : Application() {
         single { BlurProvider.getBlurProvider(resources) }
     }
 
+    override fun attachBaseContext(base: Context) {
+        //Strings read through the application context follow the chosen language from the first moment of the process
+        super.attachBaseContext(com.kieronquinn.app.darq.components.theme.AppLanguage.wrap(base))
+        //LSPosed 2.x and Vector deliver their service binder through a content provider, so the listener is registered before any provider runs
+        XposedBridge.register()
+    }
+
     override fun onCreate() {
         super.onCreate()
+        //First, so a crash anywhere in startup still leaves a report
+        CrashReporter.install(this)
         runCatching {
             //Allows blurs on some devices, doesn't really matter if it fails
             HiddenApiBypass.addHiddenApiExemptions("L")
@@ -105,7 +121,8 @@ class DarqApplication : Application() {
         Sui.init(packageName)
         ShizukuProvider.enableMultiProcessSupport(true)
         restoreSettingsSnapshot()
-        setupMonet()
+        ThemeManager.applyNightMode(get())
+        get<InstalledAppsRepository>().refresh()
         
         val settings = get<DarqSharedPreferences>()
         if (settings.persistentService) {
@@ -113,10 +130,14 @@ class DarqApplication : Application() {
                 startForegroundService(Intent(this, DarqPersistentService::class.java))
             } catch (e: Exception) {
                 Log.e("DarQA", "Failed to start persistent service from Application context (likely background execution)", e)
+                CrashReporter.recordHandled(this, "Persistent service start", e)
             }
         }
 
         val connectionProvider = get<DarqServiceConnectionProvider>()
+        XposedBridge.attach(settings.sharedPreferences) { active ->
+            notifyXposedActive(connectionProvider, active)
+        }
         if (!Shell.rootAccess() && isShizukuInstalled()) {
                 val binderReceivedListener = object : Shizuku.OnBinderReceivedListener {
                 override fun onBinderReceived() {
@@ -172,12 +193,15 @@ class DarqApplication : Application() {
         }
     }
 
-    private fun setupMonet(){
-        val settings = get<DarqSharedPreferences>()
-        MonetCompat.wallpaperColorPicker = {
-            val selectedColor = settings.monetColor
-            if(selectedColor != Integer.MAX_VALUE && it?.contains(selectedColor) == true) selectedColor
-            else it?.firstOrNull()
+    //A privileged service that bound before the framework service did must learn the new state, so it stops or resumes managing the global force dark property
+    private fun notifyXposedActive(connectionProvider: DarqServiceConnectionProvider, active: Boolean) {
+        val service = connectionProvider.getConnectedServiceOrNull() ?: return
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                service.notifySettingsChange(IPCSetting(isXposedActive = active))
+            } catch (e: Exception) {
+                Log.w("DarQA", "Failed to notify service of Xposed state", e)
+            }
         }
     }
 

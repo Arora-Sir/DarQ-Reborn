@@ -14,7 +14,6 @@ import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.base.BoundFragment
 import com.kieronquinn.app.darq.ui.utils.TransitionUtils
 import com.kieronquinn.app.darq.utils.extensions.getColorResCompat
-import com.kieronquinn.monetcompat.extensions.views.enableStretchOverscroll
 import org.commonmark.node.Heading
 import ru.noties.markwon.AbstractMarkwonPlugin
 import ru.noties.markwon.Markwon
@@ -64,7 +63,6 @@ class SettingsFaqFragment: BoundFragment<FragmentSettingsFaqBinding>(FragmentSet
             view.updatePadding(bottom = bottomInset)
             insets
         }
-        binding.root.enableStretchOverscroll()
     }
 
 }

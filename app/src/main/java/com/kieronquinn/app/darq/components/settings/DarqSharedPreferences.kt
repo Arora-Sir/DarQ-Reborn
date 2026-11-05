@@ -2,7 +2,8 @@ package com.kieronquinn.app.darq.components.settings
 
 import com.kieronquinn.app.darq.model.settings.IPCSetting
 import com.kieronquinn.app.darq.model.settings.SettingsBackup
-import com.kieronquinn.app.darq.model.xposed.XposedSelfHooks
+import com.kieronquinn.app.darq.components.xposed.XposedBridge
+import com.kieronquinn.app.darq.components.xposed.XposedState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -74,7 +75,27 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         private const val KEY_XPOSED_INVERT_STATUS_BAR = "xposed_invert_status_bar"
         const val DEFAULT_XPOSED_INVERT_STATUS_BAR = true
 
+        // NOTE: The key keeps its old name so the color picked before the theme system arrived becomes the custom accent.
         private const val KEY_UI_MONET_COLOR = "monet_color"
+
+        private const val KEY_THEME_MODE = "theme_mode"
+        const val DEFAULT_THEME_MODE = 0
+
+        private const val KEY_THEME_PURE_BLACK = "theme_pure_black"
+        const val DEFAULT_THEME_PURE_BLACK = false
+
+        private const val KEY_THEME_PURE_BLACK_LIFT = "theme_pure_black_lift"
+        const val DEFAULT_THEME_PURE_BLACK_LIFT = 50
+
+        // NOTE: The last connected mode is kept only to draw the first frame after a cold start, it is not part of Backup and Restore.
+        private const val KEY_LAST_SERVICE_MODE = "last_service_mode"
+        private const val KEY_LAST_XPOSED = "last_xposed"
+
+        private const val KEY_THEME_ACCENT = "theme_accent"
+        const val DEFAULT_THEME_ACCENT = "wallpaper"
+
+        private const val KEY_THEME_TINTED_ICONS = "theme_tinted_icons"
+        const val DEFAULT_THEME_TINTED_ICONS = false
 
         const val KEY_ENABLED_APPS = "enabled_apps"
 
@@ -119,13 +140,20 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
     // True once Auto Dark has fired at least once and saved a pre-state
     var autoDarkHasManaged by this.shared(KEY_AUTO_DARK_HAS_MANAGED, false)
     var monetColor by this.shared(KEY_UI_MONET_COLOR, Integer.MAX_VALUE)
+    var themeMode by this.shared(KEY_THEME_MODE, DEFAULT_THEME_MODE)
+    var themePureBlack by this.shared(KEY_THEME_PURE_BLACK, DEFAULT_THEME_PURE_BLACK)
+    var themePureBlackLift by this.shared(KEY_THEME_PURE_BLACK_LIFT, DEFAULT_THEME_PURE_BLACK_LIFT)
+    var themeAccent by this.shared(KEY_THEME_ACCENT, DEFAULT_THEME_ACCENT)
+    var lastServiceMode by this.shared(KEY_LAST_SERVICE_MODE, "")
+    var lastXposed by this.shared(KEY_LAST_XPOSED, false)
+    var themeTintedIcons by this.shared(KEY_THEME_TINTED_ICONS, DEFAULT_THEME_TINTED_ICONS)
     var enabledApps by this.sharedJSONArray(KEY_ENABLED_APPS)
 
     var xposedAggressiveDark by this.shared(KEY_XPOSED_AGGRESSIVE_DARK, DEFAULT_XPOSED_AGGRESSIVE_DARK)
     var xposedInvertStatus by this.shared(KEY_XPOSED_INVERT_STATUS_BAR, DEFAULT_XPOSED_INVERT_STATUS_BAR)
 
     fun getIPCSettingForKey(key: String): IPCSetting? {
-        val xposed = XposedSelfHooks.isXposedModuleEnabled()
+        val xposed = XposedState.isActive
         return when(key){
             KEY_ENABLED -> IPCSetting(enabled = enabled, isXposedActive = xposed)
             KEY_ALWAYS_FORCE_DARK -> IPCSetting(alwaysForceDark = alwaysForceDark, isXposedActive = xposed)
@@ -142,9 +170,14 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             oxygenForceDark = oxygenForceDark,
             alwaysForceDark = alwaysForceDark,
             sendAppCloses = sendAppCloses,
-            isXposedActive = XposedSelfHooks.isXposedModuleEnabled()
+            isXposedActive = XposedState.isActive
         )
     }
+
+    //The chosen language lives in its own store because it must be readable before the app starts, so only AppSharedPreferences bridges it. The Xposed copy has no language.
+    open var languageTag: String?
+        get() = null
+        set(_) {}
 
     fun getSettingsBackup(): SettingsBackup {
         return SettingsBackup(
@@ -166,7 +199,13 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
             autoDarkTargetMode = this.autoDarkTargetMode,
             autoDarkStartTime = this.autoDarkStartTime,
             autoDarkEndTime = this.autoDarkEndTime,
-            enabledApps = this.enabledApps.toList()
+            enabledApps = this.enabledApps.toList(),
+            themeMode = this.themeMode,
+            themePureBlack = this.themePureBlack,
+            themePureBlackLift = this.themePureBlackLift,
+            themeAccent = this.themeAccent,
+            themeTintedIcons = this.themeTintedIcons,
+            language = this.languageTag
         )
     }
 
@@ -194,6 +233,17 @@ abstract class DarqSharedPreferences: BaseSharedPreferences() {
         autoDarkStartTime = settingsBackup.autoDarkStartTime
         autoDarkEndTime = settingsBackup.autoDarkEndTime
         enabledApps = settingsBackup.enabledApps.toTypedArray()
+        //Backups made before the theme system have no theme fields, so the current theme stays
+        settingsBackup.themeMode?.let { themeMode = it }
+        settingsBackup.themePureBlack?.let { themePureBlack = it }
+        //A backup without a lift restores at the recommended look
+        settingsBackup.themePureBlackLift?.let { themePureBlackLift = it.coerceIn(0, 100) }
+        settingsBackup.themeAccent?.let { themeAccent = it }
+        settingsBackup.themeTintedIcons?.let { themeTintedIcons = it }
+        //Backups made before the language setting leave the current language alone
+        settingsBackup.language?.let { languageTag = it }
+        //Each write above mirrors its own key to the LibXposed remote preferences, this final pass covers a write that raced a rebind
+        XposedBridge.syncAll()
         return@withContext (useLocation && autoDarkTheme) && !currentUseLocation
     }
 

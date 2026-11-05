@@ -61,8 +61,6 @@
     <string name="item_about_title">DarQ Reborn v%1s</string>
     <string name="item_about_content">Developed &amp; Maintained by &lt;a href="https://github.com/Arora-Sir">&lt;b>&lt;u>Mohit Arora / Arora-Sir&lt;/u>&lt;/b>&lt;/a&gt;. <br/><br/>Source code is available on &lt;a href="https://github.com/Arora-Sir/DarQ-Reborn">&lt;b>&lt;u>GitHub&lt;/u>&lt;/b>&lt;/a&gt;.</string>
     <string name="item_developer_options_title">Developer Options</string>
-    <string name="item_developer_options_monet_color_picker_title">Monet Color Picker</string>
-    <string name="item_developer_options_monet_color_picker_content">Pick a color to use from your wallpaper</string>
     <string name="item_developer_options_kill_service_title">Kill duplicate services</string>
     <string name="item_developer_options_kill_service_content">Kill any duplicate DarQ services, this shouldn\'t be required due to how the service is handled, but may be if you switch between Shizuku and root modes.</string>
     <string name="item_developer_options_kill_service_toast_success">Success</string>
@@ -87,8 +85,16 @@
     <string name="item_xposed_invert_status_bar_fix_title">Fix Status Bar Inversion</string>
     <string name="item_xposed_invert_status_bar_fix_content">Attempt to disable status bar inversion in force dark apps, fixing dark icons on dark background</string>
     <string name="item_xposed_info_title">Xposed Notes</string>
-    <string name="item_xposed_info_content">If you are using EdXposed in app whitelist mode, or are using lsposed, you must also enable all the apps you want to apply to in your Xposed manager, as well as in DarQ.\nApps must be restarted after settings changes for them to apply.\nIf a setting or newly selected force dark app is not applying, try rebooting, launching DarQ then launching your selected app.\n<b>Warning:</b> If you uninstall Xposed or enable/disable DarQ\'s module, your DarQ settings may be reset due to Xposed\'s internal settings hooks. Use the backup/restore feature to save your settings before doing this.</string>
-    <string name="color_picker_unavailable">Monet Color Picker unavailable for the currently selected wallpaper</string>
+    <string name="item_xposed_info_content">DarQ works with LSPosed 1.9.2, its maintained forks and Vector.
+Enable each app in your Xposed manager as well as in DarQ, then restart the app after changing settings.
+DarQ keeps a backup of your settings, so switching the module off and on no longer resets them.</string>
+    <string name="item_xposed_request_scope_title">Add selected apps to LSPosed scope</string>
+    <string name="item_xposed_request_scope_content">Ask LSPosed or Vector to add every app you picked in DarQ to the module scope</string>
+    <string name="xposed_scope_approved">%1$s added to the LSPosed scope</string>
+    <string name="xposed_scope_approved_count">%1$d apps added to the LSPosed scope</string>
+    <string name="xposed_scope_failed">LSPosed scope request failed: %1$s</string>
+    <string name="xposed_scope_already">All selected apps are already in the LSPosed scope</string>
+    <string name="xposed_scope_unavailable">Needs LSPosed 2.x or Vector with the DarQ module enabled</string>
     <string name="loading_service_connect">Connecting to service…</string>
     <string name="snackbar_syncing_text">Syncing changes with service…</string>
     <string name="snackbar_syncing_complete_text">Changes synced with service.</string>
@@ -135,11 +141,11 @@
     <string name="dialog_location_permission_text">Allow <b>DarQ</b> to use your location to get sunrise &amp; sunset times?</string>
     <string name="dialog_location_permission_use_location">Use Location</string>
     <string name="dialog_location_permission_use_timezone">Use Time Zone\n<small>(less accurate)</small></string>
-    <string name="chip_donate">Buy me a coffee</string>
+    <string name="chip_donate">Support development</string>
     <string name="chip_twitter">X</string>
     <string name="chip_github">GitHub</string>
-    <string name="chip_socials">Socials</string>
-    <string name="chip_xda">XDA Thread</string>
+    <string name="chip_socials">Developer</string>
+    <string name="chip_credits">Credits</string>
     <string name="menu_open_source_libraries">Open source libraries</string>
     <string name="bottom_sheet_update_available_title">Update Available</string>
     <string name="bottom_sheet_update_available_positive">Download</string>
@@ -156,31 +162,198 @@
     <string name="install">Install</string>
     <string name="close">Close</string>
     <string name="app_picker_header_active">Active</string>
+    <string name="app_picker_clear_search">Clear search</string>
     <string name="app_picker_header_all">Other Applications</string>
     <string name="item_boot_wait_shizuku_title">Wait for Shizuku on boot</string>
     <string name="item_boot_wait_shizuku_content">Waits for Shizuku to start up on boot before attempting connection, avoiding start-up failure notifications.</string>
     <string name="item_check_for_prereleases_title">Check for pre-releases</string>
     <string name="item_check_for_prereleases_content">Include beta and pre-release versions when checking for updates.</string>
-    <string name="donation_dialog_title">Buy me a coffee</string>
+    <string name="donation_dialog_title">Support development</string>
     <string name="donation_dialog_upi_title">Pay via UPI</string>
     <string name="donation_dialog_upi_summary">Pay using Google Pay, PhonePe, Paytm, BHIM, etc. (India)</string>
     <string name="donation_dialog_global_title">PayPal</string>
     <string name="donation_dialog_global_summary">Pay using global credit/debit cards or PayPal</string>
 
-    <string name="social_links_dialog_title">Developer Profiles</string>
+    <string name="social_developer_name">Mohit Arora</string>
+    <string name="social_developer_role">System Architect &amp; Mobile Engineer</string>
     <string name="social_website_title">Personal Website</string>
     <string name="social_website_summary">mohitarora.me</string>
     <string name="social_github_profile_title">GitHub Profile</string>
-    <string name="social_github_profile_summary">github.com/Arora-Sir</string>
+    <string name="social_github_profile_summary">@Arora-Sir</string>
     <string name="social_linkedin_profile_title">LinkedIn Profile</string>
-    <string name="social_linkedin_profile_summary">linkedin.com/in/arora-sir</string>
+    <string name="social_linkedin_profile_summary">in/arora-sir</string>
     <string name="social_github_repo_title">GitHub Repository</string>
     <string name="social_github_repo_summary">Arora-Sir/DarQ-Reborn</string>
-    <string name="social_twitter_title">X (Twitter)</string>
-    <string name="social_twitter_summary">x.com/arorasir</string>
+    <string name="social_twitter_title">X</string>
+    <string name="social_twitter_summary">@MohitAr0rA</string>
     <string name="social_instagram_title">Instagram</string>
-    <string name="social_instagram_summary">instagram.com/arora.sir</string>
+    <string name="social_instagram_summary">@arora.sir</string>
     <string name="social_reddit_title">Reddit</string>
-    <string name="social_reddit_summary">reddit.com/user/AroraSir</string>
+    <string name="social_reddit_summary">u/AroraSir</string>
+
+    <!-- Support, credits and updates -->
+    <string name="safe_run_failed">Something went wrong. The error was saved for the next report.</string>
+    <string name="link_no_browser">No browser found to open this link</string>
+    <string name="item_support_content">Optional, always your choice</string>
+    <string name="support_intro">DarQ Reborn is free and open source. Supporting it is optional and always your choice.</string>
+    <string name="support_upi_chooser">Support via UPI</string>
+    <string name="support_upi_none">No UPI app found. UPI ID copied to the clipboard.</string>
+    <string name="support_upi_copied">UPI ID copied: %1$s</string>
+    <string name="support_copy_upi_title">Copy UPI ID</string>
+    <string name="support_copy_upi_summary">mohit1998arora@yescred</string>
+    <string name="support_sponsors_title">GitHub Sponsors</string>
+    <string name="support_sponsors_summary">Support monthly or once through GitHub</string>
+    <string name="credits_title">Credits</string>
+    <string name="credits_intro">DarQ Reborn continues the original DarQ and stands on the work of these open source projects.</string>
+    <string name="credits_upstream_title">DarQ by Kieron Quinn</string>
+    <string name="credits_upstream_summary">The original project this app is forked from</string>
+    <string name="credits_author_title">Kieron Quinn</string>
+    <string name="credits_author_summary">Original author of DarQ</string>
+    <string name="credits_shizuku_title">Shizuku</string>
+    <string name="credits_shizuku_summary">Rikka Apps, runs DarQ with system access without root</string>
+    <string name="credits_xposed_title">LSPosed and LibXposed</string>
+    <string name="credits_xposed_summary">The Xposed frameworks DarQ hooks through</string>
+    <string name="credits_libsu_title">libsu</string>
+    <string name="credits_libsu_summary">topjohnwu, runs the root service</string>
+    <string name="credits_contributors_title">Contributors</string>
+    <string name="credits_contributors_summary">Everyone who sent a fix or an idea on GitHub</string>
+    <string name="credits_licences_title">Open source licences</string>
+    <string name="credits_licences_summary">Libraries bundled in this app</string>
+    <string name="item_obtainium_title">Track with Obtainium</string>
+    <string name="item_obtainium_content">Add DarQ to Obtainium in one tap and get notified about new releases</string>
+    <string name="bottom_sheet_update_obtainium">Track with Obtainium</string>
+
+    <!-- Status card -->
+    <string name="status_label_shizuku">Shizuku</string>
+    <string name="status_label_root">Root</string>
+    <string name="status_label_xposed">Xposed</string>
+    <string name="status_label_connecting">Connecting</string>
+    <string name="status_label_not_connected">Not connected</string>
+    <string name="status_description">Status: %1$s</string>
+    <string name="status_title_shizuku">Shizuku connected</string>
+    <string name="status_title_root">Root connected</string>
+    <string name="status_title_connecting">Connecting to the service</string>
+    <string name="status_title_none">Service not connected</string>
+    <string name="status_content_none_selected">No apps selected yet</string>
+    <plurals name="status_content_apps">
+        <item quantity="one">%d app darkened</item>
+        <item quantity="other">%d apps darkened</item>
+    </plurals>
+    <string name="status_content_xposed">%1$s, Xposed module active</string>
+    <string name="status_content_not_connected">Open Shizuku or grant root, then reopen DarQ. Tap for help.</string>
+
+    <!-- Appearance -->
+    <string name="item_appearance_title">Appearance</string>
+    <string name="item_appearance_content">Theme, accent color, pure black and icons</string>
+    <string name="appearance_theme_title">Theme</string>
+    <string name="appearance_theme_system">Follow system</string>
+    <string name="appearance_theme_system_summary">Matches your device display mode</string>
+    <string name="appearance_theme_light">Light</string>
+    <string name="appearance_theme_light_summary">Always keep light theme active</string>
+    <string name="appearance_theme_dark">Dark</string>
+    <string name="appearance_theme_dark_summary">Always keep dark theme active</string>
+    <string name="appearance_pure_black_title">Pure black</string>
+    <string name="appearance_pure_black_content">Uses true black backgrounds in dark mode, which saves power on AMOLED screens</string>
+    <string name="appearance_pure_black_lift_title">Surface lift</string>
+    <string name="appearance_pure_black_lift_summary">Surface lift: %1$s. Tap to adjust.</string>
+    <string name="appearance_pure_black_lift_hint">Moves the cards, fields and sections of Pure black from flat to lifted. The page stays black.</string>
+    <string name="appearance_pure_black_lift_sample_section">Section</string>
+    <string name="appearance_pure_black_lift_sample_field">Field</string>
+    <string name="appearance_pure_black_lift_sample_selected">Selected item</string>
+    <string name="appearance_pure_black_lift_level">Level %1$d of 10</string>
+    <string name="appearance_pure_black_lift_level_recommended">Level %1$d of 10, recommended</string>
+    <string name="appearance_pure_black_lift_reset">Reset</string>
+    <string name="appearance_accent_title">Accent color</string>
+    <string name="appearance_accent_title_chosen">Accent color: %1$s</string>
+    <string name="appearance_accent_contrast">Contrast %1$.1f:1 on black, %2$.1f:1 on cards.</string>
+    <string name="appearance_accent_low_contrast">This color is hard to see on dark surfaces.</string>
+    <string name="appearance_accent_reset">Reset</string>
+    <string name="appearance_accent_wallpaper">Wallpaper</string>
+    <string name="appearance_accent_custom_value">Custom color %1$s</string>
+    <string name="appearance_accent_custom_summary">Wallpaper color</string>
+    <string name="appearance_accent_custom_title">Custom color</string>
+    <string name="appearance_accent_custom_pick">Custom</string>
+    <string name="appearance_accent_hex">Hex color</string>
+    <string name="appearance_accent_hex_error">Use six hex digits, like #0072DE</string>
+    <string name="appearance_accent_light">Light</string>
+    <string name="appearance_accent_dark">Dark</string>
+    <string name="appearance_accent_sample_title">Dark mode</string>
+    <string name="appearance_accent_sample_button">Turn on</string>
+    <string name="appearance_accent_use_color">Use this color</string>
+    <string name="appearance_accent_apply">Apply</string>
+    <string name="appearance_accent_area_description">Saturation and brightness</string>
+    <string name="appearance_accent_hue_description">Hue</string>
+    <string name="appearance_accent_note_dynamic">Android builds the full color scheme from this color.</string>
+    <string name="appearance_accent_fallback">Android 10 and 11 use the preset closest to this color</string>
+    <string-array name="appearance_accent_presets">
+        <item>Blue</item>
+        <item>Teal</item>
+        <item>Green</item>
+        <item>Purple</item>
+        <item>Orange</item>
+        <item>Rose</item>
+        <item>Amber</item>
+        <item>Mono</item>
+    </string-array>
+    <string name="appearance_tinted_icons_title">Tinted icons</string>
+    <string name="appearance_language_title">Language</string>
+    <string name="appearance_language_system">System default</string>
+    <string-array name="appearance_language_names">
+        <item>English</item>
+        <item>हिन्दी</item>
+        <item>Українська</item>
+        <item>简体中文</item>
+    </string-array>
+    <string name="appearance_tinted_icons_content">Colors the settings icons with the accent color instead of the classic multicolor set</string>
+
+    <!-- Diagnostics -->
+    <string name="item_report_issue_title">Report an issue</string>
+    <string name="item_report_issue_content">Report a bug with a diagnostic log, or suggest a feature on GitHub</string>
+    <string name="report_issue_bug">Report a bug</string>
+    <string name="report_issue_feature">Suggest a feature</string>
+    <string name="report_issue_include_log">Include diagnostic log</string>
+    <string name="report_issue_include_log_hint">You review it first. Your apps and location are removed.</string>
+    <string name="report_issue_no_log_title">No log needed</string>
+    <string name="report_issue_no_log_hint">Logs are only added to bug reports.</string>
+    <string name="report_issue_continue">Continue</string>
+    <string name="diagnostics_crash_title">DarQ closed unexpectedly</string>
+    <string name="diagnostics_crash_content">A crash report was saved on this device. Nothing is sent unless you choose to send it.</string>
+    <string name="diagnostics_crash_review">Review report</string>
+    <string name="diagnostics_crash_not_now">Not now</string>
+    <string name="diagnostics_report_title">DarQ diagnostic log</string>
+    <string name="diagnostics_preview_trimmed">[%1$d more characters of log lines, redacted the same way, are included when you continue]</string>
+    <string name="diagnostics_report_github">Continue to GitHub</string>
+    <string name="diagnostics_report_more">More options</string>
+    <string name="diagnostics_summary_note">The full log was copied by DarQ. Paste it below this line.</string>
+    <string name="diagnostics_report_close">Close</string>
+    <string name="diagnostics_report_summary">Summary</string>
+    <string name="diagnostics_report_last_crash">Last crash</string>
+    <string name="diagnostics_report_handled">Handled errors</string>
+    <string name="diagnostics_report_none">None</string>
+    <string name="diagnostics_report_log_hint">The full redacted log is included when you continue. Your apps are replaced by short codes and your location is removed.</string>
+    <string name="diagnostics_report_show_log">Show full log</string>
+    <string name="diagnostics_report_hide_log">Hide full log</string>
+    <string name="report_issue_what_happened">What happened?</string>
+    <string name="report_issue_steps">Steps to reproduce</string>
+    <string name="report_issue_problem">What would you like DarQ to do?</string>
+    <string name="report_issue_solution">How should it work? (optional)</string>
+    <string name="diagnostics_send_title">Send the log</string>
+    <string-array name="diagnostics_send_options">
+        <item>Open a bug report on GitHub</item>
+        <item>Add to an existing issue</item>
+        <item>Save to Downloads</item>
+        <item>Share</item>
+        <item>Copy to clipboard</item>
+    </string-array>
+    <string name="diagnostics_send_github_summary">Prefills a new GitHub issue in browser</string>
+    <string name="diagnostics_send_comment_summary">Copies formatted comment and opens issues list</string>
+    <string name="diagnostics_send_save_summary">Saves raw diagnostic log to local storage</string>
+    <string name="diagnostics_send_share_summary">Send via Android share sheet</string>
+    <string name="diagnostics_send_copy_summary">Copies full diagnostic text to clipboard</string>
+    <string name="diagnostics_copied_form">Full log copied. Paste it at the end of Relevant log output.</string>
+    <string name="diagnostics_copied_comment">Log copied. Open the issue and paste it into a comment.</string>
+    <string name="diagnostics_copied">Log copied to the clipboard</string>
+    <string name="diagnostics_saved">Log saved to Downloads</string>
+    <string name="diagnostics_save_failed">Could not save the log to Downloads</string>
 
 </resources>

@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.kieronquinn.app.darq.ui.utils.autoCleared
-import com.kieronquinn.monetcompat.app.MonetFragment
+import androidx.fragment.app.Fragment
+import com.kieronquinn.app.darq.components.theme.ThemeColors
 
-abstract class BoundFragment<T: ViewBinding>(private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> T): MonetFragment() {
+abstract class BoundFragment<T: ViewBinding>(private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> T): Fragment() {
+
+    internal val themeColors = ThemeColors
 
     internal var binding by autoCleared<T>()
 

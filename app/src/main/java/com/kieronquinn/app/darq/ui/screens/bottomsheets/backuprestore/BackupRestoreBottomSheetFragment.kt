@@ -40,11 +40,11 @@ class BackupRestoreBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomSh
             backupRestoreRestore.setOnClickListener {
                 viewModel.onRestoreClicked(restoreSelection)
             }
-            val accent = ColorStateList.valueOf(monet.getAccentColor(requireContext()))
+            val accent = ColorStateList.valueOf(themeColors.getAccentColor(requireContext()))
             binding.backupRestoreIcBackup.imageTintList = accent
             binding.backupRestoreIcRestore.imageTintList = accent
             binding.backupRestoreCancel.setTextColor(accent)
-            val cardBg = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.bottom_sheet_card_background)
+            val cardBg = themeColors.getBackgroundColorSecondary(requireContext())
             binding.backupRestoreRestore.backgroundTintList = ColorStateList.valueOf(cardBg)
             binding.backupRestoreBackup.backgroundTintList = ColorStateList.valueOf(cardBg)
             ViewCompat.setOnApplyWindowInsetsListener(root){ view, insets ->

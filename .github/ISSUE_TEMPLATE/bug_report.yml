@@ -1,0 +1,80 @@
+name: Bug report
+description: Something in DarQ Reborn does not work as expected
+title: "[Bug]: "
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. The fastest way to file this is from the app: **Settings > Report an issue**. That fills in what happened, the steps, the version, Android and device fields and copies a log with your apps and location removed.
+        Please check the [FAQ](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md) and existing issues first.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open DarQ
+        2. Turn on ...
+        3. Open the app ...
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: DarQ version
+      description: Shown at the bottom of DarQ settings.
+      placeholder: 3.2.0 (326, release)
+    validations:
+      required: true
+
+  - type: input
+    id: android
+    attributes:
+      label: Android version
+      placeholder: Android 16 (API 36)
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      placeholder: Samsung SM-S928B
+    validations:
+      required: true
+
+  - type: input
+    id: mode
+    attributes:
+      label: How DarQ runs
+      description: Shizuku, Root, or Xposed (with LSPosed 1.9.2, a fork, or Vector).
+      placeholder: Shizuku
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Paste the diagnostic log DarQ copied for you. It is formatted as code automatically.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I am on the latest DarQ Reborn release or pre-release
+          required: true
+        - label: I searched existing issues and the FAQ
+          required: true

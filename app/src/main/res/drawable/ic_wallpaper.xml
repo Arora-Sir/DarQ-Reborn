@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shape from Material Symbols "wallpaper" (Apache License 2.0) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,4h7V2H4C2.9,2 2,2.9 2,4v7h2V4zM10,13l-4,5h12l-3,-4l-2.03,2.71L10,13zM17,8.5C17,7.67 16.33,7 15.5,7S14,7.67 14,8.5s0.67,1.5 1.5,1.5S17,9.33 17,8.5zM20,2h-7v2h7v7h2V4C22,2.9 21.1,2 20,2zM20,20h-7v2h7c1.1,0 2,-0.9 2,-2v-7h-2V20zM4,13H2v7c0,1.1 0.9,2 2,2h7v-2H4V13z" />
+</vector>

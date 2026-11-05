@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dot of the service status in the title bar. Connected is a green that stays readable on the light and the dark surface. -->
+    <color name="status_dot_ok">#1F9D57</color>
+</resources>

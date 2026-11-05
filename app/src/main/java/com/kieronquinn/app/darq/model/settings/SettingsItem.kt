@@ -11,7 +11,9 @@ sealed class SettingsItem constructor(open val itemType: SettingsItemType, open 
         var content: CharSequence? = null,
         override var centerIconVertically: Boolean = true,
         override var visible: () -> Boolean = {true},
-        val tapAction: (() -> Unit)? = null
+        val tapAction: (() -> Unit)? = null,
+        //Read on every bind, so a subtitle such as the count of darkened apps stays current
+        val contentProvider: (() -> CharSequence?)? = null
     ): SettingsItem(SettingsItemType.SETTING)
     data class SwitchSetting(
         @DrawableRes val icon: Int,
@@ -22,7 +24,11 @@ sealed class SettingsItem constructor(open val itemType: SettingsItemType, open 
         val setValue: ((Boolean) -> Unit)? = null,
         override var centerIconVertically: Boolean = true,
         override var visible: () -> Boolean = {true},
-        val tapAction: ((Boolean) -> Boolean)? = null
+        val tapAction: ((Boolean) -> Boolean)? = null,
+        //Read on every bind, so a subtitle that depends on the switch state stays current without rebuilding the list
+        val contentProvider: (() -> CharSequence?)? = null,
+        //A tap on the row, not on the switch. Returning true means it was handled, false toggles the switch as usual
+        val rowTapAction: (() -> Boolean)? = null
     ): SettingsItem(SettingsItemType.SWITCH_SETTING)
     data class AboutSetting(
         @DrawableRes val icon: Int,

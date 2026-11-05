@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import android.util.Log
 import com.kieronquinn.app.darq.BuildConfig
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow

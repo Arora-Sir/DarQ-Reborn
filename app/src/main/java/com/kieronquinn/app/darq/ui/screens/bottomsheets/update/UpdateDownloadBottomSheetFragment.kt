@@ -1,9 +1,9 @@
 package com.kieronquinn.app.darq.ui.screens.bottomsheets.update
 
 import android.content.DialogInterface
+import com.kieronquinn.app.darq.utils.Toasts
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -14,7 +14,6 @@ import com.kieronquinn.app.darq.databinding.FragmentBottomSheetUpdateDownloadBin
 import com.kieronquinn.app.darq.ui.base.BaseBottomSheetFragment
 import com.kieronquinn.app.darq.ui.screens.container.ContainerSharedViewModel
 import com.kieronquinn.app.darq.utils.extensions.navGraphViewModel
-import com.kieronquinn.monetcompat.extensions.views.applyMonet
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,8 +49,7 @@ class UpdateDownloadBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomS
             view.updatePadding(bottom = bottomInset + extraPadding)
             insets
         }
-        binding.fragmentUpdateDownloadProgress.applyMonet()
-        val accentColor = monet.getAccentColor(requireContext())
+        val accentColor = themeColors.getAccentColor(requireContext())
         binding.fragmentUpdateDownloadCancel.setTextColor(accentColor)
         binding.fragmentUpdateDownloadInstall.setTextColor(accentColor)
         viewLifecycleOwner.lifecycleScope.launch {
@@ -88,7 +86,7 @@ class UpdateDownloadBottomSheetFragment: BaseBottomSheetFragment<FragmentBottomS
                     is UpdateDownloadBottomSheetViewModel.State.Failed -> {
                         val message = state.errorMsg?.let { "Download failed: $it" } ?: getString(R.string.bs_update_download_failed)
                         Log.e("DarQUpdate", "UpdateDownloadBottomSheetFragment: Download Failed, showing Toast: $message")
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                        Toasts.show(requireContext(), message, long = true)
                         dismiss()
                     }
                     UpdateDownloadBottomSheetViewModel.State.Idle -> {

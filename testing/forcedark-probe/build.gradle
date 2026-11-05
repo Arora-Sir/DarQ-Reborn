@@ -1,4 +1,4 @@
-// NOTE: Debug-only test fixture for device automation. It is never shipped and has no dependencies.
+// NOTE: Test fixture for device automation and user verification. Released as a standalone zero-dependency APK alongside DarQ.
 // NOTE: Its white panel turns dark only when force dark reaches it, which makes screenshot luminance a reliable oracle.
 plugins {
     id 'com.android.application'
@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.darq.forcedarkprobe'
-    compileSdkVersion 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.darq.forcedarkprobe"

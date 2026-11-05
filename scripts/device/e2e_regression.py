@@ -83,7 +83,15 @@ def expected_probe_dark(prefs: dict[str, object], selected: bool, night: bool) -
 
 
 def darq_alarm_count(dev: Device) -> int:
-    return sum(1 for line in dev.sh("dumpsys alarm", check=False).splitlines() if "Alarm{" in line and PKG in line)
+    # NOTE: Below Android 12 WorkManager keeps a far future ACTION_FORCE_STOP_RESCHEDULE alarm of its own, which is not one of DarQ's schedules, so it is not counted.
+    lines = dev.sh("dumpsys alarm", check=False).splitlines()
+    count = 0
+    for index, line in enumerate(lines):
+        if "Alarm{" in line and PKG in line:
+            following = "\n".join(lines[index + 1:index + 4])
+            if "ACTION_FORCE_STOP_RESCHEDULE" not in following:
+                count += 1
+    return count
 
 
 def with_int_pref(xml_text: str, name: str, value: int) -> str:
@@ -107,6 +115,11 @@ def open_main(dev: Device, attempts: int = 3) -> None:
             texts = [node.text for node in dev.dump_ui()]
             if MAIN_LIST_TEXT in texts:
                 return
+            # NOTE: A crash report left behind by an earlier or interrupted run makes DarQ offer it on launch, and that prompt would cover the list for good.
+            if "DarQ closed unexpectedly" in texts:
+                dev.tap_text("Not now")
+                time.sleep(1)
+                continue
             if "Service Timeout" in texts:
                 SERVICE_TIMEOUTS.append(f"{dev.serial} attempt {attempt}")
                 print(f"[WARN] DarQ service timeout on {dev.serial}, attempt {attempt}", flush=True)
@@ -120,17 +133,33 @@ def set_probe_selected(dev: Device, selected: bool) -> bool:
     open_main(dev)
     dev.tap_text(MAIN_LIST_TEXT)
     search = None
-    for _ in range(20):
-        matches = dev.find(resource_id=":id/searchBox")
-        if matches:
-            search = matches[0]
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        nodes = dev.dump_ui()
+        search = next((node for node in nodes if node.resource_id.endswith(":id/searchBox")), None)
+        if search is not None:
             break
-        time.sleep(1)
+        # A tap swallowed by a busy emulator leaves the settings list on screen, so the entry is tapped again.
+        entry = next((node for node in nodes if node.text == MAIN_LIST_TEXT), None)
+        if entry is not None:
+            dev.tap(*entry.center)
+        time.sleep(2)
     if search is None:
         raise RuntimeError("App picker search box did not appear")
-    dev.tap(*search.center)
-    dev.type_text("DarQ")
-    title = dev.wait_for_text(PROBE_LABEL, timeout=60)
+    title = None
+    for attempt in range(2):
+        dev.tap(*search.center)
+        # A keyboard still opening can drop or double the first letter, so the field is emptied and typing waits for it.
+        time.sleep(1.5)
+        dev.sh("input keyevent KEYCODE_MOVE_END; " + "; ".join(["input keyevent KEYCODE_DEL"] * 12), check=False)
+        dev.type_text("DarQ")
+        try:
+            title = dev.wait_for_text(PROBE_LABEL, timeout=30)
+            break
+        except TimeoutError:
+            dev.screenshot(ROOT / ".e2e" / f"picker-miss-{dev.serial.replace(':', '_')}-{int(time.time())}.png")
+    if title is None:
+        raise TimeoutError(f"'{PROBE_LABEL}' did not appear in the app picker after typing twice")
     switch = row_switch(dev, title.bounds)
     if switch.checked != selected:
         dev.tap(*switch.center)
@@ -172,7 +201,7 @@ def main() -> int:
     parser.add_argument("--min-idle", type=int, default=60)
     args = parser.parse_args()
 
-    out_dir = ROOT / "build/e2e" / datetime.now().strftime("%Y%m%d-%H%M%S-regression")
+    out_dir = ROOT / ".e2e" / datetime.now().strftime("%Y%m%d-%H%M%S-regression")
     out_dir.mkdir(parents=True, exist_ok=True)
     report = Report(out_dir)
     dev = Device(args.serial)
@@ -267,6 +296,57 @@ def main() -> int:
             report.add("S6", "Advanced and Auto Dark screens open", True, "Both screens opened and returned")
         except Exception as error:
             report.add("S6", "Advanced and Auto Dark screens open", False, str(error))
+
+        # S10: the title bar shows the service status and the Appearance screen offers the surface lift dialog.
+        try:
+            open_main(dev)
+            texts = [node.text for node in dev.dump_ui()]
+            status = [text for text in texts if text in ("Shizuku", "Root", "Shizuku · Xposed", "Root · Xposed", "Connecting", "Not connected")]
+            report.add("S10", "Title bar shows the service status", bool(status), (status or ["no status text found"])[0])
+            dev.tap_text("Appearance")
+            dev.wait_for_text("Pure black", timeout=15)
+            time.sleep(1)
+            if not any(node.text.startswith("Surface lift") for node in dev.dump_ui()):
+                dev.tap_text("Pure black")
+                time.sleep(4)
+                dev.wait_for_text("Pure black", timeout=15)
+            dev.tap_text("Pure black")
+            time.sleep(2)
+            dialog = [node.text for node in dev.dump_ui()]
+            shown = "Surface lift" in dialog and any(text.startswith("Level ") for text in dialog)
+            dev.screenshot(out_dir / "s10_surface_lift_dialog.png")
+            if "Cancel" in dialog:
+                dev.tap_text("Cancel")
+                # NOTE: On a slow emulator a Back sent while the dialog is still closing is swallowed by it, and the Appearance screen stays open.
+                time.sleep(2)
+            report.add("S10", "Pure black row opens the surface lift dialog", shown, next((text for text in dialog if text.startswith("Level ")), "no level text"))
+            dev.back()
+            dev.wait_for_text(MAIN_LIST_TEXT, timeout=15)
+        except Exception as error:
+            report.add("S10", "Status and surface lift dialog", False, str(error))
+
+        # S11: switching the language keeps the open screen, rebuilds its texts and is undone cleanly.
+        try:
+            open_main(dev)
+            dev.tap_text("Appearance")
+            dev.wait_for_text("Language", timeout=15)
+            dev.tap_text("Language")
+            dev.wait_for_text("हिन्दी", timeout=10)
+            dev.tap_text("हिन्दी")
+            time.sleep(3)
+            switched = [node.text for node in dev.dump_ui()]
+            stayed = "रूप-रंग" in switched and "भाषा" in switched
+            dev.tap_text("भाषा")
+            dev.wait_for_text("सिस्टम डिफ़ॉल्ट", timeout=10)
+            dev.tap_text("सिस्टम डिफ़ॉल्ट")
+            time.sleep(3)
+            restored = "Appearance" in [node.text for node in dev.dump_ui()]
+            # NOTE: The OS app locale follows only after the activity stops, so Home is pressed before the next force-stop leaves a stale locale behind.
+            dev.sh("input keyevent KEYCODE_HOME", check=False)
+            time.sleep(3)
+            report.add("S11", "Language switch keeps the screen and can be undone", stayed and restored, f"hindi on Appearance={stayed}, restored to system default={restored}")
+        except Exception as error:
+            report.add("S11", "Language switch keeps the screen and can be undone", False, str(error))
 
         # S7: without LSPosed the Xposed entry stays hidden.
         open_main(dev)

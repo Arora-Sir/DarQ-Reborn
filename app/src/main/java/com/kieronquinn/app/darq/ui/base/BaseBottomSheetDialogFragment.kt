@@ -38,7 +38,7 @@ abstract class BaseBottomSheetDialogFragment : BaseBottomSheetFragment<FragmentB
             view.updatePadding(bottom = bottomInset + extraPadding)
             insets
         }
-        val accentColor = monet.getAccentColor(requireContext())
+        val accentColor = themeColors.getAccentColor(requireContext())
         binding.bottomSheetPositive.setTextColor(accentColor)
         binding.bottomSheetNegative.setTextColor(accentColor)
         binding.bottomSheetNeutral.setTextColor(accentColor)

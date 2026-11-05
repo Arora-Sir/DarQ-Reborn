@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/accent" />
+        app:tint="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/dialog_location_permission_text"
@@ -50,7 +50,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_location_permission_text"
-        app:strokeColor="@color/accent" />
+        app:strokeColor="?attr/colorPrimary" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dialog_location_permission_deny"
@@ -67,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_location_permission_accept"
-        app:strokeColor="@color/accent" />
+        app:strokeColor="?attr/colorPrimary" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dialog_location_permission_cancel"

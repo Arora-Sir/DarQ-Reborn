@@ -6,31 +6,55 @@ plugins {
     id 'com.google.android.gms.oss-licenses-plugin'
 }
 
-def tagName = '3.1.11'
+def tagName = '3.2.0'
 
 android {
     namespace 'com.kieronquinn.app.darq'
-    compileSdkVersion 34
+    compileSdk 36
     defaultConfig {
         applicationId "com.mohitarora.darqreborn"
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 325
+        versionCode 326
         versionName tagName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "TAG_NAME", "\"${tagName}\"")
+    }
+
+    signingConfigs {
+        release {
+            def keystorePath = System.getenv("SIGNING_KEYSTORE_PATH")
+            if (keystorePath) {
+                storeFile file(keystorePath)
+                storePassword System.getenv("SIGNING_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            } else {
+                // NOTE: Local builds sign with the same key as every published APK, so updates keep installing over existing copies.
+                initWith signingConfigs.debug
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
         }
     }
 
     buildFeatures {
         viewBinding true
+        // AGP 8 turns these off by default. DarQ uses AIDL for its service and BuildConfig fields.
+        buildConfig true
+        aidl true
     }
 
     compileOptions {
@@ -38,8 +62,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+        }
+    }
+
+    // NOTE: LSPosed 1.9.2 prefers META-INF/xposed/java_init.list when it exists and then never loads assets/xposed_init, which silently breaks DarQ there.
+    // NOTE: Every current manager (LSPosed 1.9.2, its forks, Vector 2.2) loads the legacy entry, so the default build ships only that one.
+    // NOTE: Build with -PxposedModernEntry=true to add the LibXposed 101 entry for Vector and LSPosed 2.x.
+    if (project.findProperty('xposedModernEntry') == 'true') {
+        sourceSets.main.resources.srcDir 'src/xposedModern/resources'
     }
 }
 
@@ -57,9 +90,9 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
 
     //AndroidX
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation "androidx.fragment:fragment-ktx:1.4.1"
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
@@ -75,7 +108,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
 
     //Material
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
 
     //Network
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -102,11 +136,10 @@ dependencies {
     implementation "dev.rikka.shizuku:api:$shizuku_version"
     implementation "dev.rikka.shizuku:provider:$shizuku_version"
 
-    //Xposed
+    //Xposed: the legacy API (82) entry ships by default, the LibXposed (101) entry only with -PxposedModernEntry=true.
     compileOnly 'de.robv.android.xposed:api:82'
-
-    //MonetCompat
-    implementation 'com.github.KieronQuinn:MonetCompat:0.4.1'
+    compileOnly 'io.github.libxposed:api:101.0.1'
+    implementation 'io.github.libxposed:service:101.0.0'
 
     //Bypass Hidden APIs
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.2'
@@ -116,6 +149,11 @@ dependencies {
 
     //Unit tests
     testImplementation 'junit:junit:4.13.2'
+    //android.jar only stubs org.json, so the real implementation is used on the JVM
+    testImplementation 'org.json:json:20240303'
+    //Robolectric runs the theme tests, which need real Android color math and theme resolution
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test:core:1.6.1'
 
 }
 

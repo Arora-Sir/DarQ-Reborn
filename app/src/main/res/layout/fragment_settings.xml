@@ -6,6 +6,7 @@
     android:transitionGroup="true"
     android:id="@+id/root">
 
+    <!-- NOTE: The status is the second line of the main switch, so the home screen has no extra row and nothing that looks tappable but is not. -->
     <include layout="@layout/include_switch_main"
         android:id="@+id/switch_main"/>
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kieronquinn.app.darq.R
+import com.kieronquinn.app.darq.ui.utils.showBlurred
 import com.kieronquinn.app.darq.databinding.FragmentSettingsAdvancedBinding
 import com.kieronquinn.app.darq.model.settings.SettingsItem
 import com.kieronquinn.app.darq.service.background.DarqPersistentService
@@ -15,7 +16,8 @@ import com.kieronquinn.app.darq.ui.base.AutoExpandOnRotate
 import com.kieronquinn.app.darq.ui.base.BackAvailable
 import com.kieronquinn.app.darq.ui.screens.settings.BaseSettingsFragment
 import com.kieronquinn.app.darq.ui.screens.settings.SettingsAdapter
-import com.kieronquinn.monetcompat.extensions.views.applyMonetRecursively
+import com.kieronquinn.app.darq.utils.ObtainiumLink
+import com.kieronquinn.app.darq.utils.openLink
 
 class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBinding>(
     FragmentSettingsAdvancedBinding::inflate), AutoExpandOnRotate, BackAvailable {
@@ -93,6 +95,12 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
                 settings::checkForPrereleases,
                 visible = { settings.checkForUpdates }
             ),
+            SettingsItem.Setting(
+                R.drawable.ic_obtainium,
+                getString(R.string.item_obtainium_title),
+                getString(R.string.item_obtainium_content),
+                tapAction = { requireContext().openLink(ObtainiumLink.url()) }
+            ),
             SettingsItem.Header(
                 getString(R.string.item_advanced_group_theme_title)
             ),
@@ -120,7 +128,6 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.applyMonetRecursively()
         return view
     }
 
@@ -150,7 +157,7 @@ class SettingsAdvancedFragment : BaseSettingsFragment<FragmentSettingsAdvancedBi
             .setMessage(R.string.dialog_disable_persistent_service_message)
             .setPositiveButton(R.string.dialog_disable_persistent_service_confirm) { _, _ -> onConfirmed() }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .showBlurred(requireActivity())
     }
 
 }
