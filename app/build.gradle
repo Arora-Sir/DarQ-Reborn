@@ -79,7 +79,7 @@ android {
 dependencies {
 
     //Kotlin + Coroutines
-    def kotlinx_coroutines_version = "1.6.0"
+    def kotlinx_coroutines_version = "1.11.0"
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
