@@ -317,11 +317,36 @@ def main() -> int:
             dev.screenshot(out_dir / "s10_surface_lift_dialog.png")
             if "Cancel" in dialog:
                 dev.tap_text("Cancel")
+                # NOTE: On a slow emulator a Back sent while the dialog is still closing is swallowed by it, and the Appearance screen stays open.
+                time.sleep(2)
             report.add("S10", "Pure black row opens the surface lift dialog", shown, next((text for text in dialog if text.startswith("Level ")), "no level text"))
             dev.back()
             dev.wait_for_text(MAIN_LIST_TEXT, timeout=15)
         except Exception as error:
             report.add("S10", "Status and surface lift dialog", False, str(error))
+
+        # S11: switching the language keeps the open screen, rebuilds its texts and is undone cleanly.
+        try:
+            open_main(dev)
+            dev.tap_text("Appearance")
+            dev.wait_for_text("Language", timeout=15)
+            dev.tap_text("Language")
+            dev.wait_for_text("हिन्दी", timeout=10)
+            dev.tap_text("हिन्दी")
+            time.sleep(3)
+            switched = [node.text for node in dev.dump_ui()]
+            stayed = "रूप-रंग" in switched and "भाषा" in switched
+            dev.tap_text("भाषा")
+            dev.wait_for_text("सिस्टम डिफ़ॉल्ट", timeout=10)
+            dev.tap_text("सिस्टम डिफ़ॉल्ट")
+            time.sleep(3)
+            restored = "Appearance" in [node.text for node in dev.dump_ui()]
+            # NOTE: The OS app locale follows only after the activity stops, so Home is pressed before the next force-stop leaves a stale locale behind.
+            dev.sh("input keyevent KEYCODE_HOME", check=False)
+            time.sleep(3)
+            report.add("S11", "Language switch keeps the screen and can be undone", stayed and restored, f"hindi on Appearance={stayed}, restored to system default={restored}")
+        except Exception as error:
+            report.add("S11", "Language switch keeps the screen and can be undone", False, str(error))
 
         # S7: without LSPosed the Xposed entry stays hidden.
         open_main(dev)

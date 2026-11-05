@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -127,7 +128,10 @@ def main() -> int:
     if any(node.text == "Report an issue" for node in dev.dump_ui()):
         dev.tap_text("Report an issue")
         dev.wait_for_text("Include diagnostic log", timeout=20)
-        ticked = 'checked="true"' in dev.sh(f"cat {UI_DUMP_PATH}", check=False).split('text="Include diagnostic log"', 1)[-1].split("/>", 1)[0]
+        # NOTE: The log option is a title, a hint and a separate checkbox, so the tick is read from the CheckBox node that follows the title.
+        after_title = dev.sh(f"cat {UI_DUMP_PATH}", check=False).split('text="Include diagnostic log"', 1)[-1]
+        checkbox = re.search(r'<node [^>]*class="android\.widget\.CheckBox"[^>]*>', after_title)
+        ticked = bool(checkbox) and 'checked="true"' in checkbox.group(0)
         # NOTE: Typing into the first field proves the dialog resizes for the keyboard and keeps its buttons reachable.
         dev.tap_text("What happened?")
         dev.sh("input text 'screen%sdoes%snot%sload'", check=False)
@@ -138,6 +142,20 @@ def main() -> int:
         detail = f"log ticked={ticked}, preview={preview_shown}"
         dev.back()
     report.add("D6", "Report an issue includes the log by default", passed, detail)
+
+    # D7: Suggest a feature says no log is needed and hides the checkbox instead of greying it out
+    detail = "entry missing"
+    passed = False
+    if any(node.text == "Report an issue" for node in dev.dump_ui()):
+        dev.tap_text("Report an issue")
+        dev.wait_for_text("Include diagnostic log", timeout=20)
+        dev.tap_text("Suggest a feature")
+        dev.wait_for_text("No log needed", timeout=10)
+        shown = [node.text for node in dev.dump_ui()]
+        passed = "No log needed" in shown and "Include diagnostic log" not in shown
+        detail = f"no-log card shown={'No log needed' in shown}, log title hidden={'Include diagnostic log' not in shown}"
+        dev.back()
+    report.add("D7", "Suggest a feature shows the no-log card", passed, detail)
 
     path = report.write(f"DarQ diagnostics suite on {dev.serial}")
     print(f"Report: {path}")
