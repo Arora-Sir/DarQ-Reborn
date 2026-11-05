@@ -152,7 +152,7 @@ dependencies {
     //android.jar only stubs org.json, so the real implementation is used on the JVM
     testImplementation 'org.json:json:20240303'
     //Robolectric runs the theme tests, which need real Android color math and theme resolution
-    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'org.robolectric:robolectric:4.17'
     testImplementation 'androidx.test:core:1.6.1'
 
 }
