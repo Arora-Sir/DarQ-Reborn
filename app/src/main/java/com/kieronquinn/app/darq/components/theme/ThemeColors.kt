@@ -11,7 +11,7 @@ import com.google.android.material.color.MaterialColors
 object ThemeColors {
 
     fun getAccentColor(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.BLUE)
+        MaterialColors.getColor(context, androidx.appcompat.R.attr.colorPrimary, Color.BLUE)
 
     fun getBackgroundColor(context: Context): Int =
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, Color.BLACK)

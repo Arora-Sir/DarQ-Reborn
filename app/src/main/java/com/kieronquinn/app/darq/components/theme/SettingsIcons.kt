@@ -52,7 +52,7 @@ object SettingsIcons {
     fun heartGlyph(context: Context, tinted: Boolean): Drawable? {
         val glyph = ContextCompat.getDrawable(context, R.drawable.ic_support_heart)?.mutate() ?: return null
         //The heart stays pinkish red in both sets. On the tinted circle it takes the error role, on the error container circle the on-error-container role
-        val role = if (tinted) com.google.android.material.R.attr.colorError else com.google.android.material.R.attr.colorOnErrorContainer
+        val role = if (tinted) androidx.appcompat.R.attr.colorError else com.google.android.material.R.attr.colorOnErrorContainer
         glyph.setTint(MaterialColors.getColor(context, role, Color.parseColor("#FFB4AB")))
         return glyph
     }

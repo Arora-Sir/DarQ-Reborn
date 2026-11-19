@@ -301,7 +301,7 @@ class ContainerFragment: BoundFragment<FragmentContainerBinding>(FragmentContain
 
     private fun dotColor(level: StatusLevel): Int = when(level){
         StatusLevel.OK -> ContextCompat.getColor(requireContext(), R.color.status_dot_ok)
-        StatusLevel.ERROR -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorError)
+        StatusLevel.ERROR -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, androidx.appcompat.R.attr.colorError)
         StatusLevel.PENDING -> com.google.android.material.color.MaterialColors.getColor(binding.statusDot, com.google.android.material.R.attr.colorOutline)
     }
 
