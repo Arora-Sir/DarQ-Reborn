@@ -66,7 +66,7 @@ class LiftSlider @JvmOverloads constructor(context: Context, attrs: AttributeSet
         paint.color = color(com.google.android.material.R.attr.colorSurfaceContainerHighest, 0xFF2A2A2A.toInt())
         canvas.drawRoundRect(box, radius, radius, paint)
         box.set(0f, 0f, dotX(value, pad, width) + pad, height)
-        paint.color = color(com.google.android.material.R.attr.colorPrimary, 0xFF9FB6FF.toInt())
+        paint.color = color(androidx.appcompat.R.attr.colorPrimary, 0xFF9FB6FF.toInt())
         canvas.drawRoundRect(box, radius, radius, paint)
         val onPrimary = color(com.google.android.material.R.attr.colorOnPrimary, 0xFF102A6B.toInt())
         val onSurfaceVariant = color(com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFFAAAAAA.toInt())
