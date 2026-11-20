@@ -136,7 +136,8 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
                     return@collect
                 }
                 if(it == null && !sendAppCloses) return@collect
-                setForceDarkEnabled(appWhitelist.contains(it))
+                val shouldForceDark = isAlwaysForceDarkEnabled || (it != null && appWhitelist.contains(it))
+                setForceDarkEnabled(shouldForceDark)
             }
         }
         registerProcessObserver()
@@ -226,7 +227,14 @@ class DarqService(private val serviceType: DarqServiceConnectionProvider.Service
             }
             ipcSetting.alwaysForceDark != null -> {
                 isAlwaysForceDarkEnabled = ipcSetting.alwaysForceDark
-                setForceDarkEnabled(isAlwaysForceDarkEnabled)
+                if (!isEnabled || isAutoDarkBlocking) {
+                    setForceDarkEnabled(false)
+                } else {
+                    val foregroundApp = getResolvedForegroundApp()
+                    if (foregroundApp != null) currentApp.tryEmit(foregroundApp)
+                    val shouldForceDark = isAlwaysForceDarkEnabled || appWhitelist.contains(foregroundApp ?: currentApp.value)
+                    setForceDarkEnabled(shouldForceDark)
+                }
             }
             ipcSetting.oxygenForceDark != null -> {
                 isOxygenForceDarkEnabled = ipcSetting.oxygenForceDark

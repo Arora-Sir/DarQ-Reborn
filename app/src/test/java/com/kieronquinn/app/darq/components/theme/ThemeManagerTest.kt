@@ -86,7 +86,7 @@ class ThemeManagerTest {
     }
 
     private fun primaryOf(context: Context) =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.TRANSPARENT)
+        MaterialColors.getColor(context, androidx.appcompat.R.attr.colorPrimary, Color.TRANSPARENT)
 
     private fun surfaceOf(context: Context) =
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, Color.TRANSPARENT)

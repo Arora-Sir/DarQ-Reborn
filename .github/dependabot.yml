@@ -14,3 +14,5 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "io.insert-koin:*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "androidx.navigation:*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
