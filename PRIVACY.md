@@ -27,4 +27,4 @@ Backup and Restore writes a settings file to a location you choose. Android back
 Clear storage in Android app settings or uninstall DarQ. There is nothing to delete on a server.
 
 ## Contact
-https://mohitarora.me and https://github.com/Arora-Sir/DarQ-Reborn/issues/new/choose
+Email contact@mohitarora.me, visit https://mohitarora.me or open an issue at https://github.com/Arora-Sir/DarQ-Reborn/issues/new/choose
