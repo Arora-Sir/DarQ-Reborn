@@ -145,31 +145,45 @@ class Device:
 
     # UI
 
-    def dump_ui(self, retries: int = 16) -> list[Node]:
-        for _ in range(retries):
+    def dump_ui(self, retries: int = 16, max_dialogs: int = 30) -> list[Node]:
+        """Dumps the screen. System dialogs are dismissed on their own budget, so a dialog that keeps returning never eats the dump retries."""
+        dialogs = 0
+        attempts = 0
+        while attempts < retries:
             # A failed dump leaves the previous file behind, so it is deleted first to never read a stale screen.
             self.sh(f"rm -f {UI_DUMP_PATH}", check=False)
             self.sh(f"uiautomator dump {UI_DUMP_PATH}", check=False)
             raw = self.sh(f"cat {UI_DUMP_PATH}", check=False)
-            if raw.lstrip().startswith("<?xml"):
-                nodes = self._parse_nodes(raw)
-                # A loaded emulator can raise a system "isn't responding" dialog over everything. Waiting it out is safe.
-                # A crash dialog of ANOTHER app (left by a different project's run on a shared emulator) covers the screen too, Close app dismisses it.
-                if any(node.text.endswith("keeps stopping") for node in nodes):
-                    close = next((node for node in nodes if node.text == "Close app"), None)
-                    if close is not None:
-                        self.sh(f"input tap {close.center[0]} {close.center[1]}")
-                        time.sleep(2)
-                        continue
-                if any(node.text.endswith("isn't responding") for node in nodes):
-                    wait = next((node for node in nodes if node.text == "Wait"), None)
-                    if wait is not None:
-                        self.sh(f"input tap {wait.center[0]} {wait.center[1]}")
-                        time.sleep(3)
-                        continue
-                return nodes
-            time.sleep(1)
+            if not raw.lstrip().startswith("<?xml"):
+                attempts += 1
+                time.sleep(1)
+                continue
+            nodes = self._parse_nodes(raw)
+            if dialogs < max_dialogs and self._dismiss_system_dialog(nodes):
+                dialogs += 1
+                continue
+            return nodes
         raise RuntimeError("uiautomator dump failed")
+
+    def _dismiss_system_dialog(self, nodes: list[Node]) -> bool:
+        """Taps away a crash or not-responding dialog. Returns True when one was handled and the screen must be dumped again."""
+        texts = {node.text: node for node in nodes}
+        # A crash dialog of ANOTHER app (left by a different project's run on a shared emulator) covers the screen too, Close app dismisses it.
+        if any(text.endswith("keeps stopping") for text in texts) and "Close app" in texts:
+            self.sh(f"input tap {texts['Close app'].center[0]} {texts['Close app'].center[1]}")
+            time.sleep(2)
+            return True
+        not_responding = next((text for text in texts if text.endswith("isn't responding")), None)
+        if not_responding is None:
+            return False
+        # NOTE: A loaded emulator can leave the Pixel Launcher stuck in a repeating not-responding dialog that swallows every tap, and Wait only brings it back.
+        # NOTE: Closing the launcher restarts it cleanly on an emulator, while Wait stays right for any other app and for every phone because closing could kill the app under test or the owner's launcher.
+        button = "Close app" if "Launcher" in not_responding and self.serial.startswith("emulator-") else "Wait"
+        if button not in texts:
+            return False
+        self.sh(f"input tap {texts[button].center[0]} {texts[button].center[1]}")
+        time.sleep(3)
+        return True
 
     @staticmethod
     def _parse_nodes(raw: str) -> list[Node]:
@@ -231,9 +245,21 @@ class Device:
         self.assert_not_streaming()
         self.sh(f"am start -W -n {component}")
 
-    def install(self, apk: Path, user: int = 0) -> None:
-        """Installs APK strictly into specified user profile (defaults to User 0 primary)."""
-        self.adb("install", "--user", str(user), "-r", str(apk), timeout=300)
+    def install(self, apk: Path, user: int = 0, replace_signature_mismatch: bool = False) -> bool:
+        """Installs APK strictly into specified user profile (defaults to User 0 primary). Returns True when an emulator build with another signature was replaced, which also resets its data and permission grants. Only the first install of a run may ask for that, update path checks must keep failing on a mismatch."""
+        try:
+            self.adb("install", "--user", str(user), "-r", str(apk), timeout=300)
+            return False
+        except RuntimeError as error:
+            # NOTE: An earlier run can leave a release-signed build on an emulator, and Android then refuses the debug signed update.
+            # NOTE: Emulators are disposable, so the old build is removed and the install repeated. Phones keep their data and the error stands.
+            match = re.search(r"INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package (\S+) signatures", str(error))
+            if match is None or not replace_signature_mismatch or not self.serial.startswith("emulator-"):
+                raise
+            print(f"[INFO] Replacing {match.group(1)} on {self.serial}: signature differs from the installed build", flush=True)
+            self.uninstall(match.group(1))
+            self.adb("install", "--user", str(user), "-r", str(apk), timeout=300)
+            return True
 
     def uninstall_user(self, package: str, user: int) -> None:
         """Uninstalls package from a specific secondary profile without affecting other users."""

@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adbx import Device, PreflightError  # noqa: E402
+from emulator import bootstrap  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 PKG = "com.mohitarora.darqreborn"
@@ -160,21 +161,34 @@ def set_probe_selected(dev: Device, selected: bool) -> bool:
             dev.screenshot(ROOT / ".e2e" / f"picker-miss-{dev.serial.replace(':', '_')}-{int(time.time())}.png")
     if title is None:
         raise TimeoutError(f"'{PROBE_LABEL}' did not appear in the app picker after typing twice")
-    switch = row_switch(dev, title.bounds)
+    switch = row_switch(dev, PROBE_LABEL)
     if switch.checked != selected:
         dev.tap(*switch.center)
         time.sleep(1.5)
-        switch = row_switch(dev, title.bounds)
+        switch = row_switch(dev, PROBE_LABEL)
     dev.back()
     return switch.checked
 
 
-def row_switch(dev: Device, title_bounds: tuple[int, int, int, int]):
-    title_center_y = (title_bounds[1] + title_bounds[3]) // 2
-    for node in dev.find(resource_id=":id/app_switch"):
-        if node.bounds[1] <= title_center_y <= node.bounds[3]:
-            return node
-    raise RuntimeError("Probe row switch not found")
+def other_darq_builds(dev: Device) -> list[str]:
+    """Lists installed DarQ builds with a different package name, such as a side by side test copy or the upstream app."""
+    packages = [line.removeprefix("package:").strip() for line in dev.sh("pm list packages", check=False).splitlines()]
+    return [name for name in packages if name != PKG and name.startswith(("com.mohitarora.darqreborn", "com.kieronquinn.app.darq"))]
+
+
+def row_switch(dev: Device, title: str, timeout: float = 30):
+    """Finds the switch on the row that carries the given title. The row is looked up again on every dump, because a list that is still filtering or re-laying out moves it."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        nodes = dev.dump_ui()
+        title_node = next((node for node in nodes if node.text == title), None)
+        if title_node is not None:
+            title_center_y = (title_node.bounds[1] + title_node.bounds[3]) // 2
+            for node in nodes:
+                if node.resource_id.endswith(":id/app_switch") and node.bounds[1] <= title_center_y <= node.bounds[3]:
+                    return node
+        time.sleep(1.5)
+    raise RuntimeError(f"Row switch for '{title}' not found")
 
 
 def launch_probe(dev: Device, out_dir: Path, name: str) -> tuple[float, str, bool | None]:
@@ -212,9 +226,25 @@ def main() -> int:
         print(f"Preflight refused: {error}")
         return 2
 
+    # NOTE: A second DarQ build keeps its own privileged service with its own app list, and that service writes the same force dark property.
+    # NOTE: On the root emulators a leftover side by side copy turned the property on at every probe launch and made S5 fail about half of the runs.
+    rivals = other_darq_builds(dev)
+    # NOTE: Only this project's own variants (such as the .sbs test copy) are removed, and only on an emulator. Anything else is reported and left alone.
+    own_variants = [name for name in rivals if name.startswith(PKG + ".")] if dev.serial.startswith("emulator-") else []
+    for name in own_variants:
+        dev.uninstall(name)
+    if own_variants:
+        print(f"[INFO] Removed other DarQ builds from {dev.serial}: {', '.join(own_variants)}", flush=True)
+    rivals = [name for name in rivals if name not in own_variants]
+    if rivals:
+        report.add("E1", "No other DarQ build is installed", False, ", ".join(rivals) + " (left in place, remove it or expect S5 noise)")
+
     start = dev.device_time()
-    dev.install(args.apk)
+    replaced = dev.install(args.apk, replace_signature_mismatch=True)
     dev.install(args.probe_apk)
+    if replaced:
+        # NOTE: The replaced build starts with no data and no Shizuku grant, so the first-run prompts are accepted before the checks begin.
+        bootstrap(dev.serial)
 
     original_prefs_xml = dev.run_as(PKG, f"cat {PREFS}", check=False)
     (out_dir / "original_prefs.xml").write_text(original_prefs_xml, encoding="utf-8")
