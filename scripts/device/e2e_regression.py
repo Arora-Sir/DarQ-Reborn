@@ -210,7 +210,7 @@ def main() -> int:
     parser.add_argument("--serial", default="100.127.59.103:5555")
     parser.add_argument("--apk", type=Path, default=ROOT / "app/build/outputs/apk/debug/app-debug.apk")
     parser.add_argument("--probe-apk", type=Path, default=ROOT / "testing/forcedark-probe/build/outputs/apk/debug/forcedarkprobe-debug.apk")
-    parser.add_argument("--final-apk", type=Path, default=ROOT / "app/build/outputs/apk/release/app-release.apk",
+    parser.add_argument("--final-apk", default=str(ROOT / "app/build/outputs/apk/release/app-release.apk"),
                         help="Installed at the end so the phone keeps a normal build. Pass an empty value to skip.")
     parser.add_argument("--min-idle", type=int, default=60)
     args = parser.parse_args()
