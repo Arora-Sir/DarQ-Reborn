@@ -30,7 +30,9 @@ AVD_HOME = Path.home() / ".android/avd"
 JAVA_HOME = os.environ.get("JAVA_HOME", r"C:\Program Files\Eclipse Adoptium\jdk-17.0.3.7-hotspot")
 SHIZUKU_APK = Path(r"D:\Study\Learnings\Projects\Android\OpenSource-Others\Shizuku-Fork\manager\build\outputs\apk\debug\shizuku-v13.7.0-thedjchi-debug.apk")
 SHIZUKU_PKG = "moe.shizuku.privileged.api"
-DARQ_PKG = "com.mohitarora.darqreborn"
+RELEASE_PKG = "com.mohitarora.darqreborn"
+# NOTE: Set DARQ_PKG to test a side by side build (such as com.mohitarora.darqreborn.sbs) without touching the release install.
+DARQ_PKG = os.environ.get("DARQ_PKG", RELEASE_PKG)
 DARQ_ACTIVITY = f"{DARQ_PKG}/com.kieronquinn.app.darq.ui.activities.DarqActivity"
 MAIN_LIST_TEXT = "DarQ Per-App Force Dark"
 PROMPT_BUTTONS = ("Allow all the time", "Allow", "ALLOW", "Grant", "GRANT")

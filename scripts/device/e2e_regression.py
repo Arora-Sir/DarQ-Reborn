@@ -5,6 +5,8 @@ checks, then restores the user's preferences, night mode and installed apps what
 
 Usage:
     uv run --with pillow python scripts/device/e2e_regression.py --serial 100.127.59.103:5555
+
+To test a side by side build next to the release install, set DARQ_PKG to its package name, pass that build as --apk and pass an empty --final-apk.
 """
 
 from __future__ import annotations
@@ -20,10 +22,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adbx import Device, PreflightError  # noqa: E402
-from emulator import bootstrap  # noqa: E402
+from emulator import DARQ_PKG as PKG, RELEASE_PKG, bootstrap  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
-PKG = "com.mohitarora.darqreborn"
 ACTIVITY = f"{PKG}/com.kieronquinn.app.darq.ui.activities.DarqActivity"
 PROBE_PKG = "com.darq.forcedarkprobe"
 PROBE_ACTIVITY = f"{PROBE_PKG}/.ProbeActivity"
@@ -236,6 +237,10 @@ def main() -> int:
     if own_variants:
         print(f"[INFO] Removed other DarQ builds from {dev.serial}: {', '.join(own_variants)}", flush=True)
     rivals = [name for name in rivals if name not in own_variants]
+    # NOTE: A side by side build on a phone runs next to the owner's release install by design, so that one build is expected there and does not fail E1.
+    if PKG != RELEASE_PKG and not dev.serial.startswith("emulator-") and RELEASE_PKG in rivals:
+        rivals.remove(RELEASE_PKG)
+        print(f"[INFO] Testing {PKG} next to the installed {RELEASE_PKG}, which stays untouched.", flush=True)
     if rivals:
         report.add("E1", "No other DarQ build is installed", False, ", ".join(rivals) + " (left in place, remove it or expect S5 noise)")
 
