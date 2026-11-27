@@ -5,9 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import org.koin.androidx.viewmodel.ViewModelOwner
-import org.koin.androidx.viewmodel.koin.getViewModel
-import org.koin.core.context.GlobalContext
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.ParametersDefinition
 
 inline fun <reified T : ViewModel> Fragment.navGraphViewModel(
@@ -17,8 +15,6 @@ inline fun <reified T : ViewModel> Fragment.navGraphViewModel(
 ): Lazy<T> {
     return lazy(LazyThreadSafetyMode.NONE) {
         val navBackStackEntry = (navController ?: findNavController()).getBackStackEntry(navGraphId)
-        GlobalContext.get().getViewModel(
-            owner = { ViewModelOwner.from(navBackStackEntry, navBackStackEntry) }, parameters = parameters
-        )
+        getViewModel<T>(ownerProducer = { navBackStackEntry }, parameters = parameters)
     }
 }

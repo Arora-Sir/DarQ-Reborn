@@ -16,3 +16,6 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "androidx.navigation:*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # NOTE: WorkManager 2.12 ships Java 11 bytecode, so it waits for the same jvm 11 migration as navigation.
+      - dependency-name: "androidx.work:*"
+        versions: [">= 2.12"]
