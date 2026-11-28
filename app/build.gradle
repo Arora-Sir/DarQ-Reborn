@@ -117,7 +117,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
 
     //Sunrise/sunset calculator
-    implementation 'org.shredzone.commons:commons-suncalc:2.4'
+    implementation 'org.shredzone.commons:commons-suncalc:3.11'
 
     //Play Services OSS
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
