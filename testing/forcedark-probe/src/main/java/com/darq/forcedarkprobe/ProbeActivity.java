@@ -39,7 +39,8 @@ public class ProbeActivity extends Activity {
                 + "This page is white on purpose." + gap
                 + "1. Open DarQ and select DarQ Probe in the app list." + lineBreak
                 + "2. Turn on Enable DarQ." + lineBreak
-                + "3. Close this app and open it again." + gap
+                + "3. If the DarQ module is on in LSPosed or Vector, also tick DarQ Probe in the module scope." + lineBreak
+                + "4. Close this app and open it again." + gap
                 + "If this page is now dark, DarQ works on your device. If it stays white, open Report an issue in DarQ.";
     }
 

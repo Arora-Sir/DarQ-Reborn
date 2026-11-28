@@ -121,6 +121,15 @@ Long answer: Force dark is able to invert light colours to dark, and dark text a
 
 Sometimes an app launches too quickly for force dark to be applied. You may have luck closing and reopening the app, or opening and closing recent apps.
 
+### Why does every app stay light, even DarQ Probe?
+
+Check these in order, closing and reopening the app after each change.
+
+1. The system dark theme must be on.
+2. If the DarQ module is enabled in LSPosed or Vector, each app must be ticked in the DarQ module scope and also selected in DarQ. While the module is enabled DarQ stops setting the system-wide force dark switch, so an app outside the scope stays light. This applies to **Always use Force Dark** too, and the status in the title bar can be green while an app is missing from the scope.
+3. To test without the module, disable it in LSPosed or Vector, reboot, select DarQ Probe in DarQ and open the probe again.
+4. With the probe still on screen, run `adb shell getprop debug.hwui.force_dark` from a computer. If it returns `true` and the probe is white, the ROM is not acting on Android's force dark switch. Without the module that switch is the only thing DarQ changes.
+
 ### Why does Force Dark not work on some apps?
 
 These apps are web wrappers (websites running inside a WebView component) rather than native Android applications. System-level Force Dark only affects native Android UI components. 

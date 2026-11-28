@@ -50,6 +50,8 @@ If you are using the **Xposed / LSPosed** mode (to override apps that block Forc
 1. **LSPosed Manager -> DarQ module scope**: Add the apps you want Force Dark to work on. This gives DarQ permission to inject into those app processes.
 2. **DarQ app -> App picker**: Select the same apps to enable Force Dark on them, **or** enable **"Always use Force Dark"** in **Advanced Options** to skip this step and automatically apply Force Dark to everything in the LSPosed scope.
 
+While the module is enabled, DarQ stops setting the system-wide force dark switch. An app that is missing from the module scope stays light, even when it is selected in DarQ or **Always use Force Dark** is on.
+
 > [!IMPORTANT]
 > **Do not add System Framework or System UI** to the LSPosed scope. DarQ works inside each individual app process and does not need system-level access. Adding System Framework is unnecessary and may cause system UI glitches or instability.
 
@@ -118,9 +120,10 @@ Every release has a second small app, **DarQ Probe** (`Probe-for-DarQ.<version>.
 1. Install the probe from the release page of the version you use.
 2. Open DarQ, tap **DarQ Per-App Force Dark** and select DarQ Probe.
 3. Make sure **Enable DarQ** is on and the status in the title bar is green.
-4. Close the probe and open it again. The page should now be dark.
+4. If the DarQ module is enabled in LSPosed or Vector, also tick DarQ Probe in the DarQ module scope. A green status does not confirm that an app is in the scope.
+5. Close the probe and open it again. The page should now be dark.
 
-If the page stays white, open **Settings > Report an issue** in DarQ to attach diagnostic logs. Uninstall the probe when testing is complete. The app requests no permissions.
+If the page stays white, see [why every app can stay light](https://github.com/Arora-Sir/DarQ-Reborn/blob/master/app/src/main/assets/faq.md#why-does-every-app-stay-light-even-darq-probe), or open **Settings > Report an issue** in DarQ to attach diagnostic logs. Uninstall the probe when testing is complete. The app requests no permissions.
 
 ## Report an issue
 
