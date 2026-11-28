@@ -216,17 +216,17 @@ class UpdateDownloadBottomSheetViewModelImpl : UpdateDownloadBottomSheetViewMode
                         .header("User-Agent", "Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36")
                         .build()
                     val response = okHttpClient.newCall(request).execute()
-                    Log.d("DarQUpdate", "downloadUpdate: OkHttp execution complete. Code = ${response.code()}, isSuccessful = ${response.isSuccessful}")
+                    Log.d("DarQUpdate", "downloadUpdate: OkHttp execution complete. Code = ${response.code}, isSuccessful = ${response.isSuccessful}")
 
                     if (!response.isSuccessful) {
-                        Log.e("DarQUpdate", "downloadUpdate: Network request failed with code: ${response.code()}")
+                        Log.e("DarQUpdate", "downloadUpdate: Network request failed with code: ${response.code}")
                         if (outputFile.exists()) outputFile.delete()
                         cancelNotification(context)
-                        _downloadState.emit(State.Failed("HTTP Error: ${response.code()}"))
+                        _downloadState.emit(State.Failed("HTTP Error: ${response.code}"))
                         return@withContext
                     }
 
-                    val body = response.body() ?: run {
+                    val body = response.body ?: run {
                         Log.e("DarQUpdate", "downloadUpdate: Response body is null")
                         if (outputFile.exists()) outputFile.delete()
                         cancelNotification(context)

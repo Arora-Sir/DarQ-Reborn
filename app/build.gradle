@@ -85,16 +85,15 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
 
     //Koin
-    def koin_version= "3.1.5"
+    def koin_version= "3.5.6"
     implementation "io.insert-koin:koin-android:$koin_version"
-    implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
 
     //AndroidX
     implementation 'androidx.appcompat:appcompat:1.8.0'
     implementation "androidx.fragment:fragment-ktx:1.4.1"
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
+    implementation "androidx.work:work-runtime-ktx:2.11.2"
 
     //Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -110,12 +109,12 @@ dependencies {
     //Material
     implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+    implementation 'androidx.dynamicanimation:dynamicanimation:1.1.0'
 
     //Network
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
 
     //Sunrise/sunset calculator
     implementation 'org.shredzone.commons:commons-suncalc:2.4'
@@ -153,7 +152,7 @@ dependencies {
     //android.jar only stubs org.json, so the real implementation is used on the JVM
     testImplementation 'org.json:json:20240303'
     //Robolectric runs the theme tests, which need real Android color math and theme resolution
-    testImplementation 'org.robolectric:robolectric:4.17'
+    testImplementation 'org.robolectric:robolectric:4.18'
     testImplementation 'androidx.test:core:1.6.1'
 
 }
