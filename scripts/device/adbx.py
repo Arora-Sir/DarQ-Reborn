@@ -60,10 +60,26 @@ class Device:
     def focus(self) -> str:
         return self.sh("dumpsys window | grep mCurrentFocus").strip()
 
+    @staticmethod
+    def _parse_idle_age(dump: str) -> float | None:
+        """Seconds since the latest user activity in a dumpsys power dump, from the age printed after the timestamp. Returns None when no line carries an age."""
+        # NOTE: Android prints "(now)" for activity in the current millisecond and "(in N ms)" for a timestamp just ahead of the dump clock.
+        found = re.findall(r"\bm?[Ll]astUserActivityTime=\d+ \((?:(\d+) ms ago|(now|in \d+ ms))\)", dump)
+        return min((int(age or 0) / 1000 for age, _ in found), default=None)
+
     def idle_seconds(self) -> float:
+        dump = self.sh("dumpsys power")
+        age = self._parse_idle_age(dump)
+        if age is not None:
+            return age
+        if not self.serial.startswith("emulator-"):
+            raise PreflightError("Idle time is unknown because dumpsys power shows no age for lastUserActivityTime")
+        stamps = [int(stamp) for stamp in re.findall(r"\bm?[Ll]astUserActivityTime=(\d+)", dump)]
+        if not stamps:
+            return float("inf")
+        # NOTE: The timestamp excludes deep sleep while /proc/uptime includes it, so this subtraction is only trusted on emulators.
         uptime = float(self.sh("cat /proc/uptime").split()[0])
-        match = re.search(r"lastUserActivityTime=(\d+)", self.sh("dumpsys power"))
-        return uptime - int(match.group(1)) / 1000 if match else float("inf")
+        return uptime - max(stamps) / 1000
 
     @staticmethod
     def _is_pid_alive(pid: int) -> bool:
